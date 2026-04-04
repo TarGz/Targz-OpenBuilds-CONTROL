@@ -67,6 +67,17 @@ function convertParsedDataToObject(jsonData) {
   line.userData.bbbox2 = box;
   line.userData.inch = parsedData.inch;
   line.userData.totalTime = parsedData.totalTime;
+
+  // Build reverse lookup: G-code line number → first linePoint index
+  var gcodeLineToPointIndex = {};
+  for (var i = 0; i < parsedData.linePoints.length; i++) {
+    var lp = parsedData.linePoints[i];
+    if (lp.indx !== undefined && !lp.fake && gcodeLineToPointIndex[lp.indx] === undefined) {
+      gcodeLineToPointIndex[lp.indx] = i;
+    }
+  }
+  line.userData.gcodeLineToPointIndex = gcodeLineToPointIndex;
+
   line.name = 'gcodeobject'
   return line;
 }
@@ -136,6 +147,8 @@ function parseGcodeInWebWorker(gcode) {
             }, 200);
             $('#3dviewicon').removeClass('fa-pulse');
             $('#3dviewlabel').html(' 3D View')
+            // Reset restart-from-point state when new gcode is loaded
+            if (typeof onGcodeReloaded === 'function') onGcodeReloaded();
           } else {
             // Didn't get an Object
             $('#3dviewicon').removeClass('fa-pulse');

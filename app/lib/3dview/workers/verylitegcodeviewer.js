@@ -612,7 +612,8 @@ GCodeParser = function(handlers, modecmdhandlers) {
             y: threeObjArc.userData.points[i].y,
             z: threeObjArc.userData.points[i].z,
             g: 2,
-            timeMins: p2sub.timeMins
+            timeMins: p2sub.timeMins,
+            indx: args.indx
           });
         }
 
@@ -708,7 +709,8 @@ GCodeParser = function(handlers, modecmdhandlers) {
           x: p2.x,
           y: p2.y,
           z: p2.z,
-          g: g
+          g: g,
+          indx: args.indx
         });
       }
 
@@ -755,7 +757,8 @@ GCodeParser = function(handlers, modecmdhandlers) {
         y: lastLine.y,
         z: lastLine.z,
         g: g,
-        fake: true
+        fake: true,
+        indx: args.indx
       });
     }
 

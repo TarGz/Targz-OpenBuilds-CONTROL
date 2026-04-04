@@ -236,7 +236,7 @@ if (isElectron()) {
     debug_log(JSON.stringify(ev))
   })
   autoUpdater.on('update-not-available', (ev, info) => {
-    var string = 'Update not available. Installed version: ' + require('./package').version + " / Available version: " + ev.version + ".\n";
+    var string = 'Update not available. Installed version: ' + require('./package').version + "-targz" + " / Available version: " + ev.version + ".\n";
     if (require('./package').version === ev.version) {
       string += "You are already running the latest version!"
     }
@@ -410,7 +410,7 @@ var re = new RegExp("^[a-f0-9]{32}");
 var status = {
   login: false,
   driver: {
-    version: require('./package').version,
+    version: require('./package').version + "-targz",
     ipaddress: ip.address(),
     operatingsystem: false,
     powersettings: {
@@ -552,7 +552,7 @@ app.get('/api/version', (req, res) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   data = {
     "application": "OMD",
-    "version": require('./package').version,
+    "version": require('./package').version + "-targz",
     "ipaddress": ip.address() + ":" + config.webPort
   }
   res.send(JSON.stringify(data), null, 2);

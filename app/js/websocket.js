@@ -715,7 +715,7 @@ function initSocket() {
     if (webgl) {
       if (!disable3Drealtimepos) {
         if (!isJogWidget) {
-          if (!simRunning) {
+          if (!simRunning && !restartSelectionActive) {
             cone.position.x = status.machine.position.work.x
             cone.position.y = status.machine.position.work.y
             cone.position.z = status.machine.position.work.z
