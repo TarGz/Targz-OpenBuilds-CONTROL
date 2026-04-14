@@ -1,7 +1,16 @@
 # OpenBuilds CONTROL
 OpenBuilds CONTROL - Grbl Host / Interface for all CNC style machines running Grbl
 
+Instyall 
+
+
+npm install
+
+
+
+
 ## Download
+
 
 #### Latest Version
 Click to download latest version:  [![Latest Version](https://img.shields.io/github/package-json/v/openbuilds/openbuilds-control.svg)](https://github.com/OpenBuilds/OpenBuilds-CONTROL/releases/latest)
