@@ -1,0 +1,67 @@
+/* Portrait-Cubes design tokens — single source of truth for the app's
+   warm-light visual language. Consumed by pc-theme.css, restart-from-point.css
+   and any future PC component styles. */
+
+@import url('https://rsms.me/inter/inter.css');
+
+:root {
+  /* Accents */
+  --pc-primary: #FF6A00;
+  --pc-primary-hover: #e55e00;
+  --pc-primary-light: #FF8A33;
+  --pc-primary-subtle: #FFF3EB;
+
+  /* Semantic */
+  --pc-success: #22C55E;
+  --pc-success-bg: #F0FDF4;
+  --pc-success-border: #BBF7D0;
+  --pc-danger: #EF4444;
+  --pc-danger-bg: #FEF2F2;
+  --pc-danger-border: #FECACA;
+  --pc-info: #0015FF;
+
+  /* Axes (X red, Y green, Z blue, A orange) */
+  --pc-axis-x: #EF4444;
+  --pc-axis-y: #22C55E;
+  --pc-axis-z: #0015FF;
+  --pc-axis-a: #FF6A00;
+
+  /* Surfaces */
+  --pc-bg: #F5F3F0;
+  --pc-bg-warm: linear-gradient(135deg, #FCEADB 0%, #FDF0E6 50%, #F5F3F0 80%, #EEF0F5 100%);
+  --pc-surface: #FFFFFF;
+  --pc-surface-hover: #FAFAFA;
+  --pc-surface-glass: hsla(0, 0%, 92%, 0.8);
+  --pc-surface-white: rgba(255, 255, 255, 0.92);
+
+  /* Borders */
+  --pc-border: hsla(0, 0%, 100%, 0.5);
+  --pc-border-hair: #E8E5E1;
+  --pc-border-subtle: rgba(0, 0, 0, 0.08);
+
+  /* Text */
+  --pc-text: #1A1A1A;
+  --pc-text-secondary: #6B6B6B;
+  --pc-text-tertiary: #9B9B9B;
+  --pc-text-on-accent: #FFFFFF;
+
+  /* Radii */
+  --pc-radius-sm: 8px;
+  --pc-radius-md: 12px;
+  --pc-radius-lg: 16px;
+  --pc-radius-xl: 18px;
+  --pc-radius-pill: 100px;
+
+  /* Shadows */
+  --pc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --pc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --pc-shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+  --pc-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  /* Typography */
+  --pc-font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --pc-font-mono: 'JetBrains Mono', 'Lucida Console', Monaco, monospace;
+
+  /* Motion */
+  --pc-transition: 0.15s ease;
+}

@@ -3,6 +3,60 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-17',
+      version: '1.4.4',
+      changes: [
+        'Restyle console (#console) and command form: glass card, monospace paragraphs with pill hover',
+        'Restyle Ace editors (#editor, #fluidnceditor): glass frame, soft gutter',
+        'Convert editor and console fixed-bottom toolbars into centered glass nav-bar pills',
+        'Restyle macros: glass cards (.command-button-macro) with orange hover border',
+        'Restyle troubleshooting machine-profile picker (image-checkbox) as selectable glass cards with orange check',
+        'Restyle probe wizard SVG to use PC primary color; step-list numbers orange',
+        'Minor: remap .fg-openbuilds/.bd-openbuilds to neutral PC tokens'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.3',
+      changes: [
+        'Restyle DRO displays: glass cards with tabular-nums value, axis-colored text, orange hover/focus',
+        'Restyle DRO edit input (.droInput) with orange ring',
+        'Restyle jog direction buttons (.button.light.square.xlarge.jogbtn): glass 72×72, orange hover border, axis-colored FA layers',
+        'Restyle setzero/gotozero/WCS pill buttons and step-distance segmented buttons',
+        'Restyle vertical jog/feed/tool sliders with orange accent, pill reset buttons, dark tally value badge'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.2',
+      changes: [
+        'Restyle primitives: .button variants (dark/light/outline/primary/success/alert/secondary/mini/small) with PC tokens; jog & ribbon buttons preserved via :not() guards',
+        'Restyle inputs, selects, textareas: glass surface, subtle border, orange focus ring',
+        'Restyle badges (.badge, .badge.bg-*) and .tally pin-status indicators as pills',
+        'Restyle .table/.table.striped with tiny uppercase headers and hairline rows',
+        'Restyle .card, Metro.dialog.create output and Metro.toast.create output as glass cards with colored accent'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.1',
+      changes: [
+        'Restyle ribbon menu: tabbed top strip (Machine Control / Grbl / FluidNC / Troubleshooting), glass content panel, hairline group separators, tiny uppercase group labels',
+        'Restyle ribbon buttons (.ribbon-button, .ribbon-icon-button): transparent with hover, orange caret, Inter typography',
+        'Restyle ribbon dropdowns and .d-menu context menus: glass panels with pill-hover rows',
+        'Sub-tabs (3D View / Log / Macros / GCODE Editor) inherit the new tab styling'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.0',
+      changes: [
+        'Introduce Portrait-Cubes design tokens at :root (pc-tokens.css) — orange accent, glass surfaces, Inter, radii, shadows',
+        'Add pc-theme.css skin layer — restyle body background (warm gradient), window title bar (frosted glass) and bottom status bar (pill badges)',
+        'Drop dark mode: remove theme toggle button, dynamic dark.css load; simplify theme.js to light-only lookup (3D viewer colors preserved)'
+      ]
+    },
+    {
+      date: '2026-04-17',
       version: '1.3.1',
       changes: [
         'Replace app icon with new Targz Pen Plotter Ctrl logo (mac .icns, win .ico, linux .png, favicon)'

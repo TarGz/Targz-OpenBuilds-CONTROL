@@ -1,22 +1,8 @@
-/* Portrait-Cubes-inspired design language for the restart-from-point UI
-   and the 3D-view floating toolbar. Always uses the warm-light palette,
-   regardless of the app theme. */
-
-@import url('https://rsms.me/inter/inter.css');
+/* Portrait-Cubes restart-from-point UI + 3D-view floating toolbar.
+   Tokens come from pc-tokens.css (:root). */
 
 .pc-ui {
-  --pc-primary: #FF6A00;
-  --pc-primary-hover: #e55e00;
-  --pc-primary-subtle: #FFF3EB;
-  --pc-surface-glass: hsla(0, 0%, 92%, 0.8);
-  --pc-surface-white: rgba(255, 255, 255, 0.92);
-  --pc-border: hsla(0, 0%, 100%, 0.5);
-  --pc-border-subtle: rgba(0, 0, 0, 0.08);
-  --pc-text: #1A1A1A;
-  --pc-text-secondary: #6B6B6B;
-  --pc-text-tertiary: #9B9B9B;
-  --pc-shadow: 0 4px 24px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--pc-font);
   color: var(--pc-text);
   font-size: 13px;
   line-height: 1.4;
@@ -26,7 +12,7 @@
 /* --- Scrubber panel (bottom-centered glass card) --- */
 .pc-scrubber {
   position: absolute;
-  bottom: 80px;
+  bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: min(820px, calc(100% - 40px));
@@ -35,7 +21,7 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--pc-border);
   border-radius: 16px;
-  box-shadow: var(--pc-shadow);
+  box-shadow: var(--pc-shadow-lg);
   padding: 14px 18px;
   z-index: 100;
 }
@@ -164,7 +150,7 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--pc-border);
   border-radius: 12px;
-  box-shadow: var(--pc-shadow);
+  box-shadow: var(--pc-shadow-lg);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -179,7 +165,7 @@
 /* --- Floating nav-bar (bottom center, glass pill) --- */
 .pc-navbar {
   position: absolute;
-  bottom: 20px;
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -189,7 +175,7 @@
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--pc-border);
   border-radius: 18px;
-  box-shadow: var(--pc-shadow);
+  box-shadow: var(--pc-shadow-lg);
   padding: 6px 10px;
   gap: 2px;
   z-index: 90;

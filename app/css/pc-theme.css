@@ -1,0 +1,1342 @@
+/* Portrait-Cubes skin over Metro UI 4 — Phase 1: global frame.
+   Later phases (ribbon, buttons, dialogs, jog, etc.) append to this file. */
+
+/* ---------- Global base ---------- */
+html, body {
+  font-family: var(--pc-font);
+  font-size: 13px;
+  color: var(--pc-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--pc-bg-warm);
+  background-attachment: fixed;
+}
+
+/* The Metro .window wrapper — let the warm gradient bleed through */
+body > .window,
+body > .window.bd-black {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none;
+}
+
+/* ---------- Window title bar (frosted glass chrome) ---------- */
+#windowtitlebar {
+  background: var(--pc-surface-glass) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--pc-border-subtle) !important;
+  color: var(--pc-text);
+  height: 42px;
+  padding-left: 12px !important;
+}
+
+#windowtitlebar .title,
+#windowtitle {
+  color: var(--pc-text);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.1px;
+}
+
+/* Window control buttons (min/max/fullscreen/close) */
+#windowtitlebar .buttons {
+  gap: 2px;
+  display: flex;
+  align-items: center;
+  padding-right: 6px;
+}
+
+#windowtitlebar .btn-custom {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text-secondary);
+  cursor: pointer;
+  transition: background var(--pc-transition), color var(--pc-transition);
+  font-size: 12px;
+}
+
+#windowtitlebar .btn-custom:hover {
+  background: hsla(0, 0%, 100%, 0.6);
+  color: var(--pc-text);
+}
+
+/* ---------- Bottom status bar ---------- */
+.window-content > .fixed-bottom {
+  background: var(--pc-surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--pc-border-subtle);
+  padding: 4px 10px;
+}
+
+.window-content > .fixed-bottom .row {
+  margin: 0;
+}
+
+.window-content > .fixed-bottom .badge.inline.bg-openbuilds {
+  background: transparent !important;
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--pc-radius-pill);
+  border: 1px solid var(--pc-border-subtle);
+  background-color: var(--pc-surface-white) !important;
+  box-shadow: var(--pc-shadow-sm);
+  letter-spacing: 0.2px;
+}
+
+.window-content > .fixed-bottom .badge.inline.bg-openbuilds .fg-red {
+  color: var(--pc-danger) !important;
+}
+
+/* Progress bar under status */
+.window-content > .fixed-bottom [data-role="progress"] {
+  margin-top: 6px;
+  background: var(--pc-border-subtle);
+  border-radius: var(--pc-radius-pill);
+  overflow: hidden;
+  height: 4px;
+}
+
+.window-content > .fixed-bottom [data-role="progress"] .bar {
+  background: var(--pc-primary) !important;
+}
+
+/* ---------- Splash screen ---------- */
+#splash {
+  background: var(--pc-bg-warm);
+}
+
+/* =====================================================================
+   Phase 2 — Ribbon menu + tabs
+   ===================================================================== */
+
+/* Ribbon container */
+[data-role="ribbonmenu"],
+.ribbon-menu {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* ---------- Top tab strip (Machine Control / Grbl / FluidNC / Troubleshooting) ---------- */
+[data-role="ribbonmenu"] > .tabs-holder,
+.ribbonmenu > .tabs-holder {
+  background: transparent;
+  border: none;
+  padding: 6px 12px 0;
+  margin: 0;
+  display: flex;
+  gap: 2px;
+  list-style: none;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li,
+.ribbonmenu > .tabs-holder > li {
+  list-style: none;
+  margin: 0;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li > a,
+.ribbonmenu > .tabs-holder > li > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0;
+  background: transparent;
+  color: var(--pc-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  transition: background var(--pc-transition), color var(--pc-transition);
+  text-decoration: none;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li > a:hover,
+.ribbonmenu > .tabs-holder > li > a:hover {
+  background: hsla(0, 0%, 100%, 0.5);
+  color: var(--pc-text);
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li.active > a,
+.ribbonmenu > .tabs-holder > li.active > a {
+  background: var(--pc-surface-white);
+  color: var(--pc-primary);
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* FontAwesome icons inside tab labels get the active color */
+[data-role="ribbonmenu"] > .tabs-holder > li.active > a i,
+.ribbonmenu > .tabs-holder > li.active > a i {
+  color: var(--pc-primary);
+}
+
+/* ---------- Ribbon content panel ---------- */
+[data-role="ribbonmenu"] > .content-holder,
+.ribbonmenu > .content-holder {
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border-subtle);
+  border-radius: 0 var(--pc-radius-md) var(--pc-radius-md) var(--pc-radius-md);
+  margin: 0 12px;
+  box-shadow: var(--pc-shadow-sm);
+  overflow: hidden;
+}
+
+/* Only restyle the visible (active) section — don't touch display, Metro
+   toggles display:none on inactive tabs. */
+[data-role="ribbonmenu"] > .content-holder > .section,
+.ribbonmenu > .content-holder > .section {
+  background: transparent;
+  padding: 10px 4px 6px;
+}
+
+/* ---------- Groups inside a ribbon section ---------- */
+[data-role="ribbonmenu"] .group,
+.ribbonmenu .group {
+  position: relative;
+  padding: 0 12px 18px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+/* Vertical hairline separator between groups */
+[data-role="ribbonmenu"] .group + .group,
+.ribbonmenu .group + .group {
+  border-left: 1px solid var(--pc-border-subtle);
+}
+
+/* Group label ("Visit", "Machine Connection", "File", "Wizards"...) */
+[data-role="ribbonmenu"] .group > .title,
+.ribbonmenu .group > .title {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--pc-text-tertiary);
+  padding: 0 6px;
+}
+
+/* ---------- Ribbon buttons ---------- */
+.ribbon-button,
+.ribbon-icon-button {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--pc-radius-md) !important;
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: background var(--pc-transition), border-color var(--pc-transition), color var(--pc-transition);
+  cursor: pointer;
+}
+
+.ribbon-button {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 68px;
+  min-height: 68px;
+}
+
+.ribbon-icon-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  min-height: 36px;
+}
+
+.ribbon-button:hover,
+.ribbon-icon-button:hover {
+  background: hsla(0, 0%, 100%, 0.7) !important;
+  border-color: var(--pc-border-subtle) !important;
+}
+
+.ribbon-button .icon,
+.ribbon-icon-button .icon {
+  font-size: 22px;
+  color: var(--pc-text-secondary);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ribbon-icon-button .icon {
+  font-size: 16px;
+}
+
+.ribbon-button .caption,
+.ribbon-icon-button .caption {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pc-text);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.ribbon-button .icon img {
+  max-height: 26px;
+  width: auto;
+}
+
+.ribbon-button:disabled,
+.ribbon-icon-button:disabled,
+.ribbon-button.disabled,
+.ribbon-icon-button.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Dropdown-toggle caret on ribbon buttons */
+.ribbon-button.dropdown-toggle::after,
+.ribbon-icon-button.dropdown-toggle::after {
+  color: var(--pc-text-tertiary);
+}
+
+/* ---------- Ribbon dropdowns (menu panels) ---------- */
+.ribbon-dropdown,
+.d-menu {
+  background: var(--pc-surface-white) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md) !important;
+  box-shadow: var(--pc-shadow-lg) !important;
+  padding: 6px !important;
+  min-width: 200px;
+}
+
+.ribbon-dropdown > li,
+.d-menu > li {
+  list-style: none;
+  margin: 0;
+}
+
+.ribbon-dropdown > li > a,
+.d-menu > li > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text) !important;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background var(--pc-transition);
+}
+
+.ribbon-dropdown > li > a:hover,
+.d-menu > li > a:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: var(--pc-text) !important;
+}
+
+.ribbon-dropdown > li > a i,
+.d-menu > li > a i {
+  color: var(--pc-text-secondary);
+  width: 16px;
+  text-align: center;
+}
+
+.ribbon-dropdown > li.divider,
+.d-menu > li.divider {
+  height: 1px;
+  background: var(--pc-border-subtle);
+  margin: 6px 4px;
+  padding: 0;
+}
+
+/* ---------- .ribbon-group — small inline button groups inside a group ---------- */
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--pc-border-subtle);
+}
+
+.ribbon-group hr {
+  display: none;
+}
+
+/* ---------- Sub-tabs strip (3D View / Log / Macros / GCODE Editor) ---------- */
+/* Inherit the same styling as the top tabs — the markup is identical. */
+
+/* Emergency-stop group in the ribbon keeps its visual weight */
+.ribbonmenu .group.estop .ribbon-button:hover,
+[data-role="ribbonmenu"] .group.estop .ribbon-button:hover {
+  background: var(--pc-danger-bg) !important;
+  border-color: var(--pc-danger-border) !important;
+}
+
+.ribbonmenu .group.estop .ribbon-button .icon .fg-red,
+[data-role="ribbonmenu"] .group.estop .ribbon-button .icon .fg-red {
+  color: var(--pc-danger) !important;
+}
+
+/* =====================================================================
+   Phase 3 — Primitives (buttons, inputs, badges, tables, cards,
+   dialogs, toasts). Scoped to avoid touching ribbon/jog specials.
+   ===================================================================== */
+
+/* ---------- Buttons (generic Metro .button, not jog, not ribbon) ---------- */
+.button:not(.jogbtn):not(.ribbon-button):not(.ribbon-icon-button):not(.pc-btn):not(.pc-icon-btn) {
+  font-family: var(--pc-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  border-radius: var(--pc-radius-sm);
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  transition: background var(--pc-transition), border-color var(--pc-transition), color var(--pc-transition), box-shadow var(--pc-transition);
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.button:not(.jogbtn):not(.ribbon-button):not(.ribbon-icon-button):not(.pc-btn):not(.pc-icon-btn):hover {
+  filter: none;
+}
+
+/* Variant: neutral / dark / light / outline → ghost */
+.button.dark,
+.button.light,
+.button.outline {
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text-secondary) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  box-shadow: var(--pc-shadow-sm);
+}
+
+.button.dark:hover,
+.button.light:hover,
+.button.outline:hover {
+  background: #fff !important;
+  color: var(--pc-text) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Variant: primary → orange accent */
+.button.primary:not(.jogbtn) {
+  background: var(--pc-primary) !important;
+  color: var(--pc-text-on-accent) !important;
+  border-color: var(--pc-primary) !important;
+}
+.button.primary:not(.jogbtn):hover {
+  background: var(--pc-primary-hover) !important;
+  border-color: var(--pc-primary-hover) !important;
+}
+
+/* Variant: success → green */
+.button.success:not(.jogbtn) {
+  background: var(--pc-success) !important;
+  color: var(--pc-text-on-accent) !important;
+  border-color: var(--pc-success) !important;
+}
+.button.success:not(.jogbtn):hover {
+  background: #1aa84e !important;
+  border-color: #1aa84e !important;
+}
+
+/* Outline success (e.g. Scan Network) */
+.button.outline.success {
+  background: transparent !important;
+  color: var(--pc-success) !important;
+  border: 1px solid var(--pc-success) !important;
+  box-shadow: none;
+}
+.button.outline.success:hover {
+  background: var(--pc-success-bg) !important;
+  color: var(--pc-success) !important;
+}
+
+/* Variant: alert / danger → red */
+.button.alert:not(.jogbtn) {
+  background: var(--pc-danger) !important;
+  color: var(--pc-text-on-accent) !important;
+  border-color: var(--pc-danger) !important;
+}
+.button.alert:not(.jogbtn):hover {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+/* Variant: secondary → neutral gray */
+.button.secondary:not(.jogbtn) {
+  background: #E5E5E5 !important;
+  color: var(--pc-text) !important;
+  border-color: transparent !important;
+}
+
+/* Size: mini / small */
+.button.mini {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: var(--pc-radius-sm);
+}
+.button.small {
+  padding: 5px 12px;
+  font-size: 11px;
+}
+
+/* Disabled */
+.button:disabled,
+.button.disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* ---------- Inputs / selects / textareas ---------- */
+[data-role="input"],
+[data-role="select"],
+[data-role="textarea"],
+.input,
+.select,
+.textarea {
+  font-family: var(--pc-font);
+}
+
+.input input[type="text"],
+.input input[type="number"],
+.input input[type="search"],
+.input input[type="password"],
+input[data-role="input"],
+.textarea textarea,
+.select select {
+  background: var(--pc-surface-white) !important;
+  border: 1.5px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-sm) !important;
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  font-size: 13px;
+  padding: 7px 10px;
+  transition: border-color var(--pc-transition), box-shadow var(--pc-transition);
+}
+
+.input input:focus,
+.input input[type="text"]:focus,
+.input input[type="number"]:focus,
+.textarea textarea:focus,
+input[data-role="input"]:focus {
+  border-color: var(--pc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12) !important;
+  outline: none !important;
+}
+
+/* Prepend / append slots inside .input and .select (FA/Metro icons) */
+.input .prepend,
+.select .prepend,
+.input .append,
+.select .append {
+  color: var(--pc-text-tertiary) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Metro's .select wrapper + its inner button */
+.select .dropdown-toggle {
+  background: var(--pc-surface-white) !important;
+  border: 1.5px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-sm) !important;
+  color: var(--pc-text) !important;
+  padding: 7px 10px;
+  font-family: var(--pc-font);
+  font-size: 13px;
+}
+
+.select .dropdown-toggle:focus,
+.select.focused .dropdown-toggle {
+  border-color: var(--pc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.12) !important;
+}
+
+/* ---------- Badges ---------- */
+.badge:not(.inline) {
+  background: var(--pc-primary-subtle);
+  color: var(--pc-primary);
+  border-radius: var(--pc-radius-pill);
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  font-family: var(--pc-font);
+}
+
+.badge.bg-green { background: var(--pc-success-bg); color: var(--pc-success); }
+.badge.bg-red,
+.badge.bg-alert { background: var(--pc-danger-bg); color: var(--pc-danger); }
+.badge.bg-orange { background: var(--pc-primary-subtle); color: var(--pc-primary); }
+.badge.bg-blue { background: rgba(0, 21, 255, 0.08); color: var(--pc-info); }
+
+/* .tally (pin status) */
+.tally {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--pc-radius-pill);
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--pc-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--pc-font);
+  border: 1px solid var(--pc-border-subtle);
+}
+.tally.alert {
+  background: var(--pc-danger-bg);
+  color: var(--pc-danger);
+  border-color: var(--pc-danger-border);
+}
+.tally.pinstatus {
+  background: var(--pc-success-bg);
+  color: var(--pc-success);
+  border-color: var(--pc-success-border);
+}
+
+/* ---------- Tables ---------- */
+.table,
+table.table {
+  font-family: var(--pc-font);
+  font-size: 12px;
+  color: var(--pc-text);
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table thead th,
+table.table thead th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--pc-text-tertiary);
+  background: transparent;
+  border-bottom: 1px solid var(--pc-border-subtle);
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.table tbody td,
+table.table tbody td {
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--pc-border-subtle);
+}
+
+.table.striped tbody tr:nth-child(odd) td,
+table.table.striped tbody tr:nth-child(odd) td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.table.row-hover tbody tr:hover td,
+table.table.row-hover tbody tr:hover td {
+  background: rgba(255, 106, 0, 0.04);
+}
+
+.table.compact tbody td,
+table.table.compact tbody td {
+  padding: 5px 8px;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-lg) !important;
+  box-shadow: var(--pc-shadow-sm);
+  overflow: hidden;
+}
+
+.card .card-header {
+  background: transparent !important;
+  color: var(--pc-text) !important;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--pc-border-subtle) !important;
+}
+
+.card .card-content {
+  background: transparent !important;
+  color: var(--pc-text);
+  padding: 12px 14px;
+}
+
+/* ---------- Dialogs (Metro.dialog.create) ---------- */
+.dialog {
+  background: var(--pc-surface-white) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-lg) !important;
+  box-shadow: var(--pc-shadow-lg) !important;
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.dialog.dark,
+.dialog.info,
+.dialog.success,
+.dialog.warning,
+.dialog.alert {
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+}
+
+.dialog .dialog-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--pc-text) !important;
+  padding: 16px 20px 8px !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.dialog .dialog-content {
+  padding: 4px 20px 16px !important;
+  color: var(--pc-text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dialog .dialog-actions {
+  padding: 12px 20px !important;
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid var(--pc-border-subtle);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-overlay {
+  background: rgba(26, 26, 26, 0.35) !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---------- Toasts (Metro.toast.create) ---------- */
+.toast {
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--pc-radius-md) !important;
+  box-shadow: var(--pc-shadow-lg) !important;
+  padding: 10px 16px !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-left-width: 4px !important;
+}
+
+.toast.bg-red,
+.toast.alert { border-left-color: var(--pc-danger) !important; }
+.toast.bg-orange,
+.toast.warning { border-left-color: var(--pc-primary) !important; }
+.toast.bg-green,
+.toast.success { border-left-color: var(--pc-success) !important; }
+.toast.bg-blue,
+.toast.info { border-left-color: var(--pc-info) !important; }
+
+/* ---------- Hints / tooltips ---------- */
+.hint,
+[data-role="hint"] {
+  background: var(--pc-text) !important;
+  color: #fff !important;
+  font-family: var(--pc-font);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px !important;
+  border-radius: var(--pc-radius-sm) !important;
+  border: none !important;
+  box-shadow: var(--pc-shadow-md);
+}
+
+/* =====================================================================
+   Phase 4 — Jog panel + DRO displays
+   ===================================================================== */
+
+/* ---------- DRO (Digital ReadOut) container ---------- */
+.dro {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+  width: 161px;
+  height: 42px !important;
+  padding: 0 12px !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md);
+  box-shadow: var(--pc-shadow-sm);
+  line-height: 1 !important;
+  font-family: var(--pc-font);
+  font-weight: 500;
+  font-size: 18px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color var(--pc-transition), box-shadow var(--pc-transition);
+}
+
+.dro:hover {
+  border-color: var(--pc-primary);
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.08);
+}
+
+/* The numeric value itself — tabular nums for alignment */
+.dro [id$="Pos"] {
+  font-family: var(--pc-font);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.2px;
+}
+
+/* Color-coded per axis */
+#xPosDro,
+#xPosDro .dro [id="xPos"] { /* keep the red color from FA layers */ }
+#xPosDro .fg-red, #xPos.fg-red { color: var(--pc-axis-x) !important; }
+#yPosDro .fg-green, #yPos.fg-green { color: var(--pc-axis-y) !important; }
+#zPosDro .fg-blue, #zPos.fg-blue { color: var(--pc-axis-z) !important; }
+#aPosDro .fg-orange, #aPos.fg-orange { color: var(--pc-axis-a) !important; }
+
+/* Editable input state */
+.droInput {
+  background: var(--pc-primary-subtle) !important;
+  border: 1px solid var(--pc-primary) !important;
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text) !important;
+  font-family: var(--pc-font);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 18px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  padding-right: 8px !important;
+  outline: none;
+}
+
+.droInput:focus {
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.18) !important;
+}
+
+/* ---------- setzero / gotozero / WCS pill buttons ---------- */
+.button.light.jogbtn {
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-sm) !important;
+  font-family: var(--pc-font) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  box-shadow: var(--pc-shadow-sm);
+  transition: border-color var(--pc-transition), background var(--pc-transition), transform var(--pc-transition) !important;
+}
+
+.button.light.jogbtn:hover {
+  background: #fff !important;
+  border-color: var(--pc-primary) !important;
+}
+
+.button.light.jogbtn:active {
+  transform: translateY(1px);
+}
+
+/* Small dropdown caret next to DRO */
+.drotable .button.light.jogbtn[style*="width: 42px"] {
+  box-shadow: none;
+}
+
+/* ---------- Jog direction buttons (the big 75×75 square xlarge) ---------- */
+.button.light.square.xlarge.jogbtn {
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: var(--pc-radius-md) !important;
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  box-shadow: var(--pc-shadow-sm);
+  padding: 0 !important;
+  line-height: 1 !important;
+  font-family: var(--pc-font) !important;
+  transition: border-color var(--pc-transition), transform var(--pc-transition), box-shadow var(--pc-transition);
+}
+
+.button.light.square.xlarge.jogbtn:hover {
+  background: #fff !important;
+  border-color: var(--pc-primary) !important;
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.12);
+}
+
+.button.light.square.xlarge.jogbtn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Remap FA layer colors inside jog buttons to PC axis tokens */
+.button.light.square.xlarge.jogbtn .fg-red,
+.button.light.jogbtn .fa-layers-text.fg-red,
+#xPos.fg-red { color: var(--pc-axis-x) !important; }
+
+.button.light.square.xlarge.jogbtn .fg-green,
+.button.light.jogbtn .fa-layers-text.fg-green,
+#yPos.fg-green { color: var(--pc-axis-y) !important; }
+
+.button.light.square.xlarge.jogbtn .fg-blue,
+.button.light.jogbtn .fa-layers-text.fg-blue,
+.button.light.jogbtn .fg-darkBlue,
+#zPos.fg-blue { color: var(--pc-axis-z) !important; }
+
+.button.light.square.xlarge.jogbtn .fg-orange,
+.button.light.jogbtn .fa-layers-text.fg-orange,
+#aPos.fg-orange { color: var(--pc-axis-a) !important; }
+
+.button.light.jogbtn .fg-darkGray,
+.button.light.jogbtn .fg-gray { color: var(--pc-text-secondary) !important; }
+
+.button.light.jogbtn .fg-openbuilds { color: var(--pc-text) !important; }
+
+/* ---------- Step distance buttons (0.001"/0.01"/0.1"/1"/100mm) ---------- */
+.button.light.jogbtn.distbtn {
+  padding: 0 !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  background: var(--pc-surface-white) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  color: var(--pc-text-secondary) !important;
+  font-weight: 600 !important;
+}
+
+.button.light.jogbtn.distbtn:hover {
+  background: var(--pc-primary-subtle) !important;
+  color: var(--pc-primary) !important;
+  border-color: var(--pc-primary) !important;
+}
+
+.button.light.jogbtn.distbtn .fg-gray,
+.button.light.jogbtn.distbtn .jogdistXYZ {
+  color: inherit !important;
+}
+
+/* ---------- Jog/Feed/Tool slider cells (vertical sliders) ---------- */
+#jrocell,
+#frocell,
+#trocell {
+  padding: 12px 14px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#jrocell.border-left,
+#frocell.border-left,
+#trocell.border-left {
+  border-left: 1px solid var(--pc-border-subtle) !important;
+}
+
+/* reset button above each slider */
+#jrocell > .button.light.mini,
+#frocell > .button.light.mini,
+#trocell > .button.light.mini {
+  background: transparent !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  color: var(--pc-text-secondary) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px !important;
+  border-radius: var(--pc-radius-pill) !important;
+  box-shadow: none !important;
+}
+
+/* Vertical slider track */
+#jrocell .slider,
+#frocell .slider,
+#trocell .slider {
+  background: var(--pc-border-subtle) !important;
+}
+
+#jrocell .slider .complete,
+#frocell .slider .complete,
+#trocell .slider .complete,
+[data-cls-complete*="openbuilds"] .complete {
+  background: var(--pc-primary) !important;
+}
+
+#jrocell .slider .marker,
+#frocell .slider .marker,
+#trocell .slider .marker {
+  background: var(--pc-primary) !important;
+  border-color: var(--pc-primary) !important;
+  box-shadow: var(--pc-shadow-sm);
+}
+
+/* The numeric tally under each slider (realJog/realFeed/realSpeed) */
+.tally.bg-openbuilds,
+.tally.text-small.bg-openbuilds.fg-white {
+  background: var(--pc-text) !important;
+  color: var(--pc-text-on-accent) !important;
+  border: none !important;
+  border-radius: var(--pc-radius-pill) !important;
+  font-variant-numeric: tabular-nums;
+  padding: 3px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+/* Slider hint bubble */
+[data-cls-hint*="bg-light"] {
+  background: var(--pc-text) !important;
+  color: #fff !important;
+  border-radius: var(--pc-radius-sm) !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  box-shadow: var(--pc-shadow-md);
+}
+
+/* ---------- mm-mode / inch-mode nested ribbon toggle ---------- */
+/* Handled by the general ribbonmenu Phase 2 styles. */
+
+/* ---------- Jog mode switch (Incremental / Continuous) ---------- */
+[data-role="switch"] .check {
+  background: var(--pc-border-subtle) !important;
+}
+
+[data-role="switch"].thumb-color-orange .check,
+[data-role="switch"].check-color-openbuilds .check {
+  background: var(--pc-primary) !important;
+}
+
+[data-role="switch"] .check::before {
+  background: #fff !important;
+  box-shadow: var(--pc-shadow-sm);
+}
+
+/* ---------- Ripple override (keep axis-colored ripples but softer) ---------- */
+.ripple {
+  opacity: 0.15 !important;
+}
+
+/* =====================================================================
+   Phase 5 — Settings, troubleshooting, console, editor, macros, probe
+   ===================================================================== */
+
+/* ---------- Console (Log / Serial) ---------- */
+#console {
+  background: var(--pc-surface-white) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md);
+  box-shadow: var(--pc-shadow-sm) !important;
+  font-family: var(--pc-font-mono);
+  font-size: 12px;
+  color: var(--pc-text);
+  padding: 10px 16px !important;
+  margin: 8px 12px !important;
+  width: calc(100% - 24px) !important;
+}
+
+#console > p {
+  margin: 0 !important;
+  padding: 2px 8px;
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text);
+  line-height: 1.5;
+}
+
+#console > p:hover {
+  background: var(--pc-primary-subtle) !important;
+}
+
+#console > p .fg-red { color: var(--pc-danger) !important; }
+#console > p .fg-orange { color: var(--pc-primary) !important; }
+#console > p .fg-green { color: var(--pc-success) !important; }
+
+/* Console command input row */
+#commandform {
+  background: var(--pc-surface-white);
+  border-top: 1px solid var(--pc-border-subtle);
+  padding: 8px 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+#commandform #command {
+  font-family: var(--pc-font-mono) !important;
+  font-size: 12px;
+}
+
+/* ---------- GCODE & FluidNC editors ---------- */
+#editor,
+#fluidnceditor {
+  background: var(--pc-surface-white) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md) !important;
+  box-shadow: var(--pc-shadow-sm) !important;
+  margin: 8px 12px !important;
+  width: calc(100% - 24px) !important;
+  overflow: hidden;
+}
+
+/* Ace editor inner tweaks (keep default Ace theme, tone down gutter) */
+#editor .ace_gutter,
+#fluidnceditor .ace_gutter {
+  background: rgba(0, 0, 0, 0.02) !important;
+  color: var(--pc-text-tertiary) !important;
+}
+
+#editor .ace_scroller,
+#fluidnceditor .ace_scroller {
+  background: transparent !important;
+}
+
+#editor .ace_content,
+#fluidnceditor .ace_content {
+  font-family: var(--pc-font-mono) !important;
+}
+
+/* Editor bottom toolbar (Update 3D View, Save, Find, Undo, Redo, etc.) */
+#tab-two > .fixed-bottom.m-3.mb-9 {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-xl);
+  padding: 6px 10px;
+  box-shadow: var(--pc-shadow-lg);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  bottom: 60px !important;
+  margin: 0 !important;
+}
+
+/* Console's fixed-bottom command-form wrapper lives inside #tab-one */
+#tab-one > .fixed-bottom.m-3.mb-9 {
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-xl);
+  padding: 6px 10px;
+  box-shadow: var(--pc-shadow-lg);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  bottom: 60px !important;
+  margin: 0 !important;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Tighter buttons inside those floating toolbars */
+#tab-two > .fixed-bottom .button,
+#tab-one > .fixed-bottom .button {
+  margin: 0 !important;
+}
+
+/* ---------- Macros ---------- */
+#macros {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 12px;
+}
+
+.command-button-macro {
+  height: 70px;
+  background: var(--pc-surface-white) !important;
+  color: var(--pc-text) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md) !important;
+  font-family: var(--pc-font) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  box-shadow: var(--pc-shadow-sm);
+  transition: border-color var(--pc-transition), transform var(--pc-transition), box-shadow var(--pc-transition);
+  position: relative;
+}
+
+.command-button-macro:hover {
+  border-color: var(--pc-primary) !important;
+  box-shadow: 0 4px 12px rgba(255, 106, 0, 0.12);
+}
+
+.command-button-macro:active {
+  transform: translateY(1px);
+}
+
+/* The small type badge in the macro corner */
+.macrotype,
+.macrokbd {
+  color: var(--pc-text-tertiary) !important;
+  font-family: var(--pc-font);
+  font-weight: 500;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: var(--pc-radius-sm);
+}
+
+/* Ace-style macro editors inside dialog */
+#macrogcode,
+#macrojs {
+  font-family: var(--pc-font-mono) !important;
+  font-size: 12px !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-sm) !important;
+}
+
+/* ---------- Grbl settings panel ---------- */
+#grblPanel,
+#fluidncPanel,
+#updatePanel,
+#troubleshootingPanel {
+  background: transparent !important;
+  padding: 12px !important;
+}
+
+#grblconfig .row,
+#grblconfig .cell {
+  gap: 8px;
+}
+
+#grblconfig .card,
+#fluidnceditor + .card {
+  margin-bottom: 10px;
+}
+
+/* ---------- Troubleshooting: machine-profile picker (image-checkbox) ---------- */
+.image-checkbox-ul > li label {
+  border: 1.5px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-white);
+  padding: 10px !important;
+  margin: 4px !important;
+  transition: border-color var(--pc-transition), background var(--pc-transition), box-shadow var(--pc-transition);
+}
+
+.image-checkbox-ul > li label:hover {
+  border-color: var(--pc-primary) !important;
+  box-shadow: 0 2px 8px rgba(255, 106, 0, 0.08);
+}
+
+.image-checkbox-ul > li :checked + label {
+  border-color: var(--pc-primary) !important;
+  background: var(--pc-primary-subtle) !important;
+  box-shadow: 0 2px 8px rgba(255, 106, 0, 0.12);
+}
+
+.image-checkbox-ul > li :checked + label:before {
+  content: "✓" !important;
+  background-color: var(--pc-primary) !important;
+  color: #fff !important;
+  border-color: var(--pc-primary) !important;
+  transform: scale(1) !important;
+  line-height: 22px !important;
+  font-weight: 700;
+}
+
+.image-checkbox-ul > li :checked + label img {
+  transform: scale(0.95) !important;
+}
+
+/* Machine-profile hover menu */
+.machine-profile-menu {
+  background: var(--pc-surface-white) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-radius: var(--pc-radius-md) !important;
+  box-shadow: var(--pc-shadow-lg) !important;
+  padding: 12px !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ---------- Probe wizard SVG ---------- */
+.areaactive {
+  fill: var(--pc-primary) !important;
+  transition: fill var(--pc-transition);
+}
+
+.areaactive:hover {
+  fill: var(--pc-primary-hover) !important;
+}
+
+.probe-label:hover {
+  fill: var(--pc-primary-subtle) !important;
+}
+
+/* ---------- Step-list numbers (Troubleshooting wizard) ---------- */
+.step-list > li::before {
+  color: var(--pc-primary) !important;
+  font-weight: 700;
+}
+
+/* ---------- Changelog scrolling area ---------- */
+#changelog {
+  font-family: var(--pc-font);
+  color: var(--pc-text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+#changelog h4,
+#changelog b,
+#changelog strong {
+  color: var(--pc-text);
+  font-weight: 600;
+}
+
+/* ---------- OpenBuilds brand classes — restyle to warm palette ---------- */
+/* These are used sparingly for icons/badges — map to neutral tokens so
+   they stop reading as pure black. */
+.fg-openbuilds:not(.badge):not(.bg-openbuilds) {
+  color: var(--pc-text) !important;
+}
+
+.bd-openbuilds {
+  border-color: var(--pc-border-subtle) !important;
+}
+
+/* .bg-openbuilds on .badge.inline already restyled in Phase 1 (status bar) */
