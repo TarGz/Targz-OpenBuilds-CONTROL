@@ -1,0 +1,251 @@
+/* Portrait-Cubes-inspired design language for the restart-from-point UI
+   and the 3D-view floating toolbar. Always uses the warm-light palette,
+   regardless of the app theme. */
+
+@import url('https://rsms.me/inter/inter.css');
+
+.pc-ui {
+  --pc-primary: #FF6A00;
+  --pc-primary-hover: #e55e00;
+  --pc-primary-subtle: #FFF3EB;
+  --pc-surface-glass: hsla(0, 0%, 92%, 0.8);
+  --pc-surface-white: rgba(255, 255, 255, 0.92);
+  --pc-border: hsla(0, 0%, 100%, 0.5);
+  --pc-border-subtle: rgba(0, 0, 0, 0.08);
+  --pc-text: #1A1A1A;
+  --pc-text-secondary: #6B6B6B;
+  --pc-text-tertiary: #9B9B9B;
+  --pc-shadow: 0 4px 24px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--pc-text);
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Scrubber panel (bottom-centered glass card) --- */
+.pc-scrubber {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(820px, calc(100% - 40px));
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border);
+  border-radius: 16px;
+  box-shadow: var(--pc-shadow);
+  padding: 14px 18px;
+  z-index: 100;
+}
+
+.pc-scrubber-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pc-scrubber-row + .pc-scrubber-row {
+  margin-top: 10px;
+}
+
+.pc-scrubber-info {
+  justify-content: space-between;
+}
+
+.pc-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--pc-primary);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pc-label i {
+  font-size: 12px;
+}
+
+.pc-info-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pc-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.pc-info-text .pc-muted {
+  color: var(--pc-text-tertiary);
+}
+
+/* --- Slider --- */
+.pc-slider {
+  flex: 1;
+  height: 4px;
+  accent-color: var(--pc-primary);
+  cursor: pointer;
+  background: transparent;
+}
+
+/* --- Pill badge (Line number) --- */
+.pc-pill {
+  display: inline-block;
+  background: var(--pc-primary-subtle);
+  color: var(--pc-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.2px;
+  margin-right: 6px;
+}
+
+/* --- Buttons --- */
+.pc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.pc-btn i {
+  font-size: 11px;
+}
+
+.pc-btn-primary {
+  background: var(--pc-primary);
+  color: #fff;
+  border: 1px solid var(--pc-primary);
+}
+
+.pc-btn-primary:hover {
+  background: var(--pc-primary-hover);
+  border-color: var(--pc-primary-hover);
+}
+
+.pc-btn-ghost {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--pc-text-secondary);
+  border: 1.5px solid var(--pc-border-subtle);
+}
+
+.pc-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--pc-text);
+}
+
+.pc-btn-group {
+  display: inline-flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* --- Editor banner (reuses scrubber language, in-flow card) --- */
+.pc-banner {
+  margin: 0 10px 6px;
+  padding: 10px 14px;
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border);
+  border-radius: 12px;
+  box-shadow: var(--pc-shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pc-banner .pc-info-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* --- Floating nav-bar (bottom center, glass pill) --- */
+.pc-navbar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: var(--pc-surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--pc-border);
+  border-radius: 18px;
+  box-shadow: var(--pc-shadow);
+  padding: 6px 10px;
+  gap: 2px;
+  z-index: 90;
+  user-select: none;
+}
+
+.pc-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--pc-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pc-icon-btn i {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.pc-icon-btn:hover {
+  background: hsla(0, 0%, 100%, 0.7);
+  color: var(--pc-text);
+}
+
+.pc-icon-btn-accent {
+  background: var(--pc-primary);
+  color: #fff;
+  padding: 0 14px;
+}
+
+.pc-icon-btn-accent:hover {
+  background: var(--pc-primary-hover);
+  color: #fff;
+}
+
+.pc-icon-caption {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.pc-navbar-sep {
+  width: 1px;
+  height: 20px;
+  background: hsla(0, 0%, 0%, 0.10);
+  margin: 0 4px;
+  flex-shrink: 0;
+}

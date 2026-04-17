@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/probev2.css" />
     <link rel="stylesheet" href="/lib/furcanIconPicker/iconpicker-1.5.0.css" />
     <link type="text/css" rel="stylesheet" media="all" href="css/image-checkbox.css" />
+    <link rel="stylesheet" href="css/restart-from-point.css" />
 
   </head>
 
@@ -1133,7 +1134,7 @@
                   </div>
                   <div class="section" id="tab-two">
                     <div id="editor"></div>
-                    <div id="restartBanner" style="display:none; padding:8px 12px; background:rgba(30,30,30,0.95); border:2px solid #ff8c00; border-radius:6px; color:#fff; font-size:13px; margin: 0 10px 5px 10px;"></div>
+                    <div id="restartBanner" class="pc-ui pc-banner" style="display:none;"></div>
 
                     <div class="fixed-bottom m-3 mb-9">
                       <!-- <form class="inline-form"> -->
@@ -1156,26 +1157,37 @@
                       <!-- <img src="img/mch/acro55.png" style="max-width:100%; max-height:100%;">
                     <span style="position: absolute; top: 3px; right:3px; z-index: 1;" class="fas fa-cogs"></span> -->
                     </div>
-                    <div id="restartScrubber" style="display:none; position:absolute; bottom:55px; left:10px; right:10px; z-index:100; padding:8px 12px; background:rgba(20,20,20,0.95); border:2px solid #ff8c00; border-radius:6px;">
-                      <div style="display:flex; align-items:center; gap:8px;">
-                        <span class="fg-orange" style="font-size:12px; white-space:nowrap;"><i class="fas fa-route"></i> Scrub to restart point:</span>
-                        <input type="range" id="restartSlider" min="0" max="100" value="0" style="flex:1; cursor:pointer; accent-color:#ff8c00;" oninput="onRestartSliderMove(this.value)">
+                    <div id="restartScrubber" class="pc-ui pc-scrubber" style="display:none;">
+                      <div class="pc-scrubber-row">
+                        <span class="pc-label"><i class="fas fa-route"></i> Scrub to restart point</span>
+                        <input type="range" id="restartSlider" class="pc-slider" min="0" max="100" value="0" oninput="onRestartSliderMove(this.value)">
                       </div>
-                      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
-                        <span id="restartScrubInfo" class="fg-white" style="font-size:12px;">Line 1 | X:0 Y:0 Z:0</span>
-                        <span>
-                          <button class="button mini alert" onclick="triggerRestartFromScrubber()"><i class="fas fa-play"></i> Restart from here</button>
-                          <button class="button mini dark ml-1" onclick="closeScrubber()"><i class="fas fa-times"></i> Cancel</button>
+                      <div class="pc-scrubber-row pc-scrubber-info">
+                        <span id="restartScrubInfo" class="pc-info-text">Line 1 | X:0 Y:0 Z:0</span>
+                        <span class="pc-btn-group">
+                          <button class="pc-btn pc-btn-primary" onclick="triggerRestartFromScrubber()"><i class="fas fa-play"></i> Restart from here</button>
+                          <button class="pc-btn pc-btn-ghost" onclick="closeScrubber()"><i class="fas fa-times"></i> Cancel</button>
                         </span>
                       </div>
                     </div>
-                    <div class="fixed-bottom m-3 mb-9">
-                      <button class="button dark" onclick="simSpeed();"><span class="icon"><span class="fas fa-tachometer-alt"></span></span><span class="caption"><span id="simspeedval">1</span>x</span>
+                    <div class="pc-ui pc-navbar">
+                      <button class="pc-icon-btn" onclick="simSpeed();" title="Simulation speed">
+                        <i class="fas fa-tachometer-alt"></i><span class="pc-icon-caption"><span id="simspeedval">1</span>x</span>
                       </button>
-                      <button id="runSimBtn" title="Run simulation" class="button dark drop-shadow" onclick="sim(0)"><i class="fas fa-fighter-jet"></i> Simulate</button>&nbsp;
-                      <button id="stopSimBtn" style="display: none;" title="Stop Sim" class="button dark drop-shadow" onclick="simstop()"><i class="fas fa-stop"></i> Stop Sim</button>&nbsp;
-                      <button id="resetViewBtn" title="Resets camera angle and zoom" class="button dark drop-shadow" onclick="resetView(object)"><i class="fas fa-stop"></i> Reset View</button>&nbsp;
-                      <button id="openScrubberBtn" title="Scrub through toolpath to pick a restart point" class="button dark drop-shadow" onclick="openScrubber()"><i class="fas fa-route fg-orange"></i> Restart from point</button>&nbsp;
+                      <span class="pc-navbar-sep"></span>
+                      <button id="runSimBtn" class="pc-icon-btn" onclick="sim(0)" title="Run simulation">
+                        <i class="fas fa-fighter-jet"></i><span class="pc-icon-caption">Simulate</span>
+                      </button>
+                      <button id="stopSimBtn" class="pc-icon-btn" style="display:none;" onclick="simstop()" title="Stop Sim">
+                        <i class="fas fa-stop"></i><span class="pc-icon-caption">Stop</span>
+                      </button>
+                      <button id="resetViewBtn" class="pc-icon-btn" onclick="resetView(object)" title="Resets camera angle and zoom">
+                        <i class="fas fa-expand"></i><span class="pc-icon-caption">Reset View</span>
+                      </button>
+                      <span class="pc-navbar-sep"></span>
+                      <button id="openScrubberBtn" class="pc-icon-btn pc-icon-btn-accent" onclick="openScrubber()" title="Scrub through toolpath to pick a restart point">
+                        <i class="fas fa-route"></i><span class="pc-icon-caption">Restart from point</span>
+                      </button>
                     </div>
                     <div id="conetext" style="position:absolute;top:0px;left:0px; padding: 0px; display:none; z-index:100;"></div>
 

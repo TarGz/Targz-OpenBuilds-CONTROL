@@ -2,6 +2,21 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-17',
+      version: '1.3.1',
+      changes: [
+        'Replace app icon with new Targz Pen Plotter Ctrl logo (mac .icns, win .ico, linux .png, favicon)'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.3.0',
+      changes: [
+        'Restyle restart-from-point scrubber, editor banner and 3D-view floating toolbar with Portrait-Cubes design language',
+        'Fix toolpath ghosting before scrub head so already-drawn lines blend toward the viewer background instead of darkening'
+      ]
+    },
+    {
       date: '2026-04-15',
       version: '1.2.1',
       changes: [

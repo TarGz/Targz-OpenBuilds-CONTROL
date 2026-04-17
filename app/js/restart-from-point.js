@@ -117,9 +117,9 @@ function onRestartSliderMove(value) {
   }
 
   $('#restartScrubInfo').html(
-    '<span class="badge bg-orange fg-white mr-1">Line ' + lineNum + '</span> ' +
+    '<span class="pc-pill">Line ' + lineNum + '</span>' +
     'X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2) +
-    '<span class="fg-gray">' + gcodeText + '</span>'
+    '<span class="pc-muted">' + gcodeText + '</span>'
   );
 }
 
@@ -200,12 +200,15 @@ function showRestartSelection(gcodeLineNum, pointIdx) {
   var coordsText = 'X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2);
 
   $('#restartBanner').html(
-    '<span class="badge bg-orange fg-white mr-1" style="font-size:12px;">Line ' + (gcodeLineNum + 1) + '</span> ' +
-    '<span class="text-small fg-lightGray mr-1">' + coordsText + '</span> ' +
-    '<span class="text-small fg-gray mr-1" title="' + escapeHtml(editor.session.getLine(gcodeLineNum)) + '">' + escapeHtml(gcodeText) + '</span>' +
-    '<button class="button mini alert ml-2" onclick="triggerRestartFromHere()" title="Generate recovery G-code from this line"><i class="fas fa-play"></i> Restart from here</button>' +
-    '<button class="button mini info ml-1" onclick="showRestartIn3D()" title="Switch to 3D view to see position"><i class="mif-3d-rotation"></i> Show in 3D</button>' +
-    '<button class="button mini dark ml-1" onclick="clearRestartSelection()" title="Cancel selection"><i class="fas fa-times"></i></button>'
+    '<span class="pc-pill">Line ' + (gcodeLineNum + 1) + '</span>' +
+    '<span class="pc-info-text">' + coordsText +
+      ' <span class="pc-muted" title="' + escapeHtml(editor.session.getLine(gcodeLineNum)) + '">' + escapeHtml(gcodeText) + '</span>' +
+    '</span>' +
+    '<span class="pc-btn-group">' +
+      '<button class="pc-btn pc-btn-primary" onclick="triggerRestartFromHere()" title="Generate recovery G-code from this line"><i class="fas fa-play"></i> Restart from here</button>' +
+      '<button class="pc-btn pc-btn-ghost" onclick="showRestartIn3D()" title="Switch to 3D view to see position"><i class="mif-3d-rotation"></i> Show in 3D</button>' +
+      '<button class="pc-btn pc-btn-ghost" onclick="clearRestartSelection()" title="Cancel selection"><i class="fas fa-times"></i></button>' +
+    '</span>'
   ).show();
 }
 
@@ -231,17 +234,28 @@ function dimToolpathBefore(pointIdx) {
 
   var colors = object.geometry.attributes.color;
 
-  // Save original colors on first use
   if (!originalToolpathColors) {
     originalToolpathColors = new Float32Array(colors.array);
   }
 
-  // Restore original first (in case user moves selection)
   colors.array.set(originalToolpathColors);
 
-  // Dim vertices before the selected point (multiply RGB by 0.25)
-  for (var i = 0; i < pointIdx * 3; i++) {
-    colors.array[i] = originalToolpathColors[i] * 0.25;
+  // Blend "before" vertices toward the viewer background so they read as
+  // ghosted rather than darkened. Multiplying RGB alone makes red lines
+  // look like dark red on a white bg — more prominent, not less.
+  var bg = 0xffffff;
+  try { bg = Theme.getColor('SKY_BOTTOM_COLOR'); } catch (e) {}
+  var br = ((bg >> 16) & 0xff) / 255;
+  var bgG = ((bg >> 8) & 0xff) / 255;
+  var bb = (bg & 0xff) / 255;
+  var t = 0.88;
+  var inv = 1 - t;
+  var end = pointIdx * 3;
+
+  for (var i = 0; i < end; i += 3) {
+    colors.array[i]     = originalToolpathColors[i]     * inv + br  * t;
+    colors.array[i + 1] = originalToolpathColors[i + 1] * inv + bgG * t;
+    colors.array[i + 2] = originalToolpathColors[i + 2] * inv + bb  * t;
   }
 
   colors.needsUpdate = true;
