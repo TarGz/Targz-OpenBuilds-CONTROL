@@ -17,23 +17,23 @@
 }
 
 .drotable button, .dro {
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
 }
 
 .jogtable button {
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
 }
 
 #jrocell button {
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
 }
 
 #frocell button {
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
 }
 
 #trocell button {
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
 }
 
 .jogbtn:disabled {
@@ -50,25 +50,25 @@
 .dro {
   display: block;
   text-decoration: none;
-  background-color: #f8f8f8;
-  color: #a7a7a7;
+  background-color: var(--pc-surface-white);
+  color: var(--pc-text-secondary);
   width: 161px;
   height: 36px;
   position: relative;
   text-align: right;
-  padding-right: 6px;
-  padding-left: 6px;
+  padding-right: var(--pc-space-2);
+  padding-left: var(--pc-space-2);
   line-height: 32px;
-  font-weight: 900;
-  font-size: 18px;
+  font-weight: var(--pc-weight-bold);
+  font-size: var(--pc-text-lg);
   cursor: pointer;
 }
 
 .droInput {
   display: block;
   text-decoration: none;
-  background-color: #f5f6f7;
-  color: #a7a7a7;
+  background-color: var(--pc-surface-hover);
+  color: var(--pc-text-secondary);
   margin: 2px;
   width: 100px;
   height: 34px;
@@ -77,10 +77,10 @@
   padding-right: 6px;
   padding-left: 6px;
   line-height: 34px;
-  border-radius: 2px;
-  border: 1px solid #ddd;
-  font-weight: 700;
-  font-size: 18px;
+  border-radius: var(--pc-radius-sm);
+  border: 1px solid var(--pc-border-default);
+  font-weight: var(--pc-weight-semibold);
+  font-size: var(--pc-text-lg);
   cursor: default;
   text-align: right;
   border: none;
@@ -92,26 +92,26 @@
 .glossybtn:link, .glossybtn:visited {
   display: block;
   text-decoration: none;
-  background-color: #f5f6f7;
-  color: #a7a7a7;
+  background-color: var(--pc-surface-hover);
+  color: var(--pc-text-secondary);
   margin: 2px;
   width: 53px;
   height: 53.5px;
   position: relative;
   text-align: center;
   line-height: 50px;
-  border-radius: 2px;
-  border: 1px solid #ddd;
+  border-radius: var(--pc-radius-sm);
+  border: 1px solid var(--pc-border-default);
 }
 
 .glossybtn:active {
-  background: #d5d6d7;
+  background: var(--pc-border-default);
 }
 
 .glossybtn:hover {
   text-decoration: none;
-  background: rgba(164, 206, 249, 0.2);
-  border: 1px solid rgb(164, 206, 249);
+  background: var(--pc-primary-subtle);
+  border: 1px solid var(--pc-primary);
 }
 
 ​
@@ -152,10 +152,10 @@
 
 .toggle>div {
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: var(--pc-radius-pill);
   width: 36px;
   height: 17px;
-  border: 1px solid lightgray;
+  border: 1px solid var(--pc-border-default);
   user-select: none;
   position: relative;
   transition: 150ms ease-out;
@@ -163,7 +163,7 @@
 }
 
 .toggle>div:hover {
-  box-shadow: 0 0 4px #4a4e51;
+  box-shadow: 0 0 4px var(--pc-text-secondary);
 }
 
 .toggle>div:before {
@@ -175,20 +175,20 @@
   content: '';
   width: 0.7rem;
   height: 0.7rem;
-  background: #4a4e51;
+  background: var(--pc-text-secondary);
   border-radius: 50%;
   transition: 150ms;
 }
 
 .toggle input:checked+div {
-  background: #fff;
-  border-color: #lightgray;
+  background: var(--pc-primary-subtle);
+  border-color: var(--pc-primary);
 }
 
 .toggle input:checked+div:before {
-  color: #4a4e51;
+  color: var(--pc-primary);
   transform: translateX(19px);
-  background: #4a4e51;
+  background: var(--pc-primary);
 }
 
 /* End CSS mini Switch */

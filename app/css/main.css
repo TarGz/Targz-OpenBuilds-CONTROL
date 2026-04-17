@@ -37,9 +37,9 @@ body {
   /* Note only uses height attribs from here, before we connect to websocket. After that, it gets set by websocket.js */
   height: calc(100vh - 415px);
   width: 100%;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--pc-border-hairline);
   /* margin-top: 5px; */
-  box-shadow: 0 0 2px 2px #ddd;
+  box-shadow: var(--pc-shadow-sm);
   /* background-color: #fff; */
 }
 
@@ -47,9 +47,9 @@ body {
   /* Note only uses height attribs from here, before we connect to websocket. After that, it gets set by websocket.js */
   height: calc(100vh - 415px);
   width: 100%;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--pc-border-hairline);
   /* margin-top: 5px; */
-  box-shadow: 0 0 2px 2px #ddd;
+  box-shadow: var(--pc-shadow-sm);
   /* background-color: #fff; */
 }
 
@@ -57,18 +57,18 @@ body {
   /* Note only uses height attribs from here, before we connect to websocket. After that, it gets set by websocket.js */
   height: calc(100vh - 495px);
   width: 100%;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--pc-border-hairline);
   /* margin-top: 5px; */
-  box-shadow: 0 0 2px 2px #ddd;
+  box-shadow: var(--pc-shadow-sm);
 }
 
 #fluidnceditor {
   /* Note only uses height attribs from here, before we connect to websocket. After that, it gets set by websocket.js */
   height: calc(100vh - 235px);
   width: 100%;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--pc-border-hairline);
   /* margin-top: 5px; */
-  box-shadow: 0 0 2px 2px #ddd;
+  box-shadow: var(--pc-shadow-sm);
 }
 
 #console>p {
@@ -76,7 +76,7 @@ body {
 }
 
 #console>p:hover {
-  background-color: #eee;
+  background-color: var(--pc-primary-subtle);
 }
 
 #console {
@@ -88,7 +88,7 @@ body {
   overflow-x: none;
   text-align: left;
   /* background-color: #fff; */
-  box-shadow: 0 0 2px 2px #ddd;
+  box-shadow: var(--pc-shadow-sm);
   padding: 0px;
   font-size: 12px;
   padding-left: 20px;
@@ -253,31 +253,26 @@ select {
 }
 
 .machineicon:hover {
-  color: #CE352C !important;
+  color: var(--pc-danger) !important;
 }
 
 #splash {
-  z-index: 2000;
+  z-index: var(--pc-z-statusbar);
   width: 100vw;
   height: 100vh;
   background-color: #000;
 }
 
 .machine-profile-menu {
-  border: 1px solid rgb(64, 68, 71);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6),
-    /* Darker shadow for all sides */
-    0 4px 8px rgba(0, 0, 0, 0.4);
-  /* Additional dark shadow */
-  border-radius: 3px;
-  /* Optional: Adds rounded corners */
-  padding: 10px;
-  /* Optional: Adds some padding inside the div */
-  background: white;
+  border: 1px solid var(--pc-border-default);
+  box-shadow: var(--pc-shadow-lg);
+  border-radius: var(--pc-radius-md);
+  padding: var(--pc-space-4);
+  background: var(--pc-surface);
   left: 20px;
   margin-top: 10px;
 }
 
 .step-list>li::before {
-  color: #111 !important;
+  color: var(--pc-text) !important;
 }

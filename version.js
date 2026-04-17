@@ -3,6 +3,22 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-17',
+      version: '1.5.0',
+      changes: [
+        'UI polish pass: pro-grade hierarchy & consistency without changing the color DNA',
+        'Extend pc-tokens.css with spacing scale (4/6/8/12/16/20/24/32), type scale (11/12/13/14/16/20), font-weight + tracking + leading tokens, control heights (24/32/40), z-index scale, focus-ring token',
+        'Introduce three-tier border system (--pc-border-hairline / -default / -strong); legacy border tokens kept as aliases',
+        'Add pc-utilities.css utility layer: .pc-glass, .pc-card, dividers, typography helpers (.pc-label, .pc-caption, .pc-body, .pc-display, .pc-mono), .pc-titlebar, .pc-sidebar-wide, .is-hidden',
+        'Apply 4-tier typography rhythm (label 10px / caption 11px / body 13px / display 16px) across ribbon group labels, ribbon-button captions, badges, tallies, card headers',
+        'Fix active-tab icon color bug — was overridden to white on orange background, now correctly uses --pc-primary',
+        'Add body.pc-app scope + Phase 6 section in pc-theme.css: unified focus ring, control-height rhythm (buttons/inputs 32px), orange underline-style tabs, tighter letter-spacing on chrome',
+        'Progress bar bumped to 3px with pill radius; status bar gets backdrop-blur for chrome-consistency with header/scrubber',
+        'Swap hardcoded colors in buttons.css, main.css, restart-from-point.css for design tokens (--pc-border-default, --pc-primary, --pc-surface, etc.); scrubber primary button now uses orange instead of black',
+        'Strip inline titlebar sizing/padding to .pc-titlebar utility class; add class="pc-app" on <body>'
+      ]
+    },
+    {
+      date: '2026-04-17',
       version: '1.4.9',
       changes: [
         'Revert tab-action experiment; restore 3D-view floating nav-bar at bottom of #tab-three'

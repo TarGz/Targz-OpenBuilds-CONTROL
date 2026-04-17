@@ -28,16 +28,20 @@
 
   /* Surfaces */
   --pc-bg: #F5F3F0;
-  --pc-bg-warm: linear-gradient(135deg, #FCEADB 0%, #FDF0E6 50%, #F5F3F0 80%, #EEF0F5 100%);
+  --pc-bg-warm: linear-gradient(135deg, #FEF5EE 0%, #FEFAF6 50%, #FAF9F7 80%, #F5F6FA 100%);
   --pc-surface: #FFFFFF;
   --pc-surface-hover: #FAFAFA;
   --pc-surface-glass: hsla(0, 0%, 92%, 0.8);
   --pc-surface-white: rgba(255, 255, 255, 0.92);
 
-  /* Borders */
+  /* Borders — three-tier system */
+  --pc-border-hairline: rgba(0, 0, 0, 0.06);
+  --pc-border-default: rgba(0, 0, 0, 0.10);
+  --pc-border-strong: rgba(0, 0, 0, 0.16);
+  /* Legacy aliases (kept for one version) */
   --pc-border: hsla(0, 0%, 100%, 0.5);
-  --pc-border-hair: #E8E5E1;
-  --pc-border-subtle: rgba(0, 0, 0, 0.08);
+  --pc-border-hair: var(--pc-border-hairline);
+  --pc-border-subtle: var(--pc-border-default);
 
   /* Text */
   --pc-text: #1A1A1A;
@@ -64,4 +68,56 @@
 
   /* Motion */
   --pc-transition: 0.15s ease;
+  --pc-transition-slow: 0.25s ease;
+
+  /* Spacing scale (4 / 6 / 8 / 12 / 16 / 20 / 24 / 32) */
+  --pc-space-1: 4px;
+  --pc-space-2: 6px;
+  --pc-space-3: 8px;
+  --pc-space-4: 12px;
+  --pc-space-5: 16px;
+  --pc-space-6: 20px;
+  --pc-space-7: 24px;
+  --pc-space-8: 32px;
+
+  /* Type scale */
+  --pc-text-xs: 11px;
+  --pc-text-sm: 12px;
+  --pc-text-base: 13px;
+  --pc-text-md: 14px;
+  --pc-text-lg: 16px;
+  --pc-text-xl: 20px;
+
+  /* Leading */
+  --pc-leading-tight: 1.2;
+  --pc-leading-normal: 1.45;
+  --pc-leading-relaxed: 1.6;
+
+  /* Tracking */
+  --pc-tracking-tight: -0.01em;
+  --pc-tracking-normal: 0;
+  --pc-tracking-wide: 0.08em;
+
+  /* Font weights */
+  --pc-weight-regular: 400;
+  --pc-weight-medium: 500;
+  --pc-weight-semibold: 600;
+  --pc-weight-bold: 700;
+
+  /* Control heights */
+  --pc-control-sm: 24px;
+  --pc-control-md: 32px;
+  --pc-control-lg: 40px;
+
+  /* Z-index scale */
+  --pc-z-base: 1;
+  --pc-z-raised: 10;
+  --pc-z-sticky: 100;
+  --pc-z-overlay: 500;
+  --pc-z-modal: 1000;
+  --pc-z-statusbar: 2000;
+  --pc-z-toast: 3000;
+
+  /* Focus ring */
+  --pc-focus-ring: 0 0 0 3px rgba(255, 106, 0, 0.22);
 }

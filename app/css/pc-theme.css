@@ -280,15 +280,10 @@ body > .window.bd-black {
   z-index: 3;
 }
 
+/* Active tab — orange icon matching the active text color */
 [data-role="ribbonmenu"] > .tabs-holder > li.active > a i,
 .ribbonmenu > .tabs-holder > li.active > a i {
   color: var(--pc-primary) !important;
-}
-
-/* FontAwesome icons inside the active tab inherit the on-accent color */
-[data-role="ribbonmenu"] > .tabs-holder > li.active > a i,
-.ribbonmenu > .tabs-holder > li.active > a i {
-  color: var(--pc-text-on-accent) !important;
 }
 
 /* ---------- Ribbon content panel ---------- */
@@ -343,12 +338,13 @@ body > .window.bd-black {
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 9px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: var(--pc-weight-medium);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: var(--pc-tracking-wide);
   color: var(--pc-text-tertiary);
-  padding: 0 6px;
+  padding: 0 var(--pc-space-2);
+  line-height: var(--pc-leading-tight);
 }
 
 /* ---------- Ribbon buttons ---------- */
@@ -405,11 +401,12 @@ body > .window.bd-black {
 
 .ribbon-button .caption,
 .ribbon-icon-button .caption {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--pc-text-xs);
+  font-weight: var(--pc-weight-medium);
   color: var(--pc-text);
-  line-height: 1.2;
+  line-height: var(--pc-leading-normal);
   text-align: center;
+  letter-spacing: 0;
 }
 
 .ribbon-button .icon img {
@@ -1522,3 +1519,195 @@ table.table.compact tbody td {
 }
 
 /* .bg-openbuilds on .badge.inline already restyled in Phase 1 (status bar) */
+
+/* =====================================================================
+   Phase 6 — Global hierarchy pass (1.5.0)
+   Pro-grade consistency: unified focus ring, control rhythm, chrome
+   surface harmonization. Scoped through `body.pc-app` to win over
+   Metro4 defaults without extra !important.
+   ===================================================================== */
+
+body.pc-app {
+  font-size: var(--pc-text-base);
+  letter-spacing: var(--pc-tracking-normal);
+}
+
+/* Unified focus ring on interactive elements */
+body.pc-app .button:focus-visible,
+body.pc-app .ribbon-button:focus-visible,
+body.pc-app .ribbon-icon-button:focus-visible,
+body.pc-app .pc-btn:focus-visible,
+body.pc-app .pc-icon-btn:focus-visible,
+body.pc-app button:focus-visible,
+body.pc-app .input input:focus-visible,
+body.pc-app input[data-role="input"]:focus-visible,
+body.pc-app .select .dropdown-toggle:focus-visible,
+body.pc-app textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--pc-focus-ring);
+}
+
+/* Titlebar — harmonize with utility glass layer */
+body.pc-app #windowtitlebar {
+  border-bottom: 1px solid var(--pc-border-hairline) !important;
+}
+
+body.pc-app #windowtitlebar .title,
+body.pc-app #windowtitle {
+  font-weight: var(--pc-weight-semibold);
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Top ribbon tabs — 40px height, orange underline on active */
+body.pc-app [data-role="ribbonmenu"] > .tabs-holder > li > a,
+body.pc-app .ribbonmenu > .tabs-holder > li > a {
+  padding: 10px 20px !important;
+  font-size: var(--pc-text-md) !important;
+  font-weight: var(--pc-weight-medium) !important;
+  letter-spacing: var(--pc-tracking-tight) !important;
+}
+
+/* Status bar — consistent label/value rhythm */
+body.pc-app .window-content > .fixed-bottom {
+  border-top: 1px solid var(--pc-border-hairline);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+
+body.pc-app .window-content > .fixed-bottom .badge.inline.bg-openbuilds {
+  font-size: var(--pc-text-xs);
+  font-weight: var(--pc-weight-medium);
+  letter-spacing: var(--pc-tracking-normal);
+}
+
+/* Progress bar — 3px, rounded */
+body.pc-app .window-content > .fixed-bottom [data-role="progress"],
+body.pc-app .window-content > .fixed-bottom [data-role="progress"] .bar {
+  height: 3px;
+}
+
+body.pc-app .window-content > .fixed-bottom [data-role="progress"] .bar {
+  border-radius: var(--pc-radius-pill);
+}
+
+/* Generic buttons — align to control-md height */
+body.pc-app .button:not(.jogbtn):not(.ribbon-button):not(.ribbon-icon-button):not(.pc-btn):not(.pc-icon-btn):not(.mini):not(.small):not(.xlarge):not(.square):not(.distbtn) {
+  min-height: var(--pc-control-md);
+  padding: 0 var(--pc-space-4);
+}
+
+/* Inputs — align to control-md height, unified border */
+body.pc-app .input input[type="text"],
+body.pc-app .input input[type="number"],
+body.pc-app .input input[type="search"],
+body.pc-app .input input[type="password"],
+body.pc-app input[data-role="input"],
+body.pc-app .select .dropdown-toggle {
+  min-height: var(--pc-control-md);
+  border-color: var(--pc-border-default) !important;
+  font-size: var(--pc-text-base);
+}
+
+body.pc-app .textarea textarea {
+  border-color: var(--pc-border-default) !important;
+  font-size: var(--pc-text-base);
+}
+
+/* Group label hairline separator — use the new token */
+body.pc-app [data-role="ribbonmenu"] .group + .group,
+body.pc-app .ribbonmenu .group + .group {
+  border-left: 1px solid var(--pc-border-hairline);
+}
+
+/* Ribbon content panel — lighter border */
+body.pc-app [data-role="ribbonmenu"] > .content-holder,
+body.pc-app .ribbonmenu > .content-holder {
+  border-color: var(--pc-border-hairline) !important;
+}
+
+/* DRO — sharper border on hover/focus, tighter digits */
+body.pc-app .dro {
+  border-color: var(--pc-border-default) !important;
+  font-family: var(--pc-font);
+}
+
+body.pc-app .dro [id$="Pos"] {
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Jog direction buttons — unified hover color with DRO */
+body.pc-app .button.light.square.xlarge.jogbtn {
+  border-color: var(--pc-border-default) !important;
+}
+
+/* Step distance buttons — tighter caption */
+body.pc-app .button.light.jogbtn.distbtn {
+  font-size: var(--pc-text-xs) !important;
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Tables — uppercase label uses token tracking */
+body.pc-app .table thead th,
+body.pc-app table.table thead th {
+  letter-spacing: var(--pc-tracking-wide);
+  font-weight: var(--pc-weight-medium);
+}
+
+/* Card header — match label scale */
+body.pc-app .card .card-header {
+  font-size: var(--pc-text-sm);
+  font-weight: var(--pc-weight-semibold);
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Dialog title — tighter tracking */
+body.pc-app .dialog .dialog-title {
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Badges — use the pill radius token consistently */
+body.pc-app .badge:not(.inline) {
+  border-radius: var(--pc-radius-pill);
+  font-size: var(--pc-text-xs);
+  letter-spacing: var(--pc-tracking-normal);
+}
+
+/* Tally — unify with badge rhythm */
+body.pc-app .tally {
+  font-size: var(--pc-text-xs);
+  font-weight: var(--pc-weight-medium);
+}
+
+/* Scrubber & nav-bar heights snap to control scale */
+body.pc-app .pc-icon-btn {
+  height: var(--pc-control-md);
+  border-radius: var(--pc-radius-sm);
+  font-size: var(--pc-text-sm);
+}
+
+body.pc-app .pc-btn {
+  min-height: var(--pc-control-md);
+  border-radius: var(--pc-radius-sm);
+}
+
+/* Macro cards — tighter font */
+body.pc-app .command-button-macro {
+  font-size: var(--pc-text-sm) !important;
+  letter-spacing: var(--pc-tracking-tight);
+}
+
+/* Toggle switch — use tokens */
+body.pc-app [data-role="switch"] .check {
+  background: var(--pc-border-default) !important;
+}
+
+/* Console paragraphs — body size, mono */
+body.pc-app #console {
+  font-size: var(--pc-text-sm);
+}
+
+/* Header window-control hover uses token hairline */
+body.pc-app #windowtitlebar .btn-custom:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+

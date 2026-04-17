@@ -15,15 +15,15 @@
   top: 68px;
   left: 12px;
   width: min(360px, calc(100% - 24px));
-  background: #fff;
-  border: 1px solid var(--pc-border-hair);
-  border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
-  padding: 16px;
-  z-index: 100;
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border-hairline);
+  border-radius: var(--pc-radius-md);
+  box-shadow: var(--pc-shadow-card);
+  padding: var(--pc-space-5);
+  z-index: var(--pc-z-sticky);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--pc-space-4);
 }
 
 /* Kill the legacy row wrappers — we lay out with gap on the parent */
@@ -83,7 +83,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--pc-surface);
   border: 4px solid var(--pc-primary);
   box-sizing: border-box;
   margin-top: -7px; /* centers thumb on 4px track */
@@ -120,7 +120,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--pc-surface);
   border: 4px solid var(--pc-primary);
   box-sizing: border-box;
   cursor: grab;
@@ -205,27 +205,27 @@
 .pc-btn i { font-size: 11px; }
 
 .pc-btn-primary {
-  background: var(--pc-text);
-  color: #fff;
-  border-color: var(--pc-text);
+  background: var(--pc-primary);
+  color: var(--pc-text-on-accent);
+  border-color: var(--pc-primary);
   flex: 1;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: var(--pc-shadow-sm);
 }
 .pc-btn-primary:hover {
-  background: #000;
-  border-color: #000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: var(--pc-primary-hover);
+  border-color: var(--pc-primary-hover);
+  box-shadow: 0 2px 6px rgba(255,106,0,0.25);
 }
 
 .pc-btn-ghost {
   background: transparent;
   color: var(--pc-text-secondary);
-  border-color: var(--pc-border-hair);
+  border-color: var(--pc-border-hairline);
 }
 .pc-btn-ghost:hover {
   background: rgba(0,0,0,0.03);
   color: var(--pc-text);
-  border-color: rgba(0,0,0,0.15);
+  border-color: var(--pc-border-strong);
 }
 
 /* --- Editor banner (reuses scrubber language, in-flow card) --- */
@@ -256,13 +256,15 @@
   left: 12px;
   display: flex;
   align-items: center;
-  background: #fff;
-  border: 1px solid var(--pc-border-hair);
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05);
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--pc-border-hairline);
+  border-radius: var(--pc-radius-md);
+  box-shadow: var(--pc-shadow-card);
   padding: 4px;
   gap: 2px;
-  z-index: 90;
+  z-index: var(--pc-z-sticky);
   user-select: none;
 }
 

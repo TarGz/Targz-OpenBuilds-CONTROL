@@ -11,6 +11,7 @@
     <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
     <link rel="stylesheet" href="lib/metro4/css/metro-all.min.css" />
     <link rel="stylesheet" href="css/pc-tokens.css" />
+    <link rel="stylesheet" href="css/pc-utilities.css" />
     <link rel="stylesheet" href="css/pc-theme.css" />
     <link rel="stylesheet" href="css/splash.css" />
     <link rel="stylesheet" href="css/main.css" />
@@ -22,7 +23,7 @@
 
   </head>
 
-  <body>
+  <body class="pc-app">
 
     <div class="pos-fixed pos-center" id="splash">
       <center>
@@ -34,7 +35,7 @@
 
 
     <div class="window bd-black" style="height: 100vh; overflow-y: hidden;">
-      <div id="windowtitlebar" class="window-caption bg-black bd-black" style="-webkit-app-region: drag; height: 42px; padding-left: 3px;">
+      <div id="windowtitlebar" class="window-caption bg-black bd-black pc-titlebar" style="-webkit-app-region: drag;">
         <!-- <span class="icon mif-cog"></span> -->
         <span><img src="/img/targzlogo.jpeg" height="40" /></span>
         <span class="title" id="windowtitle" style="padding-left: 10px;">Targz Pen Plotter Ctrl</span>

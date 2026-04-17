@@ -1,0 +1,116 @@
+/* Portrait-Cubes utility layer — loaded between pc-tokens.css and pc-theme.css.
+   Small, composable classes for surfaces, typography and hairlines so every
+   component pulls from one place. Keep this file short — if a rule gets
+   component-specific, move it into pc-theme.css. */
+
+/* ---------- Surfaces ---------- */
+
+.pc-glass {
+  background: var(--pc-surface-glass);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+
+.pc-glass-strong {
+  background: var(--pc-surface-white);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+}
+
+.pc-card {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border-default);
+  border-radius: var(--pc-radius-md);
+  box-shadow: var(--pc-shadow-sm);
+}
+
+.pc-card-raised {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border-default);
+  border-radius: var(--pc-radius-lg);
+  box-shadow: var(--pc-shadow-card);
+}
+
+/* ---------- Dividers ---------- */
+
+.pc-divider-h {
+  height: 1px;
+  width: 100%;
+  background: var(--pc-border-hairline);
+  border: 0;
+}
+
+.pc-divider-v {
+  width: 1px;
+  align-self: stretch;
+  background: var(--pc-border-hairline);
+  border: 0;
+}
+
+/* ---------- Typography ---------- */
+
+.pc-label {
+  font-family: var(--pc-font);
+  font-size: 10px;
+  font-weight: var(--pc-weight-medium);
+  letter-spacing: var(--pc-tracking-wide);
+  text-transform: uppercase;
+  color: var(--pc-text-tertiary);
+  line-height: var(--pc-leading-tight);
+}
+
+.pc-caption {
+  font-family: var(--pc-font);
+  font-size: var(--pc-text-xs);
+  font-weight: var(--pc-weight-medium);
+  color: var(--pc-text);
+  line-height: var(--pc-leading-normal);
+}
+
+.pc-body {
+  font-family: var(--pc-font);
+  font-size: var(--pc-text-base);
+  font-weight: var(--pc-weight-regular);
+  color: var(--pc-text);
+  line-height: var(--pc-leading-normal);
+}
+
+.pc-display {
+  font-family: var(--pc-font-mono);
+  font-size: var(--pc-text-lg);
+  font-weight: var(--pc-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--pc-tracking-tight);
+  color: var(--pc-text);
+  line-height: var(--pc-leading-tight);
+}
+
+.pc-mono {
+  font-family: var(--pc-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- State helpers ---------- */
+
+.is-hidden {
+  display: none !important;
+}
+
+.pc-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--pc-focus-ring);
+}
+
+/* ---------- Layout primitives ---------- */
+
+.pc-titlebar {
+  height: 42px;
+}
+
+.pc-sidebar-wide {
+  width: 450px;
+}
+
+.pc-stack-sm {
+  margin: var(--pc-space-1);
+}
