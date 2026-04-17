@@ -1,5 +1,7 @@
 function manualcontrolPanel() {
-  $('#manualControlPanel').show()
+  $('#cd-layout').show()
+  $('.window-content > nav[data-role="ribbonmenu"]:first').addClass('cd-ribbon-hidden')
+  $('#manualControlPanel').hide()
   $('#grblPanel').hide()
   $('#fluidncPanel').hide()
   $('#updatePanel').hide()
@@ -8,6 +10,8 @@ function manualcontrolPanel() {
 
 function grblPanel() {
   grblPopulate();
+  $('#cd-layout').hide()
+  $('.window-content > nav[data-role="ribbonmenu"]:first').removeClass('cd-ribbon-hidden')
   $('#manualControlPanel').hide()
   $('#grblPanel').show()
   $('#fluidncPanel').hide()
@@ -16,7 +20,8 @@ function grblPanel() {
 }
 
 function fluidncPanel() {
-  //grblPopulate();
+  $('#cd-layout').hide()
+  $('.window-content > nav[data-role="ribbonmenu"]:first').removeClass('cd-ribbon-hidden')
   $('#manualControlPanel').hide()
   $('#grblPanel').hide()
   $('#fluidncPanel').show()
@@ -25,6 +30,8 @@ function fluidncPanel() {
 }
 
 function updatePanel() {
+  $('#cd-layout').hide()
+  $('.window-content > nav[data-role="ribbonmenu"]:first').removeClass('cd-ribbon-hidden')
   $('#manualControlPanel').hide()
   $('#grblPanel').hide()
   $('#fluidncPanel').hide()
@@ -33,6 +40,8 @@ function updatePanel() {
 }
 
 function troubleshootingPanel() {
+  $('#cd-layout').hide()
+  $('.window-content > nav[data-role="ribbonmenu"]:first').removeClass('cd-ribbon-hidden')
   $('#manualControlPanel').hide()
   $('#grblPanel').hide()
   $('#fluidncPanel').hide()

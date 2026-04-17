@@ -170,6 +170,7 @@ function initSocket() {
     }
 
     loadedFileName = data.filename;
+    if (typeof cdUpdateFileState === 'function') cdUpdateFileState(true, data.filename);
 
     setWindowTitle()
     parseGcodeInWebWorker(data.gcode)
@@ -420,6 +421,15 @@ function initSocket() {
       }
     }
     $('#gcodesent').html("Job Queue: " + data[0]);
+    if (typeof cdUpdateQueue === 'function') cdUpdateQueue(data[0]);
+    if (typeof cdUpdateJobProgress === 'function') {
+      var elapsed, remaining;
+      if (lastJobStartTime && typeof object !== 'undefined' && object && object.userData && !isNaN(object.userData.totalTime)) {
+        elapsed = (new Date().getTime() - lastJobStartTime) / 1000 / 60;
+        remaining = object.userData.totalTime - elapsed;
+      }
+      cdUpdateJobProgress(isNaN(donepercent) ? 0 : donepercent, done, total, elapsed, remaining, undefined);
+    }
   })
 
   socket.on('toastErrorAlarm', function(data) {
@@ -703,6 +713,13 @@ function initSocket() {
       if ($('#aPos').html() != apos) {
         $('#aPos').html(apos);
       }
+      if (typeof cdUpdatePosition === 'function') cdUpdatePosition(xpos, ypos, zpos);
+      if (typeof cdUpdateMPos === 'function') {
+        var mx = (status.machine.position.work.x + status.machine.position.offset.x).toFixed(3);
+        var my = (status.machine.position.work.y + status.machine.position.offset.y).toFixed(3);
+        var mz = (status.machine.position.work.z + status.machine.position.offset.z).toFixed(3);
+        cdUpdateMPos(mx, my, mz);
+      }
 
 
 
@@ -729,6 +746,12 @@ function initSocket() {
         $('#fro').data('slider').val(status.machine.overrides.feedOverride)
         $('#tro').data('slider').val(status.machine.overrides.spindleOverride)
       }
+      if (typeof cdUpdateFeed === 'function') {
+        var toolOn = status.machine.overrides.realSpindle > 0;
+        cdUpdateFeed(status.machine.overrides.realFeed, status.machine.overrides.feedOverride, status.machine.overrides.spindleOverride, toolOn);
+        cdUpdateToolState(toolOn);
+      }
+      if (typeof cdUpdateRunControls === 'function') cdUpdateRunControls(status.comms.connectionStatus);
     }
 
     if (unit == "mm") {
@@ -851,6 +874,7 @@ function initSocket() {
     setConnectBar(status.comms.connectionStatus, status);
     setControlBar(status.comms.connectionStatus, status)
     setJogPanel(status.comms.connectionStatus, status)
+    if (typeof cdUpdateConnection === 'function') cdUpdateConnection(status.comms.connectionStatus, status);
     setConsole(status.comms.connectionStatus, status)
     if (status.comms.connectionStatus != 5) {
       bellstate = false

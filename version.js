@@ -3,6 +3,15 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-17',
+      version: '1.5.1',
+      changes: [
+        'Tabs B.1: convert main tabs + sub-tabs from filled/outlined pills to minimal underline style (uppercase 11px letter-spaced label, 2px orange underline when active)',
+        'Remove ribbon content-holder card (transparent, no border), tabs-holder gets bottom hairline instead',
+        'Removed filled-tab artifacts (backgrounds, border overlaps, box-shadows) — approaching the mockup "control panel" look'
+      ]
+    },
+    {
+      date: '2026-04-17',
       version: '1.5.0',
       changes: [
         'UI polish pass: pro-grade hierarchy & consistency without changing the color DNA',

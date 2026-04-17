@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/lib/furcanIconPicker/iconpicker-1.5.0.css" />
     <link type="text/css" rel="stylesheet" media="all" href="css/image-checkbox.css" />
     <link rel="stylesheet" href="css/restart-from-point.css" />
+    <link rel="stylesheet" href="css/commanddeck.css" />
 
   </head>
 
@@ -48,7 +49,7 @@
         </div>
       </div>
       <div class="window-content" style="height: 100%; overflow: hidden  !important;">
-        <nav data-role="ribbonmenu" class="mt-1">
+        <nav data-role="ribbonmenu" class="mt-1 cd-ribbon-hidden">
           <ul class="tabs-holder">
             <li><a id="controlTab" href="#section-jog" onclick="manualcontrolPanel();"><i class="fas fa-fw fa-play"></i> Machine Control</a></li>
             <li id="grblSettings" style="display: none;"><a id="grblTab" href="#section-grbl" onclick="grblPanel();"><i class="fas fa-fw fa-sliders-h"></i> <span id="grbl-settings-tab-title">Grbl</span> Settings</a></li>
@@ -642,555 +643,412 @@
           </div>
         </nav>
 
-        <div id="manualControlPanel">
-          <center>
-            <div id="jogcontrols" class="mt-1">
-              <div class="row flex-justify-center flex-align-start" style="width: 100%; height: 100%;">
-                <div class="cell border-right bd-gray ">
+        <!-- ═══ Command Deck Layout ═══════════════════════════════════════════ -->
+        <div id="cd-layout">
 
-                  <table class="drotable mt-1">
-                    <tr>
-                      <td>
+          <!-- Top bar -->
+          <div id="cd-topbar">
+            <div class="cd-logo">
+              <div class="cd-logo-box">P</div>
+              <span class="cd-logo-text">PENPLOTTER<span class="cd-logo-muted"> · CONTROL</span></span>
+            </div>
+            <div class="cd-tabs-nav">
+              <div class="cd-tab cd-tab-active" id="cdTabMachine">MACHINE CONTROL</div>
+              <div class="cd-tab" id="cdTabTroubleshooting">TROUBLESHOOTING</div>
+            </div>
+            <div class="cd-topbar-file">
+              <span id="cdFileName" style="display:none;font-family:var(--cd-mono);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+              <button id="cdFileUnload" style="display:none;" class="cd-file-unload-btn">UNLOAD</button>
+              <button id="cdFileOpen" class="cd-open-btn">+ OPEN G-CODE</button>
+            </div>
+            <div class="cd-topbar-conn">
+              <span id="cdConnDot" class="cd-conn-dot"></span>
+              <span id="cdConnLabel" class="cd-conn-label">OFFLINE</span>
+              <button id="cdConnBtn">CONNECT</button>
+            </div>
+          </div>
 
+          <!-- Alarm banner -->
+          <div id="cd-alarm-banner" style="display:none;">
+            <span class="cd-alarm-icon">⚠</span>
+            <span class="cd-alarm-title">ALARM</span>
+            <span class="cd-alarm-desc">Controller halted. Check limits and clear before resuming.</span>
+            <div style="flex:1;"></div>
+            <button id="cdUnlockAlarm">UNLOCK ALARM</button>
+          </div>
 
-                        <div class="pos-relative">
-                          <button class="button mini light jogbtn" style="width: 60px; height: 24px;" id="wcsBtn">
-                            <span title="Show/change current Work Coordinate System" class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G54
-                          </button>
-                          <ul class="ribbon-dropdown drop-shadow" data-role="dropdown">
-                            <li class="checked wcsItem wcsItemG54" onclick="sendGcode('G54')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G54</a></li>
-                            <li class="wcsItem wcsItemG55" onclick="sendGcode('G55')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G55</a></li>
-                            <li class="wcsItem wcsItemG56" onclick="sendGcode('G56')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G56</a></li>
-                            <li class="wcsItem wcsItemG57" onclick="sendGcode('G57')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G57</a></li>
-                            <li class="wcsItem wcsItemG58" onclick="sendGcode('G58')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G58</a></li>
-                            <li class="wcsItem wcsItemG59" onclick="sendGcode('G59')"><a href="#"><span class="fas fa-fw fa-layer-group icon fg-darkGray"></span>G59</a></li>
-                          </ul>
-                        </div>
+          <!-- Position strip -->
+          <div id="cd-position-strip">
+            <div class="cd-axis-readout cd-axis-x">
+              <div class="cd-axis-header">
+                <span class="cd-axis-label">X</span>
+                <button class="cd-axis-set0" onclick="sendGcode('G10 P0 L20 X0')" id="cdSetX0">SET 0</button>
+              </div>
+              <div class="cd-axis-value" id="cdXPos">0.000</div>
+              <div class="cd-axis-wcs">WCS G54 · <span class="cdUnitsLabel">mm</span></div>
+              <div class="cd-axis-bar cd-axis-bar-x"></div>
+            </div>
+            <div class="cd-axis-readout cd-axis-y">
+              <div class="cd-axis-header">
+                <span class="cd-axis-label">Y</span>
+                <button class="cd-axis-set0" onclick="sendGcode('G10 P0 L20 Y0')" id="cdSetY0">SET 0</button>
+              </div>
+              <div class="cd-axis-value" id="cdYPos">0.000</div>
+              <div class="cd-axis-wcs">WCS G54 · <span class="cdUnitsLabel">mm</span></div>
+              <div class="cd-axis-bar cd-axis-bar-y"></div>
+            </div>
+            <div class="cd-axis-readout cd-axis-z">
+              <div class="cd-axis-header">
+                <span class="cd-axis-label">Z</span>
+                <button class="cd-axis-set0" onclick="sendGcode('G10 P0 L20 Z0')" id="cdSetZ0">SET 0</button>
+              </div>
+              <div class="cd-axis-value" id="cdZPos">0.000</div>
+              <div class="cd-axis-wcs">WCS G54 · <span class="cdUnitsLabel">mm</span></div>
+              <div class="cd-axis-bar cd-axis-bar-z"></div>
+            </div>
+            <div id="cd-feed-display">
+              <div class="cd-section-label">FEED</div>
+              <div id="cdFeedValue" class="cd-feed-value">0 <span class="cd-feed-unit">mm/min</span></div>
+              <div id="cdFeedMeta" class="cd-feed-meta">TOOL: OFF · JOG: 100%</div>
+            </div>
+          </div>
 
+          <!-- Main 3-column body -->
+          <div id="cd-main">
 
-                      </td>
-                      <td colspan="3">
-                        <nav data-role="ribbonmenu" class="mt-1">
-                          <ul class="tabs-holder">
-                            <li onclick="mmMode();"><a id="mmMode" href="#tab-mm">mm-mode</a></li>
-                            <li onclick="inMode();"><a id="inMode" href="#tab-inch">inch-mode</a></li>
-                          </ul>
-                        </nav>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button class="button light jogbtn" onclick="sendGcode( 'G10 P0 L20 X0')" style="width: 60px;" data-role="ripple" data-ripple-color="#e21b1b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-crosshairs fg-openbuilds" data-fa-transform="shrink-2 down-8 left-12"></i>
-                            <span class="fa-layers-text fg-red" data-fa-transform="down-9 right-8" style="font-weight:900; font-family: Arial; font-size: 12px;">X</span>
-                            <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">setzero</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <div class="dro" id="xPosDro">
-                          <div class="float-left fg-red" data-fa-transform="right-15">
-                            <span class="fa-layers fa-fw">
-                              <span class="fa-layers-text fg-red" data-fa-transform="right-3">X</span>
-                              <span class="fa-layers-text fg-red" data-fa-transform="left-18 rotate-270" style="font-family: Arial; font-size: 8px;">WORK</span>
-                              <!-- <span class="fa-layers-text fg-red" data-fa-transform="left-20 rotate--90" style="font-family: Arial; font-size: 11px;">work</span> -->
-                            </span>
-                          </div>
-                          <div class="float-right fg-red" id="xPos" data-editable>0.000</div>
-                          <input id="xPosInput" class="m-0 p-0 droInput float-right fg-red" data-editable="true" title="Enter to Go, Shift+Enter to Set" />
-                        </div>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 42px;"><i class="fas fa-caret-down fg-openbuilds"></i></button>
-                          <ul class="d-menu context drop-shadow drop-right" data-role="dropdown">
-                            <li><a href="#" onclick="sendGcode( 'G90\nG21\nG0 X0')"><span class="fas fa-chart-line fg-red icon"></span>Goto X0 (Work Coord) (G0 X0)</a></li>
-                            <li id="gotoXzeroMpos"><a href="#"><span class="fas fa-chart-line fg-red icon"></span>Goto X<span class="PullOffMPos">0</span> (Machine Coord) (G53 G0 X0)</a></li>
-                            <li class="divider"></li>
-                            <li class="needsXYZProbe"><a href="#" onclick="openProbeXDialog()"><span class="fas fa-podcast fa-rotate-180 fg-red icon"></span>Probe X-Zero Wizard</a></li>
-                            <li class="needsXYZProbe"><a href="#" onclick="openProbeDialog()"><span class="fas fa-podcast fa-rotate-180 fg-red icon"></span>Probe XYZ-Zero Wizard</a></li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button class="button light jogbtn" onclick="sendGcode( 'G10 P0 L20 Y0')" style="width: 60px;" data-role="ripple" data-ripple-color="#5de21b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-crosshairs fg-openbuilds" data-fa-transform="shrink-2 down-8 left-12"></i>
-                            <span class="fa-layers-text fg-green" data-fa-transform="down-9 right-8" style="font-weight:900; font-family: Arial; font-size: 12px;">Y</span>
-                            <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">setzero</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <div class="dro" id="yPosDro">
-                          <div class="float-left fg-green">
-                            <span class="fa-layers fa-fw">
-                              <span class="fa-layers-text fg-green" data-fa-transform="right-3">Y</span>
-                              <span class="fa-layers-text fg-green" data-fa-transform="left-18 rotate-270" style="font-family: Arial; font-size: 8px;">WORK</span>
-                            </span>
-                          </div>
-                          <div class="float-right fg-green" id="yPos" data-editable>0.000</div>
-                          <input id="yPosInput" class="m-0 p-0 droInput float-right fg-green" data-editable="true" title="Enter to Go, Shift+Enter to Set" />
-                        </div>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 42px;"><i class="fas fa-caret-down fg-openbuilds"></i></button>
-                          <ul class="d-menu context drop-shadow drop-right" data-role="dropdown">
-                            <li><a href="#" onclick="sendGcode( 'G90\nG21\nG0 Y0')"><span class="fas fa-chart-line fg-green icon"></span>Goto Y0 (Work Coord) (G0 Y0)</a></li>
-                            <li id="gotoYzeroMpos"><a href="#"><span class="fas fa-chart-line fg-green icon"></span>Goto Y<span class="PullOffMPos">0</span> (Machine Coord) (G53 G0 Y0)</a></li>
-                            <li class="divider"></li>
-                            <li class="needsXYZProbe"><a href="#" onclick="openProbeYDialog()"><span class="fas fa-podcast fa-rotate-180 fg-green icon"></span>Probe Y-Zero Wizard</a></li>
-                            <li class="needsXYZProbe"><a href="#" onclick="openProbeDialog()"><span class="fas fa-podcast fa-rotate-180 fg-green icon"></span>Probe XYZ-Zero Wizard</a></li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <button class="button light jogbtn" onclick="sendGcode( 'G10 P0 L20 Z0')" style="width: 60px;" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-crosshairs fg-openbuilds" data-fa-transform="shrink-2 down-8 left-12"></i>
-                            <span class="fa-layers-text fg-blue" data-fa-transform="down-9 right-8" style="font-weight:900; font-family: Arial; font-size: 12px;">Z</span>
-                            <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">setzero</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <div class="dro" id="zPosDro">
-                          <div class="float-left fg-blue">
-                            <span class="fa-layers fa-fw">
-                              <span class="fa-layers-text fg-blue" data-fa-transform="right-3">Z</span>
-                              <span class="fa-layers-text fg-blue" data-fa-transform="left-18 rotate-270" style="font-family: Arial; font-size: 8px;">WORK</span>
-                            </span>
-                          </div>
-                          <div class="float-right fg-blue" id="zPos" data-editable>0.000</div>
-                          <input id="zPosInput" class="m-0 p-0 droInput float-right fg-blue" data-editable="true" title="Enter to Go, Shift+Enter to Set" />
-                        </div>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 42px;"><i class="fas fa-caret-down fg-openbuilds"></i></button>
-                          <ul class="d-menu context drop-shadow drop-right" data-role="dropdown">
-                            <li><a href="#" onclick="sendGcode( 'G90\nG21\nG0 Z0')"><span class="fas fa-chart-line fg-blue icon"></span>Goto Z0 (Work Coord) (G0 Z0)</a></li>
-                            <li id="gotoZzeroMpos"><a href="#"><span class="fas fa-chart-line fg-blue icon"></span>Goto Z<span class="PullOffMPos">0</span> (Machine Coord) (G53 G0 Z0)</a></li>
-                            <li class="divider"></li>
-                            <!-- <li><a href="#" onclick="z0probe()()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe Z-Zero Wizard</a></li> -->
-                            <li><a href="#" onclick="openProbeZDialog()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe Z-Zero Wizard</a></li>
-                            <li class="needsXYZProbe"><a href="#" onclick="openProbeDialog()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe XYZ-Zero Wizard</a></li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
+            <!-- LEFT: Jog + Utilities + Overrides -->
+            <div id="cd-left">
 
-                    <tr class="4thaxis-active" style="display: none;">
-                      <td>
-                        <button class="button light jogbtn" onclick="sendGcode( 'G10 P0 L20 A0')" style="width: 60px;" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-crosshairs fg-openbuilds" data-fa-transform="shrink-2 down-8 left-12"></i>
-                            <span class="fa-layers-text fg-orange" data-fa-transform="down-9 right-8" style="font-weight:900; font-family: Arial; font-size: 12px;">A</span>
-                            <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">setzero</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <div class="dro" id="aPosDro">
-                          <div class="float-left fg-orange">
-                            <span class="fa-layers fa-fw">
-                              <span class="fa-layers-text fg-orange" data-fa-transform="right-3">A</span>
-                              <span class="fa-layers-text fg-orange" data-fa-transform="left-18 rotate-270" style="font-family: Arial; font-size: 8px;">WORK</span>
-                            </span>
-                          </div>
-                          <div class="float-right fg-orange" id="aPos" data-editable>0.000</div>
-                          <input id="aPosInput" class="m-0 p-0 droInput float-right fg-orange" data-editable="true" title="Enter to Go, Shift+Enter to Set" />
-                        </div>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 42px;"><i class="fas fa-caret-down fg-openbuilds"></i></button>
-                          <ul class="d-menu context drop-shadow drop-right" data-role="dropdown">
-                            <li><a href="#" onclick="sendGcode( 'G90\nG21\nG0 A0')"><span class="fas fa-chart-line fg-orange icon"></span>Goto A0 (Work Coord) (G0 Z0)</a></li>
-                            <li id="gotoAzeroMpos"><a href="#"><span class="fas fa-chart-line fg-orange icon"></span>Goto A<span class="PullOffMPos">0</span> (Machine Coord) (G53 G0 A0)</a></li>
-                            <!-- <li class="divider"></li> -->
-                            <!-- <li><a href="#" onclick="z0probe()()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe Z-Zero Wizard</a></li> -->
-                            <!-- <li><a href="#" onclick="openProbeZDialog()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe Z-Zero Wizard</a></li> -->
-                            <!-- <li class="needsXYZProbe"><a href="#" onclick="openProbeDialog()"><span class="fas fa-podcast fa-rotate-180 fg-blue icon"></span>Probe XYZ-Zero Wizard</a></li> -->
-                        </div>
-                        </ul>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <button class="button light jogbtn" onclick="sendGcode( 'G10 P0 L20 X0 Y0 Z0')" style="width: 60px;" data-role="ripple">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-crosshairs fg-openbuilds" data-fa-transform="shrink-2 down-8 left-18"></i>
-                            <span class="fa-layers-text fg-red" data-fa-transform="down-9 right-2" style="font-weight:900; font-family: Arial; font-size: 12px;">X</span>
-                            <span class="fa-layers-text fg-green" data-fa-transform="down-9 right-12" style="font-weight:900; font-family: Arial; font-size: 12px;">Y</span>
-                            <span class="fa-layers-text fg-blue" data-fa-transform="down-9 right-22" style="font-weight:900; font-family: Arial; font-size: 12px;">Z</span>
-                            <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">setzero</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 161px;" data-role="ripple">
-                            <span class="fa-layers fa-fw">
-                              <i class="fas fa-chart-line fg-openbuilds" data-fa-transform="shrink-2 down-8 left-12"></i>
-                              <i class="fas fa-caret-down fg-openbuilds" data-fa-transform="shrink-2 right-70"></i>
-                              <span class="fa-layers-text fg-red" data-fa-transform="down-9 right-8" style="font-weight:900; font-family: Arial; font-size: 12px;">X</span>
-                              <span class="fa-layers-text fg-green" data-fa-transform="down-9 right-19" style="font-weight:900; font-family: Arial; font-size: 12px;">Y</span>
-                              <span class="fa-layers-text fg-blue" data-fa-transform="down-9 right-29" style="font-weight:900; font-family: Arial; font-size: 12px;">Z</span>
-                              <span class="fa-layers-text fg-openbuilds" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">gotozero</span>
-                            </span>
-                          </button>
-                          <ul class="d-menu context drop-shadow" data-role="dropdown">
-                            <li id="gotozeroWPos">
-                              <a href="#"><span class="fas fa-chart-line fg-openbuilds icon"></span>GOTOZERO (Work Coord) (G0 Z5, G0 X0 Y0, G0 Z0) (Retract Z to Work Coord Z5)
-                              </a>
-                            </li>
-                            <li id="gotozeroZmPosXYwPos">
-                              <a href="#"><span class="fas fa-chart-line fg-openbuilds icon"></span>GOTOZERO (Z Machine Coord, XY Work Coord) (G53 G0 Z<span class="PullOffMPos">0</span>, G0 X0 Y0, G0 Z0) (Retract Z to
-                                Machine Coord)
-                              </a>
-                            </li>
-                            <li id="gotozeroMPos">
-                              <a href="#"><span class="fas fa-chart-line fg-openbuilds icon"></span>GOTOZERO (Machine Coord) (G53 G0 Z<span class="PullOffMPos">0</span>, G53 G0 X<span class="PullOffMPos">0</span> Y<span class="PullOffMPos">0</span>)
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="pos-relative">
-                          <button class="button light jogbtn" style="width: 42px;"></i>
-                            <span class="fa-layers fa-fw">
-                              <i class="fas fa-layer-group fg-openbuilds" data-fa-transform="shrink-2 up-3"></i>
-                              <i class="fas fa-caret-down fg-openbuilds" data-fa-transform="down-8"></i>
-                              <!-- <span class="fa-layers-text fg-grayBlue" data-fa-transform="up-8 " style="font-weight:900; font-family: Arial; font-size: 12px;">gotozero</span> -->
-                            </span>
-                          </button>
-                          <ul class="d-menu context drop-shadow drop-right" data-role="dropdown">
-                            <li><a href="#" onclick="sendGcode('G28')"><span class="fas fa-layer-group fg-grayBlue icon"></span>Go to Pre-Defined Position (G28)</a></li>
-                            <li><a href="#" onclick="sendGcode('G30')"><span class="fas fa-layer-group fg-grayBlue icon"></span>Go to Pre-Defined Position (G30)</a></li>
-                            <li class="divider fg-gray bg-gray bd-gray"></li>
-                            <li><a href="#" onclick="sendGcode('G28.1')"><span class="fas fa-tasks fg-grayBlue icon"></span>Set Pre-Defined Position (G28.1)</a></li>
-                            <li><a href="#" onclick="sendGcode('G30.1')"><span class="fas fa-tasks fg-grayBlue icon"></span>Set Pre-Defined Position (G30.1)</a></li>
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
+              <!-- Jog Control -->
+              <div class="cd-panel-section" id="cd-jog-section">
+                <div class="cd-section-title">
+                  <span class="cd-dot"></span> JOG CONTROL
+                  <span id="cdJogStatus" class="cd-status-tag"></span>
                 </div>
-                <div class="cell">
-
-                  <table class="jogtable">
-                    <tr>
-
-                      <td class="4thaxis-active" style="display: none;">
-                        <button class="button light square xlarge m-0 jogbtn aP jogcursorbtn" id="aP" data-role="ripple" data-ripple-color="#fa6800">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-redo fg-orange" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-orange" data-fa-transform="shrink-5 up-8" style="font-weight:600">A+</span>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td>
-
-                      </td>
-
-                      <td>
-                        <button class="button light square xlarge m-0 jogbtn yP jogcursorbtn" id="yP" data-role="ripple" data-ripple-color="#5de21b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-up fg-green" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-green" data-fa-transform="shrink-5 up-8" style="font-weight:600">Y+</span>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td>
-                      </td>
-
-
-                      <td>
-                        <button class="button light square xlarge m-0 ml-2 jogbtn zP jogcursorbtn" id="zP" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-up fg-blue" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-blue" data-fa-transform="shrink-5 up-8" style="font-weight:600">Z+</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td class="servo-active" style="display: none;">
-                        <button class="button light square xlarge m-0 jogbtn pP jogcursorbtn" id="pP" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-pen fg-darkBlue" data-fa-transform="shrink-2 down-8.5 left-6"></i>
-                            <i class="fas fa-arrow-up fg-red" data-fa-transform="shrink-0.5 down-8.5 right-6"></i>
-                            <span class="fa-layers-text fg-darkBlue" data-fa-transform="shrink-10 up-12" style="font-weight:600">PEN</span>
-                            <span class="fa-layers-text fg-darkBlue" data-fa-transform="shrink-10 up-6" style="font-weight:600">UP</span>
-                          </span>
-                        </button>
-                      </td>
-
-                    </tr>
-                    <tr>
-
-                      <td class="4thaxis-active" style="display: none;">
-                        <button class="button light square xlarge m-0 jogbtn aM jogcursorbtn" id="aM" data-role="ripple" data-ripple-color="#fa6800">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-undo fg-orange" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-orange" data-fa-transform="shrink-5 up-8" style="font-weight:600">A-</span>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td>
-                        <button class="button light square xlarge m-0 jogbtn xM jogcursorbtn" id="xM" data-role="ripple" data-ripple-color="#e21b1b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-left fg-red" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-red" data-fa-transform="shrink-5 up-8" style="font-weight:600">X-</span>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td>
-                        <button class="button light square xlarge m-0 jogbtn yM jogcursorbtn" id="yM" data-role="ripple" data-ripple-color="#5de21b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-down fg-green" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-green" data-fa-transform="shrink-5 up-8" style="font-weight:600">Y-</span>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td>
-                        <button class="button light square xlarge m-0 jogbtn xP jogcursorbtn" id="xP" data-role="ripple" data-ripple-color="#e21b1b">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-right fg-red" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-red" data-fa-transform="shrink-5 up-8" style="font-weight:600">X+</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <button class="button light square xlarge m-0 ml-2 jogbtn zM jogcursorbtn" id="zM" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-arrow-down fg-blue" data-fa-transform="shrink-2 down-8.5"></i>
-                            <span class="fa-layers-text fg-blue" data-fa-transform="shrink-5 up-8" style="font-weight:600">Z-</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td class="servo-active" style="display: none;">
-                        <button class="button light square xlarge m-0 jogbtn pM jogcursorbtn" id="pM" data-role="ripple" data-ripple-color="#1ba1e2">
-                          <span class="fa-layers fa-fw">
-                            <i class="fas fa-pen fg-darkBlue" data-fa-transform="shrink-2 down-8.5 left-6"></i>
-                            <i class="fas fa-arrow-down fg-green" data-fa-transform="shrink-0.5 down-8.5 right-6"></i>
-                            <span class="fa-layers-text fg-darkBlue" data-fa-transform="shrink-10 up-12" style="font-weight:600">PEN</span>
-                            <span class="fa-layers-text fg-darkBlue" data-fa-transform="shrink-10 up-6" style="font-weight:600">DOWN</span>
-                          </span>
-                        </button>
-                      </td>
-
-                    </tr>
-                    <tr>
-                      <td colspan='5'>
-                        <table style="width: 100%;">
-                          <tr>
-                            <td><span class="text-small">Incremental Jog</span>
-                            </td>
-                            <td class="pb-1">
-                              <label class="toggle">
-                                <input type="checkbox" id="jogTypeContinuous" />
-                                <div>app-notification</div>
-                              </label>
-                            </td>
-                            <td><span class="text-small">Continuous Jog</span>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="4thaxis-active" style="display: none;">
-
-                        <div class="pos-relative">
-                          <button class="button light jogbtn metricbtn distbtn" id="distAAxis" style="width: 100%; height: 25px; line-height: 25px;">
-                            <span class=" fa-layers fa-fw">
-                              <span id="distAAxislabel" class="fa-layers-text fg-openbuilds jogdistA" data-fa-transform="" style="font-weight:900; font-family: Arial; font-size: 12px;">A: 10&deg;</span>
-                            </span>
-                          </button>
-                          <ul class="d-menu context drop-shadow drop-bottom" data-role="dropdown">
-                            <li disabled><a href="#">Set A-Axis Increment</a></li>
-                            <li><a href="#" onclick="setADist('0.1')">0.1&deg;</a></li>
-                            <li><a href="#" onclick="setADist('1')">1&deg;</a></li>
-                            <li><a href="#" onclick="setADist('10')">10&deg;</a></li>
-                            <li><a href="#" onclick="setADist('100')">100&deg;</a></li>
-                            <li class="divider fg-gray bg-gray bd-gray"></li>
-                            <li><a href="#" onclick="setADist('30')">30&deg;</a></li>
-                            <li><a href="#" onclick="setADist('45')">45&deg;</a></li>
-                            <li><a href="#" onclick="setADist('60')">60&deg;</a></li>
-                            <li><a href="#" onclick="setADist('90')">90&deg;</a></li>
-                            <li><a href="#" onclick="setADist('180')">180&deg;</a></li>
-                            <li><a href="#" onclick="setADist('270')">270&deg;</a></li>
-                            <li><a href="#" onclick="setADist('360')">360&deg;</a></li>
-                          </ul>
-                        </div>
-
-                      </td>
-                      <td>
-                        <button class="button light jogbtn metricbtn distbtn" id="dist01" style="width: 100%; height: 25px; line-height: 25px;">
-                          <span class=" fa-layers fa-fw">
-                            <span id="dist01label" class="fa-layers-text fg-gray jogdistXYZ" data-fa-transform="" style="font-weight:900; font-family: Arial; font-size: 12px;">0.1mm</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <button class="button light jogbtn metricbtn distbtn" id="dist1" style="width: 100%; height: 25px; line-height: 25px;">
-                          <span class=" fa-layers fa-fw">
-                            <span id="dist1label" class="fa-layers-text fg-gray jogdistXYZ" data-fa-transform="" style="font-weight:900; font-family: Arial; font-size: 12px;">1mm</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <button class="button light jogbtn distbtn metricbtn bd-openbuilds" id="dist10" style="width: 100%; height: 25px; line-height: 25px;">
-                          <span class=" fa-layers fa-fw">
-                            <span id="dist10label" class="fa-layers-text fg-openbuilds jogdistXYZ" data-fa-transform="" style="font-weight:900; font-family: Arial; font-size: 12px;">10mm</span>
-                          </span>
-                        </button>
-                      </td>
-                      <td>
-                        <button class="button light jogbtn distbtn metricbtn" id="dist100" style="width: 100%; height: 25px; line-height: 25px;">
-                          <span class=" fa-layers fa-fw">
-                            <span id="dist100label" class="fa-layers-text fg-gray jogdistXYZ" data-fa-transform="" style="font-weight:900; font-family: Arial; font-size: 12px;">100mm</span>
-                          </span>
-                        </button>
-                      </td>
-                    </tr>
-                  </table>
+                <div class="cd-jog-row">
+                  <div class="cd-jog-grid">
+                    <div></div>
+                    <button class="cd-jog-btn cd-jog-y yP jogbtn" id="cdYP">Y+</button>
+                    <div></div>
+                    <button class="cd-jog-btn cd-jog-x xM jogbtn" id="cdXM">X−</button>
+                    <button class="cd-jog-home jogbtn" id="cdHome" onclick="sendGcode('$H')">HOME</button>
+                    <button class="cd-jog-btn cd-jog-x xP jogbtn" id="cdXP">X+</button>
+                    <div></div>
+                    <button class="cd-jog-btn cd-jog-y yM jogbtn" id="cdYM">Y−</button>
+                    <div></div>
+                  </div>
+                  <div class="cd-z-column">
+                    <button class="cd-jog-btn cd-jog-z zP jogbtn" id="cdZP">Z+</button>
+                    <div class="cd-z-label">Z</div>
+                    <button class="cd-jog-btn cd-jog-z zM jogbtn" id="cdZM">Z−</button>
+                  </div>
                 </div>
 
-                <div class="cell border-left bd-gray" id="jrocell">
-                  <button class="button light mini mb-1" onclick="jogOverride(100);">reset</button>
-                  <input id="jro" data-on-stop="jogOverride(arguments[0])" data-role="slider" data-accuracy="1" data-vertical="true" data-size="180" data-min="1" data-max="100" data-value="100" data-hint="true" data-hint-always="true"
-                    data-hint-position="bottom" data-hint-mask="Jog: $1%" data-cls-hint="bg-light
-                        fg-dark shadow-1" data-cls-complete="bg-openbuilds">
-                  <span class="tally text-small bg-openbuilds fg-white" id="realJog"></span>
+                <!-- Step size -->
+                <div class="cd-sub-section">
+                  <div class="cd-sub-label">STEP (<span class="cdUnitsLabel">mm</span>)</div>
+                  <div class="cd-step-row">
+                    <button class="cd-step-btn" data-step="0.01">0.01</button>
+                    <button class="cd-step-btn" data-step="0.1">0.1</button>
+                    <button class="cd-step-btn cd-step-active" data-step="1">1</button>
+                    <button class="cd-step-btn" data-step="10">10</button>
+                  </div>
                 </div>
 
-                <div class="cell border-left bd-gray" id="frocell">
-                  <button class="button light mini mb-1" onclick="feedOverride(100);">reset</button>
-                  <input id="fro" data-on-stop="feedOverride(arguments[0])" data-role="slider" data-accuracy="5" data-vertical="true" data-size="180" data-accuracy="1" data-min="10" data-max="200" data-value="100" data-hint="true"
-                    data-hint-always="true" data-hint-position="bottom" data-hint-mask="Feed: $1%" data-cls-hint="bg-light
-                        fg-dark shadow-1" data-cls-complete="bg-openbuilds">
-                  <span class="tally text-small bg-openbuilds fg-white" id="realFeed"></span>
-                </div>
-                <div class="cell border-left bd-gray" id="trocell">
-                  <button class="button light mini  mb-1" onclick="spindleOverride(100);">reset</button>
-                  <input id="tro" data-on-stop="spindleOverride(arguments[0])" data-role="slider" data-accuracy="5" data-vertical="true" data-size="180" data-accuracy="1" data-min="10" data-max="200" data-value="100" data-hint="true"
-                    data-hint-always="true" data-hint-position="bottom" data-hint-mask="Tool: $1%" data-cls-hint="bg-light
-                        fg-dark shadow-1" data-cls-complete="bg-openbuilds">
-                  <span class="tally text-small bg-openbuilds fg-white" id="realSpeed"></span>
+                <!-- Units -->
+                <div class="cd-sub-section">
+                  <div class="cd-sub-label">UNITS</div>
+                  <div class="cd-step-row">
+                    <button class="cd-unit-btn cd-unit-active" id="cdMmBtn" onclick="mmMode(); $('#mmMode').click();">MM</button>
+                    <button class="cd-unit-btn" id="cdInBtn" onclick="inMode(); $('#inMode').click();">INCH</button>
+                  </div>
                 </div>
               </div>
-            </div>
 
+              <!-- Utilities -->
+              <div class="cd-panel-section">
+                <div class="cd-section-title"><span class="cd-dot"></span> UTILITIES</div>
+                <div class="cd-util-grid">
+                  <button class="cd-util-btn" id="cdToolBtn">
+                    <span class="cd-util-label" id="cdToolLabel">TOOL · OFF</span>
+                    <span class="cd-util-hint" id="cdToolHint">pen up</span>
+                  </button>
+                  <button class="cd-util-btn" id="cdProbeBtn" onclick="openProbeZDialog()">
+                    <span class="cd-util-label">PROBE Z</span>
+                    <span class="cd-util-hint">auto-zero</span>
+                  </button>
+                  <button class="cd-util-btn" id="cdChkSizeBtn">
+                    <span class="cd-util-label">CHECK SIZE</span>
+                    <span class="cd-util-hint">bounds dry-run</span>
+                  </button>
+                  <button class="cd-util-btn" id="cdGotoXY0Btn">
+                    <span class="cd-util-label">GO TO XY0</span>
+                    <span class="cd-util-hint">rapid to origin</span>
+                  </button>
+                </div>
+              </div>
 
-            <div id="controlLogs" class="mt-0">
-
-              <nav data-role="ribbonmenu">
-                <ul class="tabs-holder">
-                  <li><a href="#tab-three" id="gcodeviewertab" onclick="fixRenderSize();"><i class="mif-3d-rotation fa-fw fg-darkCobalt" id="3dviewicon"></i><span id="3dviewlabel"> 3D View</span></a></li>
-                  <li><a href="#tab-one" id="consoletab"><i class="fas fa-fw fa-terminal fg-darkGreen"></i> Log / Serial Console</a></li>
-                  <li><a href="#tab-four" id="macrostab"><i class="fas fa-th fa-fw fg-darkOrange"></i> Macros</a></li>
-                  <li><a href="#tab-two" id="gcodeeditortab"><i class="far fa-fw fa-edit fg-darkLime"></i> GCODE Editor</a></li>
-                </ul>
-
-                <div class="content-holder">
-                  <div class="section" id="tab-one">
-                    <div id="console"></div>
-                    <div class="fixed-bottom m-3 mb-9">
-                      <form class="inline-form" id="commandform" autocomplete="off">
-                        <input title="Tip: Press F6 anywhere on the CONTROL window to quickly jump to this input" data-prepend="&nbsp;<i class='fas fa-terminal'></i>" data-role="input" data-clear-button="false" data-role="input" id="command"
-                          type="text" autocomplete="on" class=" dark needs-connection" style="width: calc(100vw - 170px);" data-editable="true" placeholder="Enter GCODE/Serial commands here to send it to your machine" />
-                        <button id="sendCommand" class="button dark needs-connection" type="button" title="Execute command">
-                          <i class="fa fa-play" style="margin-right: 10px;"></i> Send
-                        </button>
-                        <button class="button dark emptylog" type="button" onclick="$('#console').empty();" title="Clear the Log screen">
-                          <i class="fa fa-trash"></i>
-                        </button>
-                      </form>
+              <!-- Overrides -->
+              <div class="cd-panel-section cd-panel-section-grow">
+                <div class="cd-section-title"><span class="cd-dot"></span> OVERRIDES</div>
+                <div class="cd-vsliders-row">
+                  <div class="cd-vslider" id="cd-jro-wrap">
+                    <div class="cd-vslider-label">JOG</div>
+                    <div class="cd-vslider-track">
+                      <input type="range" id="cdJro" class="cd-vslider-input" orient="vertical"
+                        min="1" max="200" value="100"
+                        oninput="jogOverride(+this.value)">
                     </div>
+                    <div class="cd-vslider-val"><span id="cdJroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <button class="cd-vslider-reset" onclick="jogOverride(100)">RESET</button>
                   </div>
-                  <div class="section" id="tab-two">
-                    <div id="editor"></div>
-                    <div id="restartBanner" class="pc-ui pc-banner" style="display:none;"></div>
-
-                    <div class="fixed-bottom m-3 mb-9">
-                      <!-- <form class="inline-form"> -->
-                      <button title="Update the 3D View with the edited GCODE" class="button success" onclick="parseGcodeInWebWorker(editor.getValue())"><i class="mif-3d-rotation fa-fw"></i> Update 3D View</button>&nbsp;
-                      <button title="Save GCODE to file" class="button primary" onclick="saveGcode();"><i class="fa fa-save icon"></i></button>&nbsp;
-                      <button title="Find and Replace" class="button dark" onclick="editor.execCommand('replace')"><i class="fas fa-search"></i> Find/Replace</button>&nbsp;
-                      <button title="Select All" class="button dark" onclick="editor.execCommand('selectall')"><i class="far fa-check-square"></i> Select All</button>&nbsp;
-                      <button title="Undo" class="button dark" onclick="editor.execCommand('undo')"><i class="fas fa-undo"></i> Undo</button>&nbsp;
-                      <button title="Redo" class="button dark" onclick="editor.execCommand('redo')"><i class="fas fa-redo"></i> Redo</button>&nbsp;
-                      <button title="Go to End" class="button dark" onclick="editor.execCommand('gotoend')"><i class="fas fa-chevron-down"></i></button>&nbsp;
-                      <button title="Go to Start" class="button dark" onclick="editor.execCommand('gotostart')"><i class="fas fa-chevron-up"></i></button>&nbsp;
-                      <button title="Clear Editor" class="button dark" onclick="editor.execCommand('selectall'); editor.execCommand('del'); parseGcodeInWebWorker(editor.getValue()); loadedFileName = ''; setWindowTitle()"><i class="fas fa-eraser"></i>
-                        Clear</button>&nbsp;
-                      <!-- </form> -->
+                  <div class="cd-vslider" id="cd-fro-wrap">
+                    <div class="cd-vslider-label">FEED</div>
+                    <div class="cd-vslider-track">
+                      <input type="range" id="cdFro" class="cd-vslider-input" orient="vertical"
+                        min="10" max="200" value="100"
+                        oninput="feedOverride(+this.value)">
                     </div>
+                    <div class="cd-vslider-val"><span id="cdFroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <button class="cd-vslider-reset" onclick="feedOverride(100)">RESET</button>
                   </div>
-                  <div class="section" id="tab-three">
-                    <div id="renderArea"></div>
-                    <div style="position: absolute; top: 10px; right:10px; z-index: 1; max-width: 100px; max-width: 100px;" id="overlayimg">
-                      <!-- <img src="img/mch/acro55.png" style="max-width:100%; max-height:100%;">
-                    <span style="position: absolute; top: 3px; right:3px; z-index: 1;" class="fas fa-cogs"></span> -->
+                  <div class="cd-vslider" id="cd-tro-wrap">
+                    <div class="cd-vslider-label">TOOL</div>
+                    <div class="cd-vslider-track">
+                      <input type="range" id="cdTro" class="cd-vslider-input" orient="vertical"
+                        min="10" max="200" value="100"
+                        oninput="spindleOverride(+this.value)">
                     </div>
-                    <div id="restartScrubber" class="pc-ui pc-scrubber" style="display:none;">
-                      <div class="pc-scrubber-row">
-                        <span class="pc-label"><i class="fas fa-route"></i> Scrub to restart point</span>
-                        <input type="range" id="restartSlider" class="pc-slider" min="0" max="100" value="0" oninput="onRestartSliderMove(this.value)">
-                      </div>
-                      <div class="pc-scrubber-row pc-scrubber-info">
-                        <span id="restartScrubInfo" class="pc-info-text">Line 1 | X:0 Y:0 Z:0</span>
-                        <span class="pc-btn-group">
-                          <button class="pc-btn pc-btn-primary" onclick="triggerRestartFromScrubber()"><i class="fas fa-play"></i> Restart from here</button>
-                          <button class="pc-btn pc-btn-ghost" onclick="closeScrubber()"><i class="fas fa-times"></i> Cancel</button>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="pc-ui pc-navbar">
-                      <button class="pc-icon-btn" onclick="simSpeed();" title="Simulation speed">
-                        <i class="fas fa-tachometer-alt"></i><span class="pc-icon-caption"><span id="simspeedval">1</span>x</span>
-                      </button>
-                      <span class="pc-navbar-sep"></span>
-                      <button id="runSimBtn" class="pc-icon-btn" onclick="sim(0)" title="Run simulation">
-                        <i class="fas fa-fighter-jet"></i><span class="pc-icon-caption">Simulate</span>
-                      </button>
-                      <button id="stopSimBtn" class="pc-icon-btn" style="display:none;" onclick="simstop()" title="Stop Sim">
-                        <i class="fas fa-stop"></i><span class="pc-icon-caption">Stop</span>
-                      </button>
-                      <button id="resetViewBtn" class="pc-icon-btn" onclick="resetView(object)" title="Resets camera angle and zoom">
-                        <i class="fas fa-expand"></i><span class="pc-icon-caption">Reset View</span>
-                      </button>
-                      <span class="pc-navbar-sep"></span>
-                      <button id="openScrubberBtn" class="pc-icon-btn pc-icon-btn-accent" onclick="openScrubber()" title="Scrub through toolpath to pick a restart point">
-                        <i class="fas fa-route"></i><span class="pc-icon-caption">Restart from point</span>
-                      </button>
-                    </div>
-                    <div id="conetext" style="position:absolute;top:0px;left:0px; padding: 0px; display:none; z-index:100;"></div>
-
-                  </div>
-                  <div class="section" id="tab-four">
-                    <div id="macros"></div>
+                    <div class="cd-vslider-val"><span id="cdTroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <button class="cd-vslider-reset" onclick="spindleOverride(100)">RESET</button>
                   </div>
                 </div>
-              </nav>
+              </div>
+            </div><!-- #cd-left -->
+
+            <!-- CENTER: controlLogs (tabs + plot/console/macros/editor) -->
+            <div id="cd-center">
+              <div id="controlLogs" class="mt-0">
+
+                <nav data-role="ribbonmenu">
+                  <ul class="tabs-holder">
+                    <li><a href="#tab-three" id="gcodeviewertab" onclick="fixRenderSize();"><i class="mif-3d-rotation fa-fw fg-darkCobalt" id="3dviewicon"></i><span id="3dviewlabel"> 3D View</span></a></li>
+                    <li><a href="#tab-one" id="consoletab"><i class="fas fa-fw fa-terminal fg-darkGreen"></i> Log / Serial Console</a></li>
+                    <li><a href="#tab-four" id="macrostab"><i class="fas fa-th fa-fw fg-darkOrange"></i> Macros</a></li>
+                    <li><a href="#tab-two" id="gcodeeditortab"><i class="far fa-fw fa-edit fg-darkLime"></i> GCODE Editor</a></li>
+                  </ul>
+
+                  <div class="content-holder">
+                    <div class="section" id="tab-one">
+                      <div id="console"></div>
+                      <div class="fixed-bottom m-3 mb-9">
+                        <form class="inline-form" id="commandform" autocomplete="off">
+                          <input title="Tip: Press F6 anywhere on the CONTROL window to quickly jump to this input" data-prepend="&nbsp;<i class='fas fa-terminal'></i>" data-role="input" data-clear-button="false" id="command"
+                            type="text" autocomplete="on" class="dark needs-connection" style="width: calc(100vw - 560px);" data-editable="true" placeholder="Enter GCODE/Serial commands here to send it to your machine" />
+                          <button id="sendCommand" class="button dark needs-connection" type="button" title="Execute command">
+                            <i class="fa fa-play" style="margin-right: 10px;"></i> Send
+                          </button>
+                          <button class="button dark emptylog" type="button" onclick="$('#console').empty();" title="Clear the Log screen">
+                            <i class="fa fa-trash"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                    <div class="section" id="tab-two">
+                      <div id="editor"></div>
+                      <div id="restartBanner" class="pc-ui pc-banner" style="display:none;"></div>
+
+                      <div class="fixed-bottom m-3 mb-9">
+                        <button title="Update the 3D View with the edited GCODE" class="button success" onclick="parseGcodeInWebWorker(editor.getValue())"><i class="mif-3d-rotation fa-fw"></i> Update 3D View</button>&nbsp;
+                        <button title="Save GCODE to file" class="button primary" onclick="saveGcode();"><i class="fa fa-save icon"></i></button>&nbsp;
+                        <button title="Find and Replace" class="button dark" onclick="editor.execCommand('replace')"><i class="fas fa-search"></i> Find/Replace</button>&nbsp;
+                        <button title="Select All" class="button dark" onclick="editor.execCommand('selectall')"><i class="far fa-check-square"></i> Select All</button>&nbsp;
+                        <button title="Undo" class="button dark" onclick="editor.execCommand('undo')"><i class="fas fa-undo"></i> Undo</button>&nbsp;
+                        <button title="Redo" class="button dark" onclick="editor.execCommand('redo')"><i class="fas fa-redo"></i> Redo</button>&nbsp;
+                        <button title="Go to End" class="button dark" onclick="editor.execCommand('gotoend')"><i class="fas fa-chevron-down"></i></button>&nbsp;
+                        <button title="Go to Start" class="button dark" onclick="editor.execCommand('gotostart')"><i class="fas fa-chevron-up"></i></button>&nbsp;
+                        <button title="Clear Editor" class="button dark" onclick="editor.execCommand('selectall'); editor.execCommand('del'); parseGcodeInWebWorker(editor.getValue()); loadedFileName = ''; setWindowTitle()"><i class="fas fa-eraser"></i> Clear</button>&nbsp;
+                      </div>
+                    </div>
+                    <div class="section" id="tab-three">
+                      <div id="renderArea"></div>
+                      <div style="position: absolute; top: 10px; right:10px; z-index: 1; max-width: 100px;" id="overlayimg"></div>
+                      <div id="restartScrubber" class="pc-ui pc-scrubber" style="display:none;">
+                        <div class="pc-scrubber-row">
+                          <span class="pc-label"><i class="fas fa-route"></i> Scrub to restart point</span>
+                          <input type="range" id="restartSlider" class="pc-slider" min="0" max="100" value="0" oninput="onRestartSliderMove(this.value)">
+                        </div>
+                        <div class="pc-scrubber-row pc-scrubber-info">
+                          <span id="restartScrubInfo" class="pc-info-text">Line 1 | X:0 Y:0 Z:0</span>
+                          <span class="pc-btn-group">
+                            <button class="pc-btn pc-btn-primary" onclick="triggerRestartFromScrubber()"><i class="fas fa-play"></i> Restart from here</button>
+                            <button class="pc-btn pc-btn-ghost" onclick="closeScrubber()"><i class="fas fa-times"></i> Cancel</button>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="pc-ui pc-navbar">
+                        <button class="pc-icon-btn" onclick="simSpeed();" title="Simulation speed">
+                          <i class="fas fa-tachometer-alt"></i><span class="pc-icon-caption"><span id="simspeedval">1</span>x</span>
+                        </button>
+                        <span class="pc-navbar-sep"></span>
+                        <button id="runSimBtn" class="pc-icon-btn" onclick="sim(0)" title="Run simulation">
+                          <i class="fas fa-fighter-jet"></i><span class="pc-icon-caption">Simulate</span>
+                        </button>
+                        <button id="stopSimBtn" class="pc-icon-btn" style="display:none;" onclick="simstop()" title="Stop Sim">
+                          <i class="fas fa-stop"></i><span class="pc-icon-caption">Stop</span>
+                        </button>
+                        <button id="resetViewBtn" class="pc-icon-btn" onclick="resetView(object)" title="Resets camera angle and zoom">
+                          <i class="fas fa-expand"></i><span class="pc-icon-caption">Reset View</span>
+                        </button>
+                        <span class="pc-navbar-sep"></span>
+                        <button id="openScrubberBtn" class="pc-icon-btn pc-icon-btn-accent" onclick="openScrubber()" title="Scrub through toolpath to pick a restart point">
+                          <i class="fas fa-route"></i><span class="pc-icon-caption">Restart from point</span>
+                        </button>
+                      </div>
+                      <div id="conetext" style="position:absolute;top:0px;left:0px; padding: 0px; display:none; z-index:100;"></div>
+                    </div>
+                    <div class="section" id="tab-four">
+                      <div id="macros"></div>
+                    </div>
+                  </div>
+                </nav>
+              </div><!-- #controlLogs -->
+            </div><!-- #cd-center -->
+
+            <!-- RIGHT: Job info + run controls -->
+            <div id="cd-right">
+
+              <!-- Job info (shown when file loaded) -->
+              <div id="cd-job-info" class="cd-panel-section" style="display:none; flex:1; overflow-y:auto; overflow-x:hidden; border-bottom: 1px solid var(--cd-border);">
+                <div class="cd-section-title"><span class="cd-dot"></span> JOB</div>
+                <div class="cd-job-card">
+                  <div id="cdJobName" class="cd-job-name">—</div>
+                  <div id="cdJobMeta" class="cd-job-meta">—</div>
+                </div>
+                <div id="cdProgressPct" class="cd-progress-pct">0.0<span class="cd-progress-pct-unit">%</span></div>
+                <div class="cd-progress-track">
+                  <div id="cdProgressBar" class="cd-progress-fill" style="width:0%;"></div>
+                </div>
+                <div class="cd-job-stats">
+                  <div><div class="cd-stat-label">ELAPSED</div><div id="cdElapsed" class="cd-stat-val">—</div></div>
+                  <div><div class="cd-stat-label">REMAINING</div><div id="cdRemaining" class="cd-stat-val">—</div></div>
+                  <div><div class="cd-stat-label">LINE</div><div id="cdLine" class="cd-stat-val">0</div></div>
+                  <div><div class="cd-stat-label">TRAVEL</div><div id="cdTravel" class="cd-stat-val">0mm</div></div>
+                </div>
+              </div>
+
+              <!-- Run controls -->
+              <div id="cd-run-controls" class="cd-panel-section cd-run-section">
+                <div class="cd-section-title"><span class="cd-dot"></span> RUN</div>
+
+                <!-- Idle: file not running -->
+                <div id="cdRunIdle">
+                  <button id="cdStartBtn" class="cd-btn-start" onclick="runJobFile()" disabled>▶ START</button>
+                  <div class="cd-btn-row">
+                    <button class="cd-btn-secondary" disabled>❚❚ PAUSE</button>
+                    <button class="cd-btn-secondary" disabled>■ STOP</button>
+                  </div>
+                </div>
+
+                <!-- Active: job running or paused -->
+                <div id="cdRunActive" style="display:none;">
+                  <button id="cdPauseResumeBtn" class="cd-btn-pause">❚❚ PAUSE</button>
+                  <div class="cd-btn-row">
+                    <button id="cdStopBtn" class="cd-btn-stop">■ STOP</button>
+                    <button id="cdAbortBtn" class="cd-btn-abort">⊗ ABORT</button>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- #cd-right -->
+
+          </div><!-- #cd-main -->
+
+          <!-- Status bar -->
+          <div id="cd-statusbar">
+            <div class="cd-status-cell">
+              <span id="cdStateDot" class="cd-state-dot"></span>
+              <span id="cdStateLabel" class="cd-state-label">DISCONNECTED</span>
             </div>
-            <!-- End controlLogs -->
-          </center>
+            <div class="cd-status-cell">
+              <span id="cdPortStatus">PORT: Not Connected</span>
+            </div>
+            <div class="cd-status-cell">
+              <span id="cdBaud">BAUD —</span>
+            </div>
+            <div class="cd-status-cell">
+              <span id="cdQueue">QUEUE 0</span>
+            </div>
+            <div style="flex:1;"></div>
+            <div class="cd-status-cell" style="border-left: 1px solid var(--cd-border); border-right: none;">
+              <span id="cdMpos">MPos X0 Y0 Z0</span>
+            </div>
+          </div>
+
+          <!-- Abort confirm modal -->
+          <div id="cd-abort-modal" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.3); display:none; align-items:center; justify-content:center; z-index:200;">
+            <div class="cd-modal-box">
+              <div class="cd-modal-title">⊗ ABORT JOB?</div>
+              <div class="cd-modal-desc">This will halt motion immediately and put the controller into <strong>ALARM</strong>. You'll need to unlock before running again.</div>
+              <div class="cd-modal-actions">
+                <button class="cd-modal-cancel" id="cdAbortCancel">CANCEL</button>
+                <button class="cd-modal-confirm" id="cdAbortConfirm">ABORT</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- #cd-layout -->
+
+        <!-- ═══ Metro4 override sliders — off-screen so Metro4 can initialise them ════ -->
+        <div style="position:fixed; left:-9999px; top:0; width:200px; height:220px; overflow:hidden; pointer-events:none; visibility:hidden;">
+          <input id="jro" data-on-stop="jogOverride(arguments[0])" data-role="slider" data-accuracy="1" data-vertical="true" data-size="180" data-min="1" data-max="100" data-value="100" data-hint="true" data-hint-always="true" data-hint-position="bottom" data-hint-mask="Jog: $1%" data-cls-complete="bg-openbuilds" />
+          <input id="fro" data-on-stop="feedOverride(arguments[0])" data-role="slider" data-accuracy="1" data-vertical="true" data-size="180" data-min="10" data-max="200" data-value="100" data-hint="true" data-hint-always="true" data-hint-position="bottom" data-hint-mask="Feed: $1%" data-cls-complete="bg-openbuilds" />
+          <input id="tro" data-on-stop="spindleOverride(arguments[0])" data-role="slider" data-accuracy="1" data-vertical="true" data-size="180" data-min="10" data-max="200" data-value="100" data-hint="true" data-hint-always="true" data-hint-position="bottom" data-hint-mask="Tool: $1%" data-cls-complete="bg-openbuilds" />
         </div>
+
+        <!-- ═══ Legacy stub: hidden elements that existing JS still targets ════ -->
+        <div id="manualControlPanel" style="display:none;">
+          <!-- DRO elements targeted by websocket.js position updates -->
+          <div id="xPosDro"><div id="xPos" data-editable>0.000</div><input id="xPosInput" class="droInput" /></div>
+          <div id="yPosDro"><div id="yPos" data-editable>0.000</div><input id="yPosInput" class="droInput" /></div>
+          <div id="zPosDro"><div id="zPos" data-editable>0.000</div><input id="zPosInput" class="droInput" /></div>
+          <div id="aPosDro"><div id="aPos" data-editable>0.000</div><input id="aPosInput" class="droInput" /></div>
+          <!-- WCS selector targeted by JS -->
+          <div class="pos-relative">
+            <button id="wcsBtn">G54</button>
+            <ul class="ribbon-dropdown drop-shadow" data-role="dropdown">
+              <li class="checked wcsItem wcsItemG54" onclick="sendGcode('G54')"><a href="#">G54</a></li>
+              <li class="wcsItem wcsItemG55" onclick="sendGcode('G55')"><a href="#">G55</a></li>
+              <li class="wcsItem wcsItemG56" onclick="sendGcode('G56')"><a href="#">G56</a></li>
+              <li class="wcsItem wcsItemG57" onclick="sendGcode('G57')"><a href="#">G57</a></li>
+              <li class="wcsItem wcsItemG58" onclick="sendGcode('G58')"><a href="#">G58</a></li>
+              <li class="wcsItem wcsItemG59" onclick="sendGcode('G59')"><a href="#">G59</a></li>
+            </ul>
+          </div>
+          <!-- Goto zero dropdown items targeted by commanddeck.js / websocket.js -->
+          <ul style="display:none;">
+            <li id="gotozeroWPos"><a href="#">Goto Work Zero</a></li>
+            <li id="gotozeroZmPosXYwPos"><a href="#">Goto Z Machine / XY Work Zero</a></li>
+            <li id="gotozeroMPos"><a href="#">Goto Machine Zero</a></li>
+            <li id="gotoXzeroMpos"><a href="#"></a></li>
+            <li id="gotoYzeroMpos"><a href="#"></a></li>
+            <li id="gotoZzeroMpos"><a href="#"></a></li>
+          </ul>
+          <!-- Step distance buttons synced by commanddeck.js step-btn clicks -->
+          <button class="jogbtn distbtn metricbtn" id="dist01"></button>
+          <button class="jogbtn distbtn metricbtn" id="dist1"></button>
+          <button class="jogbtn distbtn metricbtn bd-openbuilds" id="dist10"></button>
+          <button class="jogbtn distbtn metricbtn" id="dist100"></button>
+          <!-- Jog continuous toggle used by jog.js -->
+          <input type="checkbox" id="jogTypeContinuous" />
+          <!-- Real-time tally spans used by websocket.js -->
+          <span id="realJog"></span>
+          <span id="realFeed"></span>
+          <span id="realSpeed"></span>
+          <!-- MPos spans used by websocket.js -->
+          <span class="PullOffMPos"></span>
+        </div><!-- #manualControlPanel -->
+
         <div id="grblPanel" style="display: none;">
           <div id="grblconfig"></div>
         </div>
@@ -1936,6 +1794,7 @@
 
   <script type="text/javascript" src="js/metroactions.js"></script>
   <script type="text/javascript" src="js/jog.js"></script>
+  <script type="text/javascript" src="js/commanddeck.js"></script>
   <script type="text/javascript" src="js/servo.js"></script>
 
   <script type="text/javascript" src="js/widget.js"></script>

@@ -185,10 +185,11 @@ body > .window.bd-black {
 .ribbonmenu > .tabs-holder {
   background: transparent !important;
   border: none !important;
-  padding: 4px 0 0 12px !important;
-  margin: 0 0 -2px 0 !important;
+  border-bottom: 1px solid var(--pc-border-hairline) !important;
+  padding: 0 16px !important;
+  margin: 0 !important;
   display: flex !important;
-  gap: 0 !important;
+  gap: 4px !important;
   list-style: none !important;
   height: auto !important;
   min-height: 0 !important;
@@ -232,28 +233,24 @@ body > .window.bd-black {
 .ribbonmenu > .tabs-holder > li > a {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 12px 22px !important;
-  border: 1px solid var(--pc-border-subtle) !important;
-  border-bottom: none !important;
-  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0 !important;
-  background: hsla(0, 0%, 100%, 0.5) !important;
-  color: var(--pc-text-secondary) !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.1px !important;
+  gap: 8px !important;
+  padding: 10px 18px !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--pc-text-tertiary) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
   cursor: pointer !important;
-  transition: background var(--pc-transition), color var(--pc-transition);
+  transition: color var(--pc-transition), border-color var(--pc-transition);
   text-decoration: none !important;
   line-height: 1 !important;
   height: auto !important;
   min-height: 0 !important;
   margin: 0 !important;
-}
-
-[data-role="ribbonmenu"] > .tabs-holder > li + li > a,
-.ribbonmenu > .tabs-holder > li + li > a {
-  margin-left: -1px !important;
 }
 
 [data-role="ribbonmenu"] > .tabs-holder > li > a i,
@@ -264,18 +261,18 @@ body > .window.bd-black {
 
 [data-role="ribbonmenu"] > .tabs-holder > li > a:hover,
 .ribbonmenu > .tabs-holder > li > a:hover {
-  background: hsla(0, 0%, 100%, 0.5);
-  color: var(--pc-text);
+  background: transparent !important;
+  color: var(--pc-text) !important;
 }
 
 [data-role="ribbonmenu"] > .tabs-holder > li.active > a,
 .ribbonmenu > .tabs-holder > li.active > a {
-  background: #FFF6EF !important;
+  background: transparent !important;
   color: var(--pc-primary) !important;
-  border-color: var(--pc-primary-subtle) !important;
-  box-shadow: 0 -2px 8px rgba(255, 106, 0, 0.08) !important;
-  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0 !important;
-  padding-bottom: 14px !important;
+  border-bottom-color: var(--pc-primary) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding-bottom: 10px !important;
   position: relative;
   z-index: 3;
 }
@@ -292,30 +289,35 @@ body > .window.bd-black {
    breaking their viewport-relative positioning. */
 [data-role="ribbonmenu"] > .content-holder,
 .ribbonmenu > .content-holder {
-  background: var(--pc-surface-white) !important;
-  border: 1px solid var(--pc-border-subtle) !important;
-  border-top: none !important;
-  border-radius: 0 var(--pc-radius-md) var(--pc-radius-md) var(--pc-radius-md) !important;
-  margin: 0 12px !important;
-  padding-top: 0 !important;
-  box-shadow: var(--pc-shadow-sm) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
   position: relative;
   z-index: 1;
 }
 
-/* Only restyle the visible (active) section — don't touch display, Metro
-   toggles display:none on inactive tabs. */
+/* Force proper tab-section visibility — Metro's CSS was being outranked
+   by our content-holder overrides, causing all sections to show at once. */
 [data-role="ribbonmenu"] > .content-holder > .section,
 .ribbonmenu > .content-holder > .section {
   background: transparent;
   padding: 6px 2px 4px;
+  display: none !important;
+}
+
+[data-role="ribbonmenu"] > .content-holder > .section.active,
+.ribbonmenu > .content-holder > .section.active {
+  display: block !important;
 }
 
 /* ---------- Groups inside a ribbon section ---------- */
 [data-role="ribbonmenu"] .group,
 .ribbonmenu .group {
   position: relative;
-  padding: 0 10px 14px;
+  padding: 0 10px 6px;
   border: none;
   display: flex;
   flex-direction: column;
@@ -333,18 +335,7 @@ body > .window.bd-black {
 /* Group label ("Visit", "Machine Connection", "File", "Wizards"...) */
 [data-role="ribbonmenu"] .group > .title,
 .ribbonmenu .group > .title {
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 10px;
-  font-weight: var(--pc-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: var(--pc-tracking-wide);
-  color: var(--pc-text-tertiary);
-  padding: 0 var(--pc-space-2);
-  line-height: var(--pc-leading-tight);
+  display: none !important;
 }
 
 /* ---------- Ribbon buttons ---------- */
@@ -553,24 +544,37 @@ body > .window.bd-black {
   border-color: rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Variant: primary → orange accent */
+/* Variant: primary → neutral ghost */
 .button.primary:not(.jogbtn) {
-  background: var(--pc-primary) !important;
-  color: var(--pc-text-on-accent) !important;
-  border-color: var(--pc-primary) !important;
+  background: var(--pc-surface) !important;
+  color: var(--pc-text) !important;
+  border: 1px solid var(--pc-border-default) !important;
+  box-shadow: var(--pc-shadow-sm);
 }
 .button.primary:not(.jogbtn):hover {
-  background: var(--pc-primary-hover) !important;
-  border-color: var(--pc-primary-hover) !important;
+  background: var(--pc-surface-hover) !important;
+  border-color: var(--pc-border-strong) !important;
 }
 
-/* Variant: success → orange accent (brand primary in this app) */
-.button.success:not(.jogbtn) {
+/* Variant: success → neutral ghost by default (only #connectBtn stays orange) */
+.button.success:not(.jogbtn):not(#connectBtn) {
+  background: var(--pc-surface) !important;
+  color: var(--pc-text) !important;
+  border: 1px solid var(--pc-border-default) !important;
+  box-shadow: var(--pc-shadow-sm);
+}
+.button.success:not(.jogbtn):not(#connectBtn):hover {
+  background: var(--pc-surface-hover) !important;
+  border-color: var(--pc-border-strong) !important;
+}
+
+/* Connect button — the ONE filled orange primary in the UI */
+#connectBtn {
   background: var(--pc-primary) !important;
   color: var(--pc-text-on-accent) !important;
   border-color: var(--pc-primary) !important;
 }
-.button.success:not(.jogbtn):hover {
+#connectBtn:hover {
   background: var(--pc-primary-hover) !important;
   border-color: var(--pc-primary-hover) !important;
 }
