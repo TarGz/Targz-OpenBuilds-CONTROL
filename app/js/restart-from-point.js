@@ -43,7 +43,7 @@ function openScrubber() {
   }
 
   $('#restartScrubber').show();
-  $('#openScrubberBtn').hide();
+  $('#openScrubberBtn').addClass('active');
 
   // Move to start
   onRestartSliderMove(0);
@@ -68,12 +68,19 @@ function closeScrubber() {
 
   restoreToolpathColors();
   $('#restartScrubber').hide();
-  $('#openScrubberBtn').show();
+  $('#openScrubberBtn').removeClass('active');
 }
 
 function onRestartSliderMove(value) {
   var idx = parseInt(value);
   if (!object || !object.userData || !object.userData.linePoints) return;
+
+  // Paint the left-of-thumb fill (Chrome has no ::-moz-range-progress equivalent)
+  var slider = document.getElementById('restartSlider');
+  if (slider) {
+    var pct = ((value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.setProperty('--pc-slider-fill', pct + '%');
+  }
 
   var lp = object.userData.linePoints[idx];
   if (!lp) return;
@@ -113,13 +120,15 @@ function onRestartSliderMove(value) {
   if (lp.indx !== undefined && typeof editor !== 'undefined') {
     gcodeText = editor.session.getLine(lp.indx);
     if (gcodeText && gcodeText.length > 60) gcodeText = gcodeText.substring(0, 60) + '...';
-    gcodeText = ' | ' + escapeHtml(gcodeText);
+    gcodeText = escapeHtml(gcodeText);
   }
 
   $('#restartScrubInfo').html(
-    '<span class="pc-pill">Line ' + lineNum + '</span>' +
-    'X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2) +
-    '<span class="pc-muted">' + gcodeText + '</span>'
+    '<div class="pc-info-line">' +
+      '<span class="pc-pill">Line ' + lineNum + '</span>' +
+      'X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2) +
+    '</div>' +
+    (gcodeText ? '<div class="pc-info-gcode">' + gcodeText + '</div>' : '')
   );
 }
 
@@ -250,9 +259,10 @@ function dimToolpathBefore(pointIdx) {
   var bb = (bg & 0xff) / 255;
   var t = 0.88;
   var inv = 1 - t;
-  var end = pointIdx * 3;
+  var start = pointIdx * 3;
+  var total = colors.array.length;
 
-  for (var i = 0; i < end; i += 3) {
+  for (var i = start; i < total; i += 3) {
     colors.array[i]     = originalToolpathColors[i]     * inv + br  * t;
     colors.array[i + 1] = originalToolpathColors[i + 1] * inv + bgG * t;
     colors.array[i + 2] = originalToolpathColors[i + 2] * inv + bb  * t;
@@ -309,7 +319,7 @@ function onGcodeReloaded() {
   scrubberOpen = false;
   hideRestartBanner();
   $('#restartScrubber').hide();
-  $('#openScrubberBtn').show();
+  $('#openScrubberBtn').removeClass('active');
 }
 
 // Initialize when DOM is ready

@@ -68,48 +68,99 @@ body > .window.bd-black {
   color: var(--pc-text);
 }
 
-/* ---------- Bottom status bar ---------- */
+/* ---------- Status bar — thin footer strip ---------- */
+/* Plain text status (timer, Port, Controller, Job Queue) in a slim
+   20px strip at the very bottom. Progress bar is a 2px line right
+   above the footer, visible only when a job is running. */
 .window-content > .fixed-bottom {
-  background: var(--pc-surface-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  background: var(--pc-surface-white);
   border-top: 1px solid var(--pc-border-subtle);
-  padding: 4px 10px;
+  padding: 0 14px;
+  z-index: 2000;
+  pointer-events: auto;
+  height: 22px;
+  display: flex;
+  align-items: center;
 }
 
 .window-content > .fixed-bottom .row {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.window-content > .fixed-bottom .cell-3 {
+  width: auto !important;
+  flex: 0 0 auto;
+  padding: 0 !important;
+}
+
+.window-content > .fixed-bottom .cell-3 > div {
+  display: inline-flex;
 }
 
 .window-content > .fixed-bottom .badge.inline.bg-openbuilds {
+  -webkit-app-region: no-drag;
+  width: auto !important;
   background: transparent !important;
-  color: var(--pc-text) !important;
+  background-color: transparent !important;
+  color: var(--pc-text-secondary) !important;
   font-family: var(--pc-font);
   font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: var(--pc-radius-pill);
-  border: 1px solid var(--pc-border-subtle);
-  background-color: var(--pc-surface-white) !important;
-  box-shadow: var(--pc-shadow-sm);
-  letter-spacing: 0.2px;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .window-content > .fixed-bottom .badge.inline.bg-openbuilds .fg-red {
   color: var(--pc-danger) !important;
 }
 
-/* Progress bar under status */
+/* Progress bar — 2px line sitting just above the footer */
+.window-content > .fixed-bottom .row:last-child {
+  position: fixed;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  top: auto;
+  margin: 0;
+  display: block;
+  pointer-events: none;
+  z-index: 2001;
+}
+
+.window-content > .fixed-bottom .row:last-child .cell-12 {
+  padding: 0;
+  width: 100%;
+}
+
 .window-content > .fixed-bottom [data-role="progress"] {
-  margin-top: 6px;
-  background: var(--pc-border-subtle);
-  border-radius: var(--pc-radius-pill);
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
   overflow: hidden;
-  height: 4px;
+  height: 2px;
+  width: 100%;
 }
 
 .window-content > .fixed-bottom [data-role="progress"] .bar {
   background: var(--pc-primary) !important;
+  height: 2px;
 }
 
 /* ---------- Splash screen ---------- */
@@ -132,13 +183,43 @@ body > .window.bd-black {
 /* ---------- Top tab strip (Machine Control / Grbl / FluidNC / Troubleshooting) ---------- */
 [data-role="ribbonmenu"] > .tabs-holder,
 .ribbonmenu > .tabs-holder {
-  background: transparent;
-  border: none;
-  padding: 6px 12px 0;
-  margin: 0;
-  display: flex;
-  gap: 2px;
-  list-style: none;
+  background: transparent !important;
+  border: none !important;
+  padding: 4px 0 0 12px !important;
+  margin: 0 0 -2px 0 !important;
+  display: flex !important;
+  gap: 0 !important;
+  list-style: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  position: relative;
+  z-index: 2;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li,
+.ribbonmenu > .tabs-holder > li {
+  height: auto !important;
+  line-height: normal !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li::before,
+[data-role="ribbonmenu"] > .tabs-holder > li::after,
+.ribbonmenu > .tabs-holder > li::before,
+.ribbonmenu > .tabs-holder > li::after {
+  display: none !important;
+  content: none !important;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li.active,
+.ribbonmenu > .tabs-holder > li.active {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 [data-role="ribbonmenu"] > .tabs-holder > li,
@@ -149,20 +230,36 @@ body > .window.bd-black {
 
 [data-role="ribbonmenu"] > .tabs-holder > li > a,
 .ribbonmenu > .tabs-holder > li > a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0;
-  background: transparent;
-  color: var(--pc-text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  cursor: pointer;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px 22px !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-bottom: none !important;
+  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0 !important;
+  background: hsla(0, 0%, 100%, 0.5) !important;
+  color: var(--pc-text-secondary) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1px !important;
+  cursor: pointer !important;
   transition: background var(--pc-transition), color var(--pc-transition);
-  text-decoration: none;
+  text-decoration: none !important;
+  line-height: 1 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li + li > a,
+.ribbonmenu > .tabs-holder > li + li > a {
+  margin-left: -1px !important;
+}
+
+[data-role="ribbonmenu"] > .tabs-holder > li > a i,
+.ribbonmenu > .tabs-holder > li > a i {
+  font-size: 18px !important;
+  line-height: 1 !important;
 }
 
 [data-role="ribbonmenu"] > .tabs-holder > li > a:hover,
@@ -173,28 +270,42 @@ body > .window.bd-black {
 
 [data-role="ribbonmenu"] > .tabs-holder > li.active > a,
 .ribbonmenu > .tabs-holder > li.active > a {
-  background: var(--pc-surface-white);
-  color: var(--pc-primary);
-  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+  background: #FFF6EF !important;
+  color: var(--pc-primary) !important;
+  border-color: var(--pc-primary-subtle) !important;
+  box-shadow: 0 -2px 8px rgba(255, 106, 0, 0.08) !important;
+  border-radius: var(--pc-radius-md) var(--pc-radius-md) 0 0 !important;
+  padding-bottom: 14px !important;
+  position: relative;
+  z-index: 3;
 }
 
-/* FontAwesome icons inside tab labels get the active color */
 [data-role="ribbonmenu"] > .tabs-holder > li.active > a i,
 .ribbonmenu > .tabs-holder > li.active > a i {
-  color: var(--pc-primary);
+  color: var(--pc-primary) !important;
+}
+
+/* FontAwesome icons inside the active tab inherit the on-accent color */
+[data-role="ribbonmenu"] > .tabs-holder > li.active > a i,
+.ribbonmenu > .tabs-holder > li.active > a i {
+  color: var(--pc-text-on-accent) !important;
 }
 
 /* ---------- Ribbon content panel ---------- */
+/* NOTE: intentionally no backdrop-filter here — it creates a containing
+   block for fixed descendants (like the pc-navbar inside #tab-three),
+   breaking their viewport-relative positioning. */
 [data-role="ribbonmenu"] > .content-holder,
 .ribbonmenu > .content-holder {
-  background: var(--pc-surface-white);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--pc-border-subtle);
-  border-radius: 0 var(--pc-radius-md) var(--pc-radius-md) var(--pc-radius-md);
-  margin: 0 12px;
-  box-shadow: var(--pc-shadow-sm);
-  overflow: hidden;
+  background: var(--pc-surface-white) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
+  border-top: none !important;
+  border-radius: 0 var(--pc-radius-md) var(--pc-radius-md) var(--pc-radius-md) !important;
+  margin: 0 12px !important;
+  padding-top: 0 !important;
+  box-shadow: var(--pc-shadow-sm) !important;
+  position: relative;
+  z-index: 1;
 }
 
 /* Only restyle the visible (active) section — don't touch display, Metro
@@ -202,14 +313,14 @@ body > .window.bd-black {
 [data-role="ribbonmenu"] > .content-holder > .section,
 .ribbonmenu > .content-holder > .section {
   background: transparent;
-  padding: 10px 4px 6px;
+  padding: 6px 2px 4px;
 }
 
 /* ---------- Groups inside a ribbon section ---------- */
 [data-role="ribbonmenu"] .group,
 .ribbonmenu .group {
   position: relative;
-  padding: 0 12px 18px;
+  padding: 0 10px 14px;
   border: none;
   display: flex;
   flex-direction: column;
@@ -228,11 +339,11 @@ body > .window.bd-black {
 [data-role="ribbonmenu"] .group > .title,
 .ribbonmenu .group > .title {
   position: absolute;
-  bottom: 4px;
+  bottom: 2px;
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -259,17 +370,17 @@ body > .window.bd-black {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-width: 68px;
-  min-height: 68px;
+  gap: 2px;
+  min-width: 64px;
+  min-height: 58px;
 }
 
 .ribbon-icon-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  min-height: 36px;
+  padding: 5px 10px;
+  min-height: 32px;
 }
 
 .ribbon-button:hover,
@@ -280,7 +391,7 @@ body > .window.bd-black {
 
 .ribbon-button .icon,
 .ribbon-icon-button .icon {
-  font-size: 22px;
+  font-size: 20px;
   color: var(--pc-text-secondary);
   line-height: 1;
   display: inline-flex;
@@ -289,7 +400,7 @@ body > .window.bd-black {
 }
 
 .ribbon-icon-button .icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .ribbon-button .caption,
@@ -403,6 +514,7 @@ body > .window.bd-black {
   color: var(--pc-danger) !important;
 }
 
+
 /* =====================================================================
    Phase 3 — Primitives (buttons, inputs, badges, tables, cards,
    dialogs, toasts). Scoped to avoid touching ribbon/jog specials.
@@ -455,27 +567,28 @@ body > .window.bd-black {
   border-color: var(--pc-primary-hover) !important;
 }
 
-/* Variant: success → green */
+/* Variant: success → orange accent (brand primary in this app) */
 .button.success:not(.jogbtn) {
-  background: var(--pc-success) !important;
+  background: var(--pc-primary) !important;
   color: var(--pc-text-on-accent) !important;
-  border-color: var(--pc-success) !important;
+  border-color: var(--pc-primary) !important;
 }
 .button.success:not(.jogbtn):hover {
-  background: #1aa84e !important;
-  border-color: #1aa84e !important;
+  background: var(--pc-primary-hover) !important;
+  border-color: var(--pc-primary-hover) !important;
 }
 
-/* Outline success (e.g. Scan Network) */
+/* Outline success (e.g. Scan Network) — neutral ghost */
 .button.outline.success {
   background: transparent !important;
-  color: var(--pc-success) !important;
-  border: 1px solid var(--pc-success) !important;
+  color: var(--pc-text-secondary) !important;
+  border: 1px solid var(--pc-border-subtle) !important;
   box-shadow: none;
 }
 .button.outline.success:hover {
-  background: var(--pc-success-bg) !important;
-  color: var(--pc-success) !important;
+  background: rgba(0, 0, 0, 0.03) !important;
+  color: var(--pc-text) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Variant: alert / danger → red */
@@ -795,19 +908,19 @@ table.table.compact tbody td {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   background: var(--pc-surface-white) !important;
   color: var(--pc-text) !important;
   width: 161px;
-  height: 42px !important;
-  padding: 0 12px !important;
+  height: 34px !important;
+  padding: 0 10px !important;
   border: 1px solid var(--pc-border-subtle) !important;
   border-radius: var(--pc-radius-md);
   box-shadow: var(--pc-shadow-sm);
   line-height: 1 !important;
   font-family: var(--pc-font);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 15px;
   position: relative;
   cursor: pointer;
   transition: border-color var(--pc-transition), box-shadow var(--pc-transition);
@@ -823,7 +936,7 @@ table.table.compact tbody td {
   font-family: var(--pc-font);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 16px;
   letter-spacing: -0.2px;
 }
 
@@ -844,9 +957,9 @@ table.table.compact tbody td {
   font-family: var(--pc-font);
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  font-size: 18px !important;
-  height: 30px !important;
-  line-height: 30px !important;
+  font-size: 14px !important;
+  height: 26px !important;
+  line-height: 26px !important;
   padding-right: 8px !important;
   outline: none;
 }
@@ -884,8 +997,8 @@ table.table.compact tbody td {
 
 /* ---------- Jog direction buttons (the big 75×75 square xlarge) ---------- */
 .button.light.square.xlarge.jogbtn {
-  width: 72px !important;
-  height: 72px !important;
+  width: 60px !important;
+  height: 60px !important;
   border-radius: var(--pc-radius-md) !important;
   background: var(--pc-surface-white) !important;
   color: var(--pc-text) !important;
@@ -956,11 +1069,19 @@ table.table.compact tbody td {
 #jrocell,
 #frocell,
 #trocell {
-  padding: 12px 14px !important;
+  padding: 6px 10px !important;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+}
+
+/* Cap vertical slider track height — Metro renders data-size as inline
+   height on the .slider.vertical element; this overrides to save pixels. */
+#jrocell .slider.vertical,
+#frocell .slider.vertical,
+#trocell .slider.vertical {
+  height: 120px !important;
 }
 
 #jrocell.border-left,
@@ -985,11 +1106,28 @@ table.table.compact tbody td {
   box-shadow: none !important;
 }
 
-/* Vertical slider track */
+/* Vertical slider — remove the pale gray container, keep only the thin
+   track + orange fill + thumb. */
 #jrocell .slider,
 #frocell .slider,
 #trocell .slider {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* The inner backing (where Metro draws the gray track) */
+#jrocell .slider.vertical .backside,
+#frocell .slider.vertical .backside,
+#trocell .slider.vertical .backside,
+#jrocell .slider .backside,
+#frocell .slider .backside,
+#trocell .slider .backside {
   background: var(--pc-border-subtle) !important;
+  width: 4px !important;
+  border-radius: 100px !important;
+  left: 50% !important;
+  transform: translateX(-50%);
 }
 
 #jrocell .slider .complete,
@@ -997,14 +1135,45 @@ table.table.compact tbody td {
 #trocell .slider .complete,
 [data-cls-complete*="openbuilds"] .complete {
   background: var(--pc-primary) !important;
+  width: 4px !important;
+  border-radius: 100px !important;
+  left: 50% !important;
+  transform: translateX(-50%);
 }
 
 #jrocell .slider .marker,
 #frocell .slider .marker,
-#trocell .slider .marker {
-  background: var(--pc-primary) !important;
-  border-color: var(--pc-primary) !important;
-  box-shadow: var(--pc-shadow-sm);
+#trocell .slider .marker,
+#jrocell .slider.vertical .marker,
+#frocell .slider.vertical .marker,
+#trocell .slider.vertical .marker {
+  background: #fff !important;
+  border: 3px solid var(--pc-primary) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.12) !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Kill any ::before/::after pseudo-decorations Metro might add */
+#jrocell .slider .marker::before,
+#frocell .slider .marker::before,
+#trocell .slider .marker::before,
+#jrocell .slider .marker::after,
+#frocell .slider .marker::after,
+#trocell .slider .marker::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* The numeric tally under each slider (realJog/realFeed/realSpeed) */
@@ -1105,6 +1274,15 @@ table.table.compact tbody td {
 
 /* ---------- GCODE & FluidNC editors ---------- */
 #editor,
+#fluidnceditor,
+#renderArea,
+#macros,
+#console {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+#editor,
 #fluidnceditor {
   background: var(--pc-surface-white) !important;
   border: 1px solid var(--pc-border-subtle) !important;
@@ -1134,6 +1312,7 @@ table.table.compact tbody td {
 
 /* Editor bottom toolbar (Update 3D View, Save, Find, Undo, Redo, etc.) */
 #tab-two > .fixed-bottom.m-3.mb-9 {
+  position: fixed !important;
   display: inline-flex;
   gap: 6px;
   flex-wrap: wrap;
@@ -1147,12 +1326,14 @@ table.table.compact tbody td {
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  bottom: 60px !important;
+  bottom: 20px !important;
   margin: 0 !important;
+  z-index: 90;
 }
 
 /* Console's fixed-bottom command-form wrapper lives inside #tab-one */
 #tab-one > .fixed-bottom.m-3.mb-9 {
+  position: fixed !important;
   background: var(--pc-surface-white);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -1163,11 +1344,12 @@ table.table.compact tbody td {
   left: 50%;
   right: auto;
   transform: translateX(-50%);
-  bottom: 60px !important;
+  bottom: 20px !important;
   margin: 0 !important;
   display: inline-flex;
   gap: 6px;
   align-items: center;
+  z-index: 90;
 }
 
 /* Tighter buttons inside those floating toolbars */

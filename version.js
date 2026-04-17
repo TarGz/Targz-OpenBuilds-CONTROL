@@ -3,6 +3,49 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-17',
+      version: '1.4.9',
+      changes: [
+        'Revert tab-action experiment; restore 3D-view floating nav-bar at bottom of #tab-three'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.8',
+      changes: [
+        'Fold 3D-view tools into the sub-tabs strip as <li class="tab-action"> entries (Simulate / Stop / Reset View / Restart from point)',
+        'Action items push right via margin-left:auto on the first one; accent class highlights Restart from point in orange',
+        'Removes the floating nav-bar entirely — zero bottom chrome, full canvas'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.7',
+      changes: [
+        'Move 3D-view tools (Simulate / Stop / Reset View / Restart from point) inline with the sub-tabs row as a compact pill',
+        'Sub-tabs become fully rounded pills (pill radius, active = white with shadow)'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.6',
+      changes: [
+        'Relocate status pills (timer, Port, Controller, Job Queue) into the title bar — reclaims the entire 40px bottom strip for content',
+        'Move progress bar to a 2px line just under the title bar (visible only during active jobs)',
+        'Lower floating nav-bars to bottom:20px; grow 3D canvas by another ~40px'
+      ]
+    },
+    {
+      date: '2026-04-17',
+      version: '1.4.5',
+      changes: [
+        'Tighten UI chrome: smaller DROs (34px, 15px/16px), 60×60 jog direction buttons, trimmed ribbon padding',
+        'Cap vertical jog/feed/tool slider tracks to 120px, tighter slider cells',
+        'Reduce initial height reservation for #renderArea, #editor, #console, #macros so 3D canvas gains ~95px',
+        'Nudge scrubber bottom offset to 110px'
+      ]
+    },
+    {
+      date: '2026-04-17',
       version: '1.4.4',
       changes: [
         'Restyle console (#console) and command form: glass card, monospace paragraphs with pill hover',
