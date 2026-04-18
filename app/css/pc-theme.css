@@ -1311,46 +1311,60 @@ table.table.compact tbody td {
   font-family: var(--pc-font-mono) !important;
 }
 
-/* Editor bottom toolbar (Update 3D View, Save, Find, Undo, Redo, etc.) */
+/* Editor toolbar docked INSIDE #tab-two (Update 3D View, Save, Find, Undo, Redo, etc.) */
 #tab-two > .fixed-bottom.m-3.mb-9 {
-  position: fixed !important;
-  display: inline-flex;
+  position: static !important;
+  display: flex;
   gap: 6px;
   flex-wrap: wrap;
   background: var(--pc-surface-white);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-xl);
-  padding: 6px 10px;
-  box-shadow: var(--pc-shadow-lg);
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-  bottom: 20px !important;
+  border-top: 1px solid var(--pc-border-hairline);
+  border-radius: 0;
+  padding: 8px 12px !important;
+  box-shadow: none !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  bottom: auto !important;
   margin: 0 !important;
-  z-index: 90;
+  flex-shrink: 0;
+  z-index: auto;
+  align-items: center;
 }
 
-/* Console's fixed-bottom command-form wrapper lives inside #tab-one */
+/* Console's command-form row lives INSIDE #tab-one, not as a floating pill.
+   With #tab-one flex-column, it sits naturally at the bottom of the tab. */
 #tab-one > .fixed-bottom.m-3.mb-9 {
-  position: fixed !important;
+  position: static !important;
   background: var(--pc-surface-white);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-xl);
-  padding: 6px 10px;
-  box-shadow: var(--pc-shadow-lg);
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
-  bottom: 20px !important;
+  border-top: 1px solid var(--pc-border-hairline);
+  border-radius: 0;
+  padding: 8px 12px !important;
+  box-shadow: none !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  bottom: auto !important;
   margin: 0 !important;
-  display: inline-flex;
+  display: flex;
   gap: 6px;
   align-items: center;
-  z-index: 90;
+  flex-shrink: 0;
+  z-index: auto;
+}
+
+#tab-one > .fixed-bottom.m-3.mb-9 #commandform {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  align-items: center;
+}
+
+#tab-one > .fixed-bottom.m-3.mb-9 #command,
+#tab-one > .fixed-bottom.m-3.mb-9 .input {
+  flex: 1;
+  width: 100% !important;
+  min-width: 0;
 }
 
 /* Tighter buttons inside those floating toolbars */

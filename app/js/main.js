@@ -316,6 +316,7 @@ function loadFile(f) {
       }
       loadedFileName = f.name;
       setWindowTitle()
+      if (typeof cdUpdateFileState === 'function') cdUpdateFileState(true, f.name);
       if (webgl) {
         printLog(`<span class="fg-red">[ GCODE Parser ]</span><span class='fg-darkGray'> GCODE File Loaded, please wait while we render a preview... </span>`);
       } else {

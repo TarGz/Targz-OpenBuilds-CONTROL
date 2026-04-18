@@ -69,6 +69,13 @@ function closeScrubber() {
   restoreToolpathColors();
   $('#restartScrubber').hide();
   $('#openScrubberBtn').removeClass('active');
+
+  // Command Deck: close the docked scrub panel and restore the Edit Start
+  // trigger if a gcode file is still loaded.
+  $('#cd-scrub-panel').hide();
+  if (typeof editor !== 'undefined' && editor && editor.session && editor.session.getLength() > 1) {
+    $('#cd-scrub-trigger').show();
+  }
 }
 
 function onRestartSliderMove(value) {

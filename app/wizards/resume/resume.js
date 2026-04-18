@@ -341,26 +341,10 @@ function startFromHere(lineNumber) {
   window._recoveryState = state;
   window._recoveryLineNumber = lineNumber;
 
-  Metro.dialog.create({
-    title: "<i class='fas fa-fw fa-route'></i> Recover Job From Line " + lineNumber,
-    content: resumeFileTemplate,
-    toTop: true,
-    width: '75%',
-    clsDialog: 'dark',
-    actions: [{
-        caption: "Proceed — Replace GCODE and Update 3D View",
-        cls: "js-dialog-close alert",
-        onclick: function() {
-          redoJob();
-        }
-      },
-      {
-        caption: "Cancel",
-        cls: "js-dialog-close",
-        onclick: function() {}
-      }
-    ]
-  });
+  // Skip the confirmation dialog — proceed straight to recovery.
+  // (Validation errors are still surfaced above via Metro.dialog; warnings
+  // are non-blocking.)
+  redoJob();
 }
 
 function escapeHtmlResume(text) {
@@ -484,5 +468,4 @@ function redoJob() {
   window._recoveryState = null;
   window._recoveryLineNumber = null;
 
-  Metro.toast.create('Recovery G-code loaded. Review in editor, then click Run Job when ready.', null, 8000, 'bg-green');
 }

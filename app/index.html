@@ -664,6 +664,7 @@
             <div class="cd-topbar-conn">
               <span id="cdConnDot" class="cd-conn-dot"></span>
               <span id="cdConnLabel" class="cd-conn-label">OFFLINE</span>
+              <select id="cdPortSelect" class="cd-port-select" title="Serial port"></select>
               <button id="cdConnBtn">CONNECT</button>
             </div>
           </div>
@@ -873,19 +874,6 @@
                     <div class="section" id="tab-three">
                       <div id="renderArea"></div>
                       <div style="position: absolute; top: 10px; right:10px; z-index: 1; max-width: 100px;" id="overlayimg"></div>
-                      <div id="restartScrubber" class="pc-ui pc-scrubber" style="display:none;">
-                        <div class="pc-scrubber-row">
-                          <span class="pc-label"><i class="fas fa-route"></i> Scrub to restart point</span>
-                          <input type="range" id="restartSlider" class="pc-slider" min="0" max="100" value="0" oninput="onRestartSliderMove(this.value)">
-                        </div>
-                        <div class="pc-scrubber-row pc-scrubber-info">
-                          <span id="restartScrubInfo" class="pc-info-text">Line 1 | X:0 Y:0 Z:0</span>
-                          <span class="pc-btn-group">
-                            <button class="pc-btn pc-btn-primary" onclick="triggerRestartFromScrubber()"><i class="fas fa-play"></i> Restart from here</button>
-                            <button class="pc-btn pc-btn-ghost" onclick="closeScrubber()"><i class="fas fa-times"></i> Cancel</button>
-                          </span>
-                        </div>
-                      </div>
                       <div class="pc-ui pc-navbar">
                         <button class="pc-icon-btn" onclick="simSpeed();" title="Simulation speed">
                           <i class="fas fa-tachometer-alt"></i><span class="pc-icon-caption"><span id="simspeedval">1</span>x</span>
@@ -899,10 +887,6 @@
                         </button>
                         <button id="resetViewBtn" class="pc-icon-btn" onclick="resetView(object)" title="Resets camera angle and zoom">
                           <i class="fas fa-expand"></i><span class="pc-icon-caption">Reset View</span>
-                        </button>
-                        <span class="pc-navbar-sep"></span>
-                        <button id="openScrubberBtn" class="pc-icon-btn pc-icon-btn-accent" onclick="openScrubber()" title="Scrub through toolpath to pick a restart point">
-                          <i class="fas fa-route"></i><span class="pc-icon-caption">Restart from point</span>
                         </button>
                       </div>
                       <div id="conetext" style="position:absolute;top:0px;left:0px; padding: 0px; display:none; z-index:100;"></div>
@@ -937,11 +921,12 @@
                 </div>
               </div>
 
-              <!-- Run controls -->
-              <div id="cd-run-controls" class="cd-panel-section cd-run-section">
+              <!-- Bottom bloc: Run controls + Edit Start + Scrub panel
+                   (always visible, pinned bottom; scrub panel expands below
+                   the Edit Start button when opened) -->
+              <div id="cd-run-controls" class="cd-panel-section cd-run-section cd-run-bottom">
                 <div class="cd-section-title"><span class="cd-dot"></span> RUN</div>
 
-                <!-- Idle: file not running -->
                 <div id="cdRunIdle">
                   <button id="cdStartBtn" class="cd-btn-start" onclick="runJobFile()" disabled>▶ START</button>
                   <div class="cd-btn-row">
@@ -950,13 +935,41 @@
                   </div>
                 </div>
 
-                <!-- Active: job running or paused -->
                 <div id="cdRunActive" style="display:none;">
                   <button id="cdPauseResumeBtn" class="cd-btn-pause">❚❚ PAUSE</button>
                   <div class="cd-btn-row">
                     <button id="cdStopBtn" class="cd-btn-stop">■ STOP</button>
                     <button id="cdAbortBtn" class="cd-btn-abort">⊗ ABORT</button>
                   </div>
+                </div>
+
+                <button id="cdEditStartBtn" class="cd-edit-start-btn">✎ EDIT START</button>
+
+                <!-- Scrub to restart point (opens below Edit Start) -->
+                <div id="cd-scrub-panel" class="cd-scrub-section" style="display:none;">
+                  <div class="cd-scrub-head">
+                    <div class="cd-section-title cd-scrub-title">
+                      <i class="fas fa-route"></i> SCRUB TO RESTART POINT
+                    </div>
+                    <button id="cdScrubStopBtn" class="cd-scrub-stop" title="Close scrubber">↺ STOP PT</button>
+                  </div>
+
+                  <input type="range" id="restartSlider" class="cd-scrub-slider" min="0" max="100" value="0" oninput="onRestartSliderMove(this.value)">
+
+                  <div class="cd-scrub-steps">
+                    <button class="cd-scrub-step" data-step="-100">-100</button>
+                    <button class="cd-scrub-step" data-step="-10">-10</button>
+                    <button class="cd-scrub-step" data-step="-1">-1</button>
+                    <button class="cd-scrub-step" data-step="1">+1</button>
+                    <button class="cd-scrub-step" data-step="10">+10</button>
+                    <button class="cd-scrub-step" data-step="100">+100</button>
+                  </div>
+
+                  <div id="restartScrubInfo" class="cd-scrub-info pc-info-text">
+                    <div class="pc-info-line"><span class="pc-pill">Line 0</span>X:0 Y:0 Z:0</div>
+                  </div>
+
+                  <button class="cd-btn-start cd-scrub-restart" onclick="triggerRestartFromScrubber()">✓ VALIDATE</button>
                 </div>
               </div>
 
