@@ -21,6 +21,7 @@
     <link type="text/css" rel="stylesheet" media="all" href="css/image-checkbox.css" />
     <link rel="stylesheet" href="css/restart-from-point.css" />
     <link rel="stylesheet" href="css/commanddeck.css" />
+    <link rel="stylesheet" href="css/settings.css" />
 
   </head>
 
@@ -54,7 +55,7 @@
             <li><a id="controlTab" href="#section-jog" onclick="manualcontrolPanel();"><i class="fas fa-fw fa-play"></i> Machine Control</a></li>
             <li id="grblSettings" style="display: none;"><a id="grblTab" href="#section-grbl" onclick="grblPanel();"><i class="fas fa-fw fa-sliders-h"></i> <span id="grbl-settings-tab-title">Grbl</span> Settings</a></li>
             <li id="fluidncSettings" style="display: none;"><a id="fluidncTab" href="#section-fluidnc" onclick="fluidncPanel();"><i class="fas fa-fw fa-sliders-h"></i> FluidNC Settings</a></li>
-            <li><a href="#section-troubleshooting" id="troubleshootingTab" onclick="troubleshootingPanel();"><i class="fas fa-fw fa-file-medical-alt"></i> Troubleshooting</a></li>
+            <li><a href="#section-troubleshooting" id="troubleshootingTab" onclick="troubleshootingPanel();"><i class="fas fa-fw fa-file-medical-alt"></i> Settings</a></li>
           </ul>
           <div class="content-holder">
 
@@ -654,7 +655,7 @@
             </div>
             <div class="cd-tabs-nav">
               <div class="cd-tab cd-tab-active" id="cdTabMachine">MACHINE CONTROL</div>
-              <div class="cd-tab" id="cdTabTroubleshooting">TROUBLESHOOTING</div>
+              <div class="cd-tab" id="cdTabTroubleshooting">SETTINGS</div>
             </div>
             <div class="cd-topbar-file">
               <span id="cdFileName" style="display:none;font-family:var(--cd-mono);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
@@ -664,7 +665,10 @@
             <div class="cd-topbar-conn">
               <span id="cdConnDot" class="cd-conn-dot"></span>
               <span id="cdConnLabel" class="cd-conn-label">OFFLINE</span>
-              <select id="cdPortSelect" class="cd-port-select" title="Serial port"></select>
+              <label class="cd-port-select-wrap">
+                <span class="cd-port-icon"><i class="fab fa-usb"></i></span>
+                <select id="cdPortSelect" class="cd-port-select" title="Serial port"></select>
+              </label>
               <button id="cdConnBtn">CONNECT</button>
             </div>
           </div>
@@ -712,6 +716,47 @@
               <div id="cdFeedValue" class="cd-feed-value">0 <span class="cd-feed-unit">mm/min</span></div>
               <div id="cdFeedMeta" class="cd-feed-meta">TOOL: OFF · JOG: 100%</div>
             </div>
+          </div>
+
+          <!-- Settings view (hidden until SETTINGS tab clicked; rendered by settings.js) -->
+          <div id="cd-settings-layout" style="display:none;" data-active="diagnostics">
+            <nav class="cd-set-nav">
+              <div class="cd-set-nav-header">SETTINGS</div>
+              <button class="cd-set-nav-item" data-target="parameters">
+                <span class="cd-set-nav-label">GRBL PARAMETERS</span>
+                <span class="cd-set-nav-hint">$0–$132 firmware config</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="calibration">
+                <span class="cd-set-nav-label">CALIBRATION</span>
+                <span class="cd-set-nav-hint">Axes steps · servo</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="tools">
+                <span class="cd-set-nav-label">TOOLS &amp; WIZARDS</span>
+                <span class="cd-set-nav-hint">Surfacing · firmware · USB</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="shortcuts">
+                <span class="cd-set-nav-label">KEYBOARD</span>
+                <span class="cd-set-nav-hint">Customize shortcuts</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="diagnostics">
+                <span class="cd-set-nav-label">DIAGNOSTICS</span>
+                <span class="cd-set-nav-hint">Inputs · comms · 3D viewer</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="joblog">
+                <span class="cd-set-nav-label">JOB LOG</span>
+                <span class="cd-set-nav-hint">History · recover</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="about">
+                <span class="cd-set-nav-label">ABOUT</span>
+                <span class="cd-set-nav-hint">Version · changelog</span>
+              </button>
+              <div class="cd-set-nav-spacer"></div>
+              <div class="cd-set-nav-footer" id="cdSetNavFooter">
+                PenPlotter Control<br>
+                <span id="cdSetNavFwVer">grbl —</span>
+              </div>
+            </nav>
+            <div class="cd-set-content" id="cdSetContent"><!-- panels injected by settings.js --></div>
           </div>
 
           <!-- Main 3-column body -->
@@ -1808,6 +1853,7 @@
   <script type="text/javascript" src="js/metroactions.js"></script>
   <script type="text/javascript" src="js/jog.js"></script>
   <script type="text/javascript" src="js/commanddeck.js"></script>
+  <script type="text/javascript" src="js/settings.js"></script>
   <script type="text/javascript" src="js/servo.js"></script>
 
   <script type="text/javascript" src="js/widget.js"></script>

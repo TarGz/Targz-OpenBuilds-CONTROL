@@ -2,6 +2,20 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-18',
+      version: '1.5.2',
+      changes: [
+        'Settings page: rework legacy troubleshootingPanel into a V2-design SETTINGS view rendered inside Command Deck',
+        'New left sub-nav with 7 sections (GRBL Parameters, Calibration, Tools & Wizards, Keyboard, Diagnostics, Job Log, About) mirroring the V2 mockup',
+        'Diagnostics: 3D viewer / serial / DRO toggles wired to existing localStorage flags; new showGpuInfo flag gates Computer card',
+        'GRBL Parameters panel: Basic/Advanced tabs, search, dirty-row highlighting, APPLY sends $key=value lines via sendGcode and re-requests $$',
+        'Tools panel wires Mobile Jog and USB Flashdrive to existing pages; Surfacing/Firmware fall back gracefully when handlers are absent',
+        'About panel reads VERSION + CHANGELOG when version.js is reachable via require, with kv fallback otherwise',
+        'Calibration / Keyboard rebind / Job Log entries scaffolded per the mockup with disabled actions until backends land',
+        'New app/css/settings.css and app/js/settings.js; SETTINGS / MACHINE CONTROL tabs in Command Deck topbar now swap views in place'
+      ]
+    },
+    {
       date: '2026-04-17',
       version: '1.5.1',
       changes: [

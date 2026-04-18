@@ -5,6 +5,7 @@ var disable3Drealtimepos = false;
 var disable3Dgcodepreview = false;
 var disableSerialLog = false; // todo also hide tab when set to true
 var disableDROupdates = false;
+var showGpuInfo = false;
 
 function saveDiagnostics() {
   localStorage.setItem('disable3Dviewer', disable3Dviewer);
@@ -14,6 +15,7 @@ function saveDiagnostics() {
   localStorage.setItem('disable3Dgcodepreview', disable3Dgcodepreview);
   localStorage.setItem('disableSerialLog', disableSerialLog);
   localStorage.setItem('disableDROupdates', disableDROupdates);
+  localStorage.setItem('showGpuInfo', showGpuInfo);
 
 }
 
@@ -83,7 +85,11 @@ function initDiagnostics() {
     disableDROupdates = false;
   }
 
-
+  if (localStorage.getItem('showGpuInfo')) {
+    showGpuInfo = JSON.parse(localStorage.getItem('showGpuInfo')) == true;
+  } else {
+    showGpuInfo = false;
+  }
 
 };
 

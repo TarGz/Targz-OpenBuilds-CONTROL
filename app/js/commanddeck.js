@@ -60,87 +60,369 @@ $(document).ready(function () {
   syncUnitBtns(); // initial sync on load
 
   // ─── Dev Machine (simulator) ─────────────────────────────────────────────
-  // Provides a no-hardware "connected" state so the UI can be exercised
-  // (DROs, feed, job controls, etc.) without a real controller.
+  // Drives the full "connected" state pipeline (setConnectBar + setControlBar
+  // + setJogPanel + cdUpdateConnection + setConsole + laststatus) via a 250 ms
+  // tick loop, so UI testing without hardware matches real controller flows.
   var DEV_PORT_VALUE = '__dev-machine__';
+  var DEV_PORT_DEMO  = '__dev-machine-with-demo__';
   var devTimer = null;
-  var devPos = { x: 0, y: 0, z: 0 };
+  var devJobStart = null;
+  var devAlarmUntil = 0;
 
-  function fakeStatus(overrides) {
-    var s = {
+  // Machine state we own
+  var dev = {
+    connectionStatus: 0,
+    runStatus: 'Idle',
+    posX: 0, posY: 0, posZ: 0,
+    feed: 0,
+    feedOverride: 100,
+    spindleOverride: 100,
+    realSpindle: 0,
+    toolOn: false,
+    spindle: 'M5',
+    queue: 0,
+    paused: false
+  };
+
+  // Small canned demo so users can exercise the run cycle with zero setup.
+  var DEV_DEMO_GCODE = [
+    '; --- Dev Machine demo (square + zigzag) ---',
+    'G21 ; mm',
+    'G90 ; absolute',
+    'G17 ; XY plane',
+    'G54 ; WCS 1',
+    'F4000',
+    'G0 Z5',
+    'G0 X0 Y0',
+    'G1 Z0 F1000',
+    'G1 X50 Y0 F4000',
+    'G1 X50 Y50',
+    'G1 X0  Y50',
+    'G1 X0  Y0',
+    '; zigzag fill',
+    'G1 X5  Y5',
+    'G1 X45 Y5',
+    'G1 X45 Y10',
+    'G1 X5  Y10',
+    'G1 X5  Y15',
+    'G1 X45 Y15',
+    'G1 X45 Y20',
+    'G1 X5  Y20',
+    'G1 X5  Y25',
+    'G1 X45 Y25',
+    'G1 X45 Y30',
+    'G1 X5  Y30',
+    'G1 X5  Y35',
+    'G1 X45 Y35',
+    'G1 X45 Y40',
+    'G1 X5  Y40',
+    'G0 Z5',
+    'G0 X0 Y0',
+    'M5',
+    '; end'
+  ].join('\n');
+
+  function buildFakeStatus() {
+    return {
       comms: {
-        connectionStatus: 1,
+        connectionStatus: dev.connectionStatus,
+        runStatus: dev.runStatus,
+        queue: dev.queue,
+        blocked: false,
         interfaces: {
           activePort: 'Dev Machine (simulator)',
           serialBaud: 115200,
-          ports: []
+          ports: [],
+          networkDevices: []
         }
       },
       machine: {
         position: {
-          work: { x: devPos.x, y: devPos.y, z: devPos.z },
-          machine: { x: devPos.x, y: devPos.y, z: devPos.z }
+          work:    { x: dev.posX, y: dev.posY, z: dev.posZ, a: 0 },
+          machine: { x: dev.posX, y: dev.posY, z: dev.posZ, a: 0 },
+          offset:  { x: 0, y: 0, z: 0, a: 0 }
         },
         overrides: {
-          realFeed: 0,
-          feedOverride: 100,
-          spindleOverride: 100
+          realFeed: dev.feed,
+          feedOverride: dev.feedOverride,
+          spindleOverride: dev.spindleOverride,
+          realSpindle: dev.realSpindle
         },
-        modals: { spindle: 'M5' }
+        modals: {
+          coordinatesys: 'G54',
+          homedRecently: true,
+          spindle: dev.spindle
+        },
+        firmware: { platform: 'dev', version: 'dev-0.0.0', date: '', type: 'grbl' },
+        inputs: [],
+        has4thAxis: false
       },
-      driver: { version: 'dev-0.0.0' }
+      driver: { version: 'dev-0.0.0', operatingsystem: 'dev', powersettings: {} }
     };
-    return Object.assign(s, overrides || {});
   }
 
-  function startDevMachine() {
-    window._devMachineActive = true;
-    var s = fakeStatus();
-    if (typeof cdUpdateConnection === 'function') cdUpdateConnection(1, s);
-    if (typeof cdUpdatePosition === 'function') cdUpdatePosition('0.000', '0.000', '0.000');
-    if (typeof cdUpdateFeed === 'function') cdUpdateFeed(0, 100, 100, false);
-    if (typeof cdUpdateQueue === 'function') cdUpdateQueue(0);
-    if (typeof cdUpdateMPos === 'function') cdUpdateMPos('0.000', '0.000', '0.000');
-    clearInterval(devTimer);
-    devTimer = setInterval(function () {
-      if (!window._devMachineActive) return;
-      // Heartbeat — keeps "connected" state fresh in case any code expects updates
-      if (typeof cdUpdatePosition === 'function') {
-        cdUpdatePosition(devPos.x.toFixed(3), devPos.y.toFixed(3), devPos.z.toFixed(3));
+  // Heavy, state-transition-level dispatch. Re-renders pills / button states
+  // and must only run when connectionStatus actually changes, otherwise the
+  // UI blinks at the tick rate.
+  function dispatchFullStatus(status) {
+    try {
+      if (typeof setConnectBar === 'function') setConnectBar(status.comms.connectionStatus, status);
+      if (typeof setControlBar === 'function') setControlBar(status.comms.connectionStatus, status);
+      if (typeof setJogPanel   === 'function') setJogPanel(status.comms.connectionStatus, status);
+      if (typeof cdUpdateConnection === 'function') cdUpdateConnection(status.comms.connectionStatus, status);
+      if (typeof setConsole    === 'function') setConsole(status.comms.connectionStatus, status);
+    } catch (e) { console.warn('[Dev Machine] dispatch error', e); }
+  }
+
+  // Light per-tick update: keep position / progress / laststatus fresh
+  // without touching pill labels or port-select DOM. Dirty-checks every
+  // value so identical-data ticks are true no-ops (fixes DRO flicker).
+  var _last = { x: null, y: null, z: null, feed: null, fOv: null, sOv: null, tool: null, queue: null };
+  function dispatchLight(status) {
+    window.laststatus = status;
+
+    var x = dev.posX.toFixed(3), y = dev.posY.toFixed(3), z = dev.posZ.toFixed(3);
+    if ((x !== _last.x || y !== _last.y || z !== _last.z) && typeof cdUpdatePosition === 'function') {
+      cdUpdatePosition(x, y, z);
+      if (typeof cdUpdateMPos === 'function') cdUpdateMPos(x, y, z);
+      _last.x = x; _last.y = y; _last.z = z;
+    }
+    if (dev.queue !== _last.queue && typeof cdUpdateQueue === 'function') {
+      cdUpdateQueue(dev.queue);
+      _last.queue = dev.queue;
+    }
+    if ((dev.feed !== _last.feed || dev.feedOverride !== _last.fOv ||
+         dev.spindleOverride !== _last.sOv || dev.toolOn !== _last.tool) &&
+        typeof cdUpdateFeed === 'function') {
+      cdUpdateFeed(dev.feed, dev.feedOverride, dev.spindleOverride, dev.toolOn);
+      _last.feed = dev.feed; _last.fOv = dev.feedOverride;
+      _last.sOv = dev.spindleOverride; _last.tool = dev.toolOn;
+    }
+  }
+
+  var _lastDispatchedStatus = -1;
+
+  function devTick() {
+    if (!window._devMachineActive) return;
+
+    var now = Date.now();
+    var simActive = (typeof simRunning !== 'undefined' && simRunning) &&
+                    (typeof cone !== 'undefined' && cone) &&
+                    (typeof object !== 'undefined' && object && object.userData &&
+                     object.userData.linePoints);
+
+    // Transition alarm → back to idle after 1 s flash
+    if (dev.connectionStatus === 5 && now > devAlarmUntil) {
+      dev.connectionStatus = 1;
+      dev.runStatus = 'Idle';
+    }
+
+    if (simActive && !dev.paused) {
+      dev.posX = cone.position.x;
+      dev.posY = cone.position.y;
+      dev.posZ = cone.position.z;
+      if (dev.connectionStatus !== 5) {
+        dev.connectionStatus = 3;
+        dev.runStatus = 'Run';
       }
-    }, 1000);
+    } else if (dev.paused) {
+      dev.connectionStatus = 4;
+      dev.runStatus = 'Hold';
+    } else if (dev.connectionStatus !== 5 && !simActive) {
+      // Only fall back to idle if not running — don't override a state
+      // transition that happened mid-tick (e.g. right after START)
+      if (dev.connectionStatus === 3) {
+        dev.connectionStatus = 1;
+        dev.runStatus = 'Idle';
+      }
+    }
+
+    var status = buildFakeStatus();
+
+    // Heavy dispatch ONLY when the connectionStatus has changed — this is
+    // what was causing the whole UI to blink at the tick rate.
+    if (status.comms.connectionStatus !== _lastDispatchedStatus) {
+      _lastDispatchedStatus = status.comms.connectionStatus;
+      dispatchFullStatus(status);
+    }
+
+    // Light per-tick update always runs
+    dispatchLight(status);
+
+    if (simActive) {
+      var total = object.userData.linePoints.length;
+      var done = Math.min(simIdx, total);
+      var pct = total > 0 ? (done / total) * 100 : 0;
+      var elapsedMs = devJobStart ? (now - devJobStart) : 0;
+      var elapsedMin = elapsedMs / 60000;
+      var remainingMin = (pct > 0.5) ? (elapsedMin * (100 / pct - 1)) : 0;
+      if (typeof cdUpdateJobProgress === 'function') {
+        cdUpdateJobProgress(pct, done, total, elapsedMin, remainingMin, undefined);
+      }
+    }
+  }
+
+  // Force a full dispatch (for explicit transitions — connect, disconnect,
+  // start, pause, stop, abort).
+  function dispatchStateTransition() {
+    var status = buildFakeStatus();
+    _lastDispatchedStatus = status.comms.connectionStatus;
+    dispatchFullStatus(status);
+    dispatchLight(status);
+  }
+
+  function startDevMachine(withDemo) {
+    window._devMachineActive = true;
+    dev.connectionStatus = 1;
+    dev.runStatus = 'Idle';
+    dev.paused = false;
+    dev.posX = dev.posY = dev.posZ = 0;
+    dev.feed = 0;
+    dev.toolOn = false;
+    dev.spindle = 'M5';
+
+    if (withDemo && typeof editor !== 'undefined' && editor) {
+      editor.session.setValue(DEV_DEMO_GCODE);
+      if (typeof loadedFileName !== 'undefined') loadedFileName = 'dev-demo.gcode';
+      if (typeof setWindowTitle === 'function') setWindowTitle();
+      if (typeof cdUpdateFileState === 'function') cdUpdateFileState(true, 'dev-demo.gcode');
+      if (typeof parseGcodeInWebWorker === 'function') parseGcodeInWebWorker(editor.getValue());
+    }
+
+    clearInterval(devTimer);
+    _lastDispatchedStatus = -1;
+    _last.x = _last.y = _last.z = _last.feed = _last.fOv = _last.sOv = _last.tool = _last.queue = null;
+    dispatchStateTransition();      // one full dispatch: 0 → 1
+    devTimer = setInterval(devTick, 250);
   }
 
   function stopDevMachine() {
     window._devMachineActive = false;
+    devJobStart = null;
+    dev.paused = false;
     clearInterval(devTimer);
     devTimer = null;
-    if (typeof cdUpdateConnection === 'function') cdUpdateConnection(0, fakeStatus({ comms: { connectionStatus: 0 } }));
+    if (typeof simRunning !== 'undefined' && simRunning && typeof simstop === 'function') {
+      try { simstop(); } catch (e) {}
+    }
+    dev.connectionStatus = 0;
+    dev.runStatus = 'Idle';
+    dispatchStateTransition();      // one full dispatch: * → 0
+    window.laststatus = undefined;
+    _lastDispatchedStatus = -1;
   }
 
-  // The Dev Machine option is injected by cdSyncPortOptions on every sync.
+  // ─── Run cycle ────────────────────────────────────────────────────────────
+  var _origRunJobFile = window.runJobFile;
+  window.runJobFile = function () {
+    if (window._devMachineActive) {
+      if (!window.editor || editor.session.getLength() <= 1) {
+        if (window.Metro && Metro.toast) {
+          Metro.toast.create('Load a gcode file first.', null, 3000, 'bg-orange');
+        }
+        return;
+      }
+      dev.paused = false;
+      dev.connectionStatus = 3;
+      dev.runStatus = 'Run';
+      devJobStart = Date.now();
+      if (typeof sim === 'function') sim(0);
+      dispatchStateTransition();
+      return;
+    }
+    if (typeof _origRunJobFile === 'function') _origRunJobFile.apply(this, arguments);
+  };
 
-  // Intercept sendGcode when the Dev Machine is active — echo to the console
-  // and, for G0/G1 jogs, move the fake position so the DRO updates visibly.
+  // ─── Intercept socket.emit in dev mode ─────────────────────────────────
+  // Instead of mutating the main button handlers, we wrap socket.emit so
+  // dev-mode traps 'pause' / 'resume' / 'stop' events and drives the sim.
+  // Real-mode emit is forwarded unchanged.
+  if (typeof socket !== 'undefined' && socket && typeof socket.emit === 'function') {
+    var _origSocketEmit = socket.emit.bind(socket);
+    socket.emit = function (event, payload) {
+      if (window._devMachineActive) {
+        if (event === 'pause') {
+          dev.paused = true;
+          if (typeof simRunning !== 'undefined') window.simRunning = false;
+          dispatchStateTransition();
+          return;
+        }
+        if (event === 'resume') {
+          dev.paused = false;
+          if (typeof runSim === 'function' &&
+              typeof object !== 'undefined' && object && typeof simIdx !== 'undefined' &&
+              simIdx < object.userData.linePoints.length) {
+            window.simRunning = true;
+            runSim();
+          }
+          dispatchStateTransition();
+          return;
+        }
+        if (event === 'stop') {
+          if (payload && payload.abort) {
+            if (typeof simstop === 'function') simstop();
+            dev.paused = false;
+            dev.connectionStatus = 5;
+            dev.runStatus = 'Alarm';
+            devAlarmUntil = Date.now() + 1000;
+            devJobStart = null;
+            dispatchStateTransition();
+            return;
+          }
+          if (typeof simstop === 'function') simstop();
+          dev.paused = false;
+          dev.connectionStatus = 1;
+          dev.runStatus = 'Idle';
+          devJobStart = null;
+          dispatchStateTransition();
+          return;
+        }
+        if (event === 'clearAlarm') {
+          dev.connectionStatus = 1;
+          dev.runStatus = 'Idle';
+          dispatchStateTransition();
+          return;
+        }
+        // Other events (openFile, openbuilds, etc.) are harmless in dev mode
+        // — let them through so the rest of the UI keeps working.
+      }
+      return _origSocketEmit.apply(this, arguments);
+    };
+  }
+
+  // ─── sendGcode fake controller ───────────────────────────────────────────
   var _origSendGcode = window.sendGcode;
   window.sendGcode = function (gcode) {
     if (window._devMachineActive) {
       if (typeof printLog === 'function') {
-        printLog('<span class="fg-blue">[ Dev Machine ]</span> ' + String(gcode).replace(/\n/g, ' | '));
+        printLog('<span class="fg-blue">[ Dev Machine ]</span> ' +
+                 String(gcode).replace(/\n/g, ' | '));
       }
-      // Very light parse: pick up absolute X/Y/Z targets from $J / G0 / G1
-      var lines = String(gcode).split(/\r?\n/);
-      lines.forEach(function (ln) {
-        var mx = ln.match(/X(-?\d+(?:\.\d+)?)/i);
-        var my = ln.match(/Y(-?\d+(?:\.\d+)?)/i);
-        var mz = ln.match(/Z(-?\d+(?:\.\d+)?)/i);
-        if (mx) devPos.x = parseFloat(mx[1]);
-        if (my) devPos.y = parseFloat(my[1]);
-        if (mz) devPos.z = parseFloat(mz[1]);
+      String(gcode).split(/\r?\n/).forEach(function (ln) {
+        // Tool / spindle modals
+        if (/\bM3\b/i.test(ln)) { dev.toolOn = true;  dev.spindle = 'M3'; dev.realSpindle = 1000; }
+        if (/\bM4\b/i.test(ln)) { dev.toolOn = true;  dev.spindle = 'M4'; dev.realSpindle = 1000; }
+        if (/\bM5\b/i.test(ln)) { dev.toolOn = false; dev.spindle = 'M5'; dev.realSpindle = 0; }
+
+        // WCS shift: G10 P0 L20 X… — update dev position to typed value
+        var wcs = ln.match(/G10\s+P0\s+L20\s+(.*)/i);
+        if (wcs) {
+          var ax = wcs[1];
+          var mx = ax.match(/X(-?\d+(?:\.\d+)?)/i); if (mx) dev.posX = parseFloat(mx[1]);
+          var my = ax.match(/Y(-?\d+(?:\.\d+)?)/i); if (my) dev.posY = parseFloat(my[1]);
+          var mz = ax.match(/Z(-?\d+(?:\.\d+)?)/i); if (mz) dev.posZ = parseFloat(mz[1]);
+          return;
+        }
+
+        // Motion parse — $J= / G0 / G1 / G2 / G3
+        if (/^\s*(\$J=|G0|G1|G2|G3)/i.test(ln)) {
+          var mx2 = ln.match(/X(-?\d+(?:\.\d+)?)/i); if (mx2) dev.posX = parseFloat(mx2[1]);
+          var my2 = ln.match(/Y(-?\d+(?:\.\d+)?)/i); if (my2) dev.posY = parseFloat(my2[1]);
+          var mz2 = ln.match(/Z(-?\d+(?:\.\d+)?)/i); if (mz2) dev.posZ = parseFloat(mz2[1]);
+          var mf  = ln.match(/F(\d+(?:\.\d+)?)/i);   if (mf)  dev.feed = parseFloat(mf[1]);
+        }
       });
-      if (typeof cdUpdatePosition === 'function') {
-        cdUpdatePosition(devPos.x.toFixed(3), devPos.y.toFixed(3), devPos.z.toFixed(3));
-      }
+      dispatchLight(buildFakeStatus()); // no state change, just DRO/feed
       return;
     }
     if (typeof _origSendGcode === 'function') _origSendGcode.apply(this, arguments);
@@ -159,56 +441,76 @@ $(document).ready(function () {
     }
     var chosen = $('#cdPortSelect').val();
     if (chosen === DEV_PORT_VALUE) {
-      startDevMachine();
+      startDevMachine(false);
       return;
     }
-    // Mirror CD select → #portUSB, then call existing selectPort()
-    if (chosen) $('#portUSB').val(chosen);
-    if ($('#portUSB').val()) {
+    if (chosen === DEV_PORT_DEMO) {
+      startDevMachine(true);
+      return;
+    }
+    if (chosen) {
+      $('#portUSB').val(chosen);
       selectPort();
     }
   });
 
-  // ─── Port selector sync (CD <select> ↔ #portUSB) ─────────────────────────
-  // Mirror options from the hidden Metro #portUSB select (kept live-populated
-  // by ui.js from socket port-scan events) into our CD <select>.
+  // ─── Port selector: native <select> in CD topbar, mirroring #portUSB ─────
+  // Copies the optgroup structure (USB Ports / Network Ports) from the
+  // Metro-populated #portUSB into our own <select>, and prepends the Dev
+  // Machine options.
   function cdSyncPortOptions() {
     var $src = $('#portUSB');
     var $dst = $('#cdPortSelect');
     if (!$src.length || !$dst.length) return;
+
+    // Remember current CD selection so we don't clobber a Dev Machine pick
     var currentDst = $dst.val();
     var currentSrc = $src.val();
+
     $dst.empty();
-    $src.find('option').each(function () {
-      var $o = $(this);
-      $dst.append($('<option></option>').val($o.val()).text($o.text()));
+
+    // Dev Machine group at the top
+    var $devGrp = $('<optgroup label="Dev Machine"></optgroup>');
+    $devGrp.append($('<option></option>').val(DEV_PORT_DEMO).text('▸ Dev Machine + demo gcode'));
+    $devGrp.append($('<option></option>').val(DEV_PORT_VALUE).text('▸ Dev Machine (simulator)'));
+    $dst.append($devGrp);
+
+    // Mirror #portUSB structure — preserves optgroups (USB Ports, Network Ports)
+    $src.children().each(function () {
+      var $node = $(this);
+      if ($node.is('optgroup')) {
+        var $g = $('<optgroup></optgroup>').attr('label', $node.attr('label'));
+        $node.children('option').each(function () {
+          var $o = $(this);
+          $g.append($('<option></option>').val($o.val()).text($o.text()));
+        });
+        $dst.append($g);
+      } else if ($node.is('option')) {
+        $dst.append($('<option></option>').val($node.val()).text($node.text()));
+      }
     });
-    // Preserve selection: prefer whatever #portUSB has, else what CD had
-    var preferred = currentSrc || currentDst;
-    if (preferred) $dst.val(preferred);
-    // Always inject the Dev Machine simulator option at the top
-    var DEV_PORT_VALUE = '__dev-machine__';
-    if ($dst.find('option[value="' + DEV_PORT_VALUE + '"]').length === 0) {
-      $dst.prepend($('<option></option>').val(DEV_PORT_VALUE).text('▸ Dev Machine (simulator)'));
-    }
-    // Restore selection if we just prepended
+
+    // Preserve selection: if CD was on a Dev Machine pick, keep it. Else
+    // reflect #portUSB's value.
+    var isDevPick = (currentDst === DEV_PORT_VALUE || currentDst === DEV_PORT_DEMO);
+    var preferred = isDevPick ? currentDst : (currentSrc || currentDst);
     if (preferred) $dst.val(preferred);
 
-    // Never disable — Dev Machine is always a valid pick.
     $dst.prop('disabled', false);
   }
 
-  // When user picks a different port in the CD select, mirror to #portUSB
-  $('#cdPortSelect').on('change', function () {
-    $('#portUSB').val($(this).val()).trigger('change');
-  });
-
-  // Initial populate, plus periodic re-sync to pick up backend port scans.
-  // We intentionally avoid DOMSubtreeModified — it fires too aggressively
-  // (including while the user has our <select> open) and closes the menu.
+  // Initial populate + periodic refresh to pick up backend port scans.
   cdSyncPortOptions();
+  setTimeout(cdSyncPortOptions, 500);
   setInterval(cdSyncPortOptions, 2000);
   window.cdSyncPortOptions = cdSyncPortOptions;
+
+  // When user picks a non-dev port, mirror to #portUSB so selectPort() works
+  $('#cdPortSelect').on('change', function () {
+    var v = $(this).val();
+    if (v === DEV_PORT_VALUE || v === DEV_PORT_DEMO) return;
+    $('#portUSB').val(v).trigger('change');
+  });
 
   // ─── File open ───────────────────────────────────────────────────────────
   // The original #openGcodeBtn* elements are dropdown toggles, not direct
@@ -383,10 +685,24 @@ $(document).ready(function () {
     $('#cd-scrub-panel').show();
   };
 
-  // ─── Troubleshooting tab in CD top bar ───────────────────────────────────
-  $('#cdTabTroubleshooting').on('click', function () {
-    troubleshootingPanel();
-  });
+  // ─── Settings / Machine Control tab swap in CD top bar ──────────────────
+  function cdShowMachine() {
+    $('#cd-position-strip').show();
+    $('#cd-main').show();
+    $('#cd-settings-layout').hide();
+    $('#cdTabMachine').addClass('cd-tab-active');
+    $('#cdTabTroubleshooting').removeClass('cd-tab-active');
+  }
+  function cdShowSettings() {
+    if (typeof window.cdSettingsInit === 'function') window.cdSettingsInit();
+    $('#cd-position-strip').hide();
+    $('#cd-main').hide();
+    $('#cd-settings-layout').css('display', 'flex');
+    $('#cdTabTroubleshooting').addClass('cd-tab-active');
+    $('#cdTabMachine').removeClass('cd-tab-active');
+  }
+  $('#cdTabMachine').on('click', cdShowMachine);
+  $('#cdTabTroubleshooting').on('click', cdShowSettings);
 
   // ─── CD-aware reconnect helpers ──────────────────────────────────────────
 
@@ -431,6 +747,7 @@ $(document).ready(function () {
     if (status && status.comms && status.comms.interfaces && status.comms.interfaces.serialBaud) {
       $('#cdBaud').text('BAUD ' + status.comms.interfaces.serialBaud);
     }
+    if (typeof window.cdSettingsOnStatus === 'function') window.cdSettingsOnStatus();
 
     // Alarm banner
     $('#cd-alarm-banner').toggle(alarm);
