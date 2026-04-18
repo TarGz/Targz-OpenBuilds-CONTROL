@@ -70,6 +70,9 @@ function closeScrubber() {
   $('#restartScrubber').hide();
   $('#openScrubberBtn').removeClass('active');
 
+  // Reset camera to the overview framing on close.
+  if (typeof cdScrubResetCamera === 'function') cdScrubResetCamera();
+
   // Command Deck: close the docked scrub panel and restore the Edit Start
   // trigger if a gcode file is still loaded.
   $('#cd-scrub-panel').hide();
@@ -117,6 +120,10 @@ function onRestartSliderMove(value) {
     cone.position.y = y;
     cone.position.z = z;
   }
+
+  // Follow the cursor with the 3D camera so the user can precisely dial in
+  // the restart point. Zoom is adjusted via the ZOOM slider below.
+  if (typeof cdScrubFollow === 'function') cdScrubFollow(x, y);
 
   // Dim toolpath before this point
   dimToolpathBefore(idx);

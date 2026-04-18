@@ -581,6 +581,23 @@ function makeSprite(scene, rendererType, vals) {
 
 // Global Function to keep three fullscreen
 
+// Edit-mode helper: pan the camera onto the current scrub cursor point.
+// Mouse-wheel zoom via OrbitControls handles zoom; we just pan here.
+window.cdScrubFollow = function (x, y) {
+  if (typeof camera === 'undefined' || typeof controls === 'undefined' || !camera || !controls) return;
+  var dx = x - controls.target.x;
+  var dy = y - controls.target.y;
+  controls.target.x += dx;
+  controls.target.y += dy;
+  camera.position.x += dx;
+  camera.position.y += dy;
+  controls.update();
+};
+
+window.cdScrubResetCamera = function () {
+  if (typeof resetView === 'function') resetView();
+};
+
 function fixRenderSize() {
   if (renderer) {
     setTimeout(function() {

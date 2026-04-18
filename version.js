@@ -3,6 +3,15 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-18',
+      version: '1.5.6',
+      changes: [
+        'Edit mode: 3D camera now follows the scrub cursor (cdScrubFollow) so the user can zoom via mouse wheel and nudge ±1/±10/±100 to pen-position precisely',
+        'Camera resets to full view (resetView) when the scrubber closes',
+        'Zoom slider + buttons removed — mouse-wheel OrbitControls zoom is enough'
+      ]
+    },
+    {
+      date: '2026-04-18',
       version: '1.5.5',
       changes: [
         'Titlebar slimmed: 42px → 26px, logo removed, window control buttons shrunk to 26×26, title text dropped to 11px/0.7 opacity',
