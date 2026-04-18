@@ -754,6 +754,75 @@
   border-color: var(--cd-axis-z);
 }
 
+/* Canvas status strip (GRID / VIEW / state chip) — overlays the right side of
+   the existing Metro4 ribbon tab bar without interfering with Metro4's DOM. */
+#cd-center #controlLogs {
+  position: relative;
+}
+
+#cd-center .cd-canvas-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  font-family: var(--cd-mono);
+  font-size: 9.5px;
+  letter-spacing: 1px;
+  color: var(--cd-text-faint);
+  background: var(--cd-panel);
+  border-bottom: 1px solid var(--cd-border);
+  border-left: 1px solid var(--cd-border);
+  pointer-events: none;
+  z-index: 5;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#cd-center .cd-canvas-status span {
+  white-space: nowrap;
+}
+
+#cd-center .cd-canvas-status-sep {
+  color: var(--cd-border-strong);
+  font-weight: 400;
+}
+
+#cd-center .cd-canvas-state {
+  color: var(--cd-accent);
+  font-weight: 600;
+}
+
+#cd-center .cd-canvas-state.cd-live  { color: var(--cd-good); }
+#cd-center .cd-canvas-state.cd-hold  { color: var(--cd-amber); }
+#cd-center .cd-canvas-state.cd-scrub { color: var(--cd-axis-z); }
+
+/* 3D View: cream tab with a white canvas filling the pane.
+   Border + contour live in the Three.js scene (simpler — no CSS sizing fight). */
+#cd-center #tab-three {
+  background: var(--cd-bg) !important;
+  padding: 0 !important;
+  position: relative;
+  overflow: hidden !important;
+}
+
+#cd-center #renderArea {
+  background: var(--cd-bg) !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  flex: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+#cd-center #tab-three #renderArea canvas {
+  display: block !important;
+}
+
 /* ─── Step / Units ─────────────────────────────────────────────────────────── */
 .cd-sub-section {
   margin-top: 8px;

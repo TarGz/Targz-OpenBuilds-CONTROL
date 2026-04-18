@@ -93,7 +93,7 @@ function drawWorkspace(xmin, xmax, ymin, ymax) {
   sceneLights.name = "Scene Lights"
   workspace.add(sceneLights);
 
-  scene.fog = new THREE.Fog(0xffffff, 1, 20000);
+  scene.fog = new THREE.Fog(0xFFFAF4, 1, 20000);
 
   // SKYDOME
   if (!disable3Dskybox) {
@@ -193,6 +193,39 @@ function redrawGrid(xmin, xmax, ymin, ymax, inches) {
   };
 
   var grid = new THREE.Group();
+
+  // White work-area plane + contour, drawn behind the grid so ticks/rulers read on white.
+  // This is the "canvas" the user sees; the outer tab stays on the cream --cd-bg.
+  var wxmin = inches ? Math.floor(xmin * 25.4) : Math.floor(xmin);
+  var wxmax = inches ? Math.ceil(xmax * 25.4)  : Math.ceil(xmax);
+  var wymin = inches ? Math.floor(ymin * 25.4) : Math.floor(ymin);
+  var wymax = inches ? Math.ceil(ymax * 25.4)  : Math.ceil(ymax);
+  if (!wxmax) wxmax = 200;
+  if (!wymax) wymax = 200;
+  var planeW = wxmax - wxmin;
+  var planeH = wymax - wymin;
+  var workPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(planeW, planeH),
+    new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: false, depthWrite: false })
+  );
+  workPlane.position.set((wxmin + wxmax) / 2, (wymin + wymax) / 2, -0.5);
+  workPlane.name = "WorkAreaBackground";
+  grid.add(workPlane);
+
+  var contourGeo = new THREE.Geometry();
+  contourGeo.vertices.push(
+    new THREE.Vector3(wxmin, wymin, -0.4),
+    new THREE.Vector3(wxmax, wymin, -0.4),
+    new THREE.Vector3(wxmax, wymax, -0.4),
+    new THREE.Vector3(wxmin, wymax, -0.4),
+    new THREE.Vector3(wxmin, wymin, -0.4)
+  );
+  var contour = new THREE.Line(
+    contourGeo,
+    new THREE.LineBasicMaterial({ color: 0xEADFCB })
+  );
+  contour.name = "WorkAreaContour";
+  grid.add(contour);
 
   var axesgrp = new THREE.Object3D();
   axesgrp.name = "Axes Markers"
@@ -326,7 +359,9 @@ function init3D() {
     camera.position.z = 295;
 
     $('#renderArea').append(renderer.domElement);
-    renderer.setClearColor(0xffffff, 1); // Background color of viewer = transparent
+    // V2: surround is cream (var(--cd-bg)); the white "work area" is drawn as a
+    // filled plane with a border contour inside the scene (see redrawGrid).
+    renderer.setClearColor(0xFFFAF4, 1);
     // renderer.setSize(window.innerWidth - 10, window.innerHeight - 10);
     renderer.clear();
 
@@ -549,9 +584,10 @@ function makeSprite(scene, rendererType, vals) {
 function fixRenderSize() {
   if (renderer) {
     setTimeout(function() {
-      sceneWidth = document.getElementById("renderArea").offsetWidth;
-      sceneHeight = document.getElementById("renderArea").offsetHeight;
-      renderer.setSize(sceneWidth, sceneHeight);
+      var el = document.getElementById("renderArea");
+      sceneWidth = el.clientWidth || el.offsetWidth;
+      sceneHeight = el.clientHeight || el.offsetHeight;
+      renderer.setSize(sceneWidth, sceneHeight, true);
       //renderer.setSize(window.innerWidth, window.innerHeight);
       camera.aspect = sceneWidth / sceneHeight;
       camera.updateProjectionMatrix();

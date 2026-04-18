@@ -918,6 +918,21 @@ $(document).ready(function () {
       window.cdStopProgressTicker();
     }
 
+    // Canvas state chip (top-right of 3D VIEW / CONSOLE / ... strip)
+    var $chip = $('#cdCanvasState');
+    if ($chip.length) {
+      $chip.removeClass('cd-live cd-hold cd-scrub');
+      if (running && !paused) {
+        $chip.text('● LIVE').addClass('cd-live').show();
+      } else if (paused) {
+        $chip.text('❚❚ HOLD').addClass('cd-hold').show();
+      } else if (hasFile) {
+        $chip.text('● PREVIEW').show();
+      } else {
+        $chip.hide();
+      }
+    }
+
     // Utility buttons
     var canUtil = connected && !running && connectionStatus !== 5;
     $('#cdChkSizeBtn').prop('disabled', !canUtil || !hasFile);

@@ -3,6 +3,19 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-18',
+      version: '1.5.4',
+      changes: [
+        'Command Deck canvas zone rework — V2 tab strip + framed work area',
+        'Tabs renamed and restyled: 3D VIEW / CONSOLE / MACROS / G-CODE (uppercase mono, flat, orange underline on active). Legacy Metro4 ribbon icons hidden',
+        'New canvas status overlay in top-right of the tab strip: GRID / VIEW / state chip (PREVIEW · LIVE · HOLD), wired to cdUpdateRunControls',
+        'Three.js scene now draws the work area as a white plane + thin beige contour inside the cream-backgrounded viewport, so the white only shows where the plot lives',
+        'Jog Control panel regroup: PEN UP / Z+ / Z− / PEN DOWN in a 2×2 strip above the XY jog grid; all buttons share a consistent portrait footprint',
+        'Jog panel compaction pass: tighter paddings, step row now 0.1 / 1 / 10 / 100 (dropped 0.01), Z/pen buttons slimmed to 40px rows',
+        'fixRenderSize() uses clientWidth/Height and Three.js setSize(..., true) so the canvas tracks the padded container without overflow'
+      ]
+    },
+    {
+      date: '2026-04-18',
       version: '1.5.3',
       changes: [
         'Command Deck fix batch after v1.5.2 shakedown',

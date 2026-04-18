@@ -885,12 +885,19 @@
             <div id="cd-center">
               <div id="controlLogs" class="mt-0">
 
+                <div id="cdCanvasStatus" class="cd-canvas-status">
+                  <span>GRID: <span id="cdCanvasGrid">10mm</span></span>
+                  <span class="cd-canvas-status-sep">·</span>
+                  <span>VIEW: <span id="cdCanvasViewMode">TOP</span></span>
+                  <span class="cd-canvas-status-sep">·</span>
+                  <span id="cdCanvasState" class="cd-canvas-state">● PREVIEW</span>
+                </div>
                 <nav data-role="ribbonmenu">
                   <ul class="tabs-holder">
-                    <li><a href="#tab-three" id="gcodeviewertab" onclick="fixRenderSize();"><i class="mif-3d-rotation fa-fw fg-darkCobalt" id="3dviewicon"></i><span id="3dviewlabel"> 3D View</span></a></li>
-                    <li><a href="#tab-one" id="consoletab"><i class="fas fa-fw fa-terminal fg-darkGreen"></i> Log / Serial Console</a></li>
-                    <li><a href="#tab-four" id="macrostab"><i class="fas fa-th fa-fw fg-darkOrange"></i> Macros</a></li>
-                    <li><a href="#tab-two" id="gcodeeditortab"><i class="far fa-fw fa-edit fg-darkLime"></i> GCODE Editor</a></li>
+                    <li><a href="#tab-three" id="gcodeviewertab" onclick="fixRenderSize();"><span id="3dviewlabel">3D VIEW</span></a></li>
+                    <li><a href="#tab-one" id="consoletab">CONSOLE</a></li>
+                    <li><a href="#tab-four" id="macrostab">MACROS</a></li>
+                    <li><a href="#tab-two" id="gcodeeditortab">G-CODE</a></li>
                   </ul>
 
                   <div class="content-holder">
