@@ -3,6 +3,16 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-18',
+      version: '1.5.5',
+      changes: [
+        'Titlebar slimmed: 42px → 26px, logo removed, window control buttons shrunk to 26×26, title text dropped to 11px/0.7 opacity',
+        'CD layout height offset updated to calc(100vh - 26px) to match the new titlebar',
+        'Version badge added to the Command Deck top bar next to PENPLOTTER · CONTROL, auto-synced from version.js via require() at page ready',
+        'Scrub-to-restart-point card: each info row pinned to its own block with fixed line-height (pill / coords / gcode) so digit-count changes no longer shift the card vertically; coords use tabular-nums; empty gcode row still reserves its height'
+      ]
+    },
+    {
+      date: '2026-04-18',
       version: '1.5.4',
       changes: [
         'Command Deck canvas zone rework — V2 tab strip + framed work area',

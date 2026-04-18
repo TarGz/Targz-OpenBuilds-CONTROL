@@ -131,11 +131,9 @@ function onRestartSliderMove(value) {
   }
 
   $('#restartScrubInfo').html(
-    '<div class="pc-info-line">' +
-      '<span class="pc-pill">Line ' + lineNum + '</span>' +
-      'X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2) +
-    '</div>' +
-    (gcodeText ? '<div class="pc-info-gcode">' + gcodeText + '</div>' : '')
+    '<div class="pc-info-row pc-info-row-pill"><span class="pc-pill">Line ' + lineNum + '</span></div>' +
+    '<div class="pc-info-row pc-info-row-coords">X:' + lp.x.toFixed(2) + ' Y:' + lp.y.toFixed(2) + ' Z:' + lp.z.toFixed(2) + '</div>' +
+    '<div class="pc-info-row pc-info-gcode">' + (gcodeText || '&nbsp;') + '</div>'
   );
 }
 

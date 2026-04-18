@@ -30,8 +30,21 @@ body > .window.bd-black {
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--pc-border-subtle) !important;
   color: var(--pc-text);
-  height: 42px;
+  height: 26px;
+  min-height: 26px;
   padding-left: 12px !important;
+}
+
+#windowtitlebar .title,
+#windowtitle {
+  font-size: 11px !important;
+  opacity: 0.7;
+}
+
+#windowtitlebar .btn-custom {
+  width: 26px !important;
+  height: 26px !important;
+  font-size: 10px !important;
 }
 
 #windowtitlebar .title,

@@ -3,6 +3,12 @@
 
 $(document).ready(function () {
 
+  // Version badge — pull from version.js when reachable, else leave the markup value.
+  try {
+    var v = require('../../version.js');
+    if (v && v.version) $('#cdLogoVersion').text('v' + v.version);
+  } catch (e) { /* renderer without nodeIntegration — hardcoded markup is fine */ }
+
   // Resize the 3D renderer once the Command Deck layout is in place.
   // Three.js sized itself before flex:1 chained through, leaving a tiny canvas.
   setTimeout(function () {

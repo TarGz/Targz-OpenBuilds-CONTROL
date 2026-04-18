@@ -29,7 +29,7 @@
 #cd-layout {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 42px); /* below titlebar */
+  height: calc(100vh - 26px); /* below slimmed titlebar */
   background: var(--cd-bg);
   color: var(--cd-text);
   font-family: var(--pc-font);
@@ -87,6 +87,20 @@
 
 .cd-logo-muted {
   color: var(--cd-text-muted);
+}
+
+.cd-logo-version {
+  margin-left: 8px;
+  padding: 1px 6px;
+  font-family: var(--cd-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: var(--cd-text-faint);
+  background: var(--cd-panel-alt);
+  border: 1px solid var(--cd-border);
+  border-radius: 2px;
+  white-space: nowrap;
 }
 
 .cd-tabs-nav {
@@ -1351,25 +1365,34 @@
   font-family: var(--cd-mono);
   font-size: 11px;
   color: var(--cd-text-muted);
-  line-height: 1.5;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.cd-scrub-info .pc-info-line {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   gap: 6px;
 }
 
-.cd-scrub-info .pc-info-gcode {
-  display: block !important;
+.cd-scrub-info .pc-info-row {
+  display: block;
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 18px;
+  min-height: 18px;
+}
+
+.cd-scrub-info .pc-info-row-pill {
+  line-height: 22px;
+  min-height: 22px;
+}
+
+.cd-scrub-info .pc-info-row-coords {
+  color: var(--cd-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.cd-scrub-info .pc-info-gcode {
+  color: var(--cd-text-faint);
+  font-style: italic;
 }
 
 .cd-scrub-restart {

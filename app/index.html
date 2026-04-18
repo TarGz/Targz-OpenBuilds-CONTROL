@@ -38,9 +38,7 @@
 
     <div class="window bd-black" style="height: 100vh; overflow-y: hidden;">
       <div id="windowtitlebar" class="window-caption bg-black bd-black pc-titlebar" style="-webkit-app-region: drag;">
-        <!-- <span class="icon mif-cog"></span> -->
-        <span><img src="/img/targzlogo.jpeg" height="40" /></span>
-        <span class="title" id="windowtitle" style="padding-left: 10px;">Targz Pen Plotter Ctrl</span>
+        <span class="title" id="windowtitle"></span>
 
         <div class="buttons" style="-webkit-app-region: no-drag">
           <span title="Minimize" class="btn-custom" onclick="socket.emit('minimize')"><i class="fas fa-window-minimize"></i></span>
@@ -652,6 +650,7 @@
             <div class="cd-logo">
               <div class="cd-logo-box">P</div>
               <span class="cd-logo-text">PENPLOTTER<span class="cd-logo-muted"> · CONTROL</span></span>
+              <span class="cd-logo-version" id="cdLogoVersion">v1.5.5</span>
             </div>
             <div class="cd-tabs-nav">
               <div class="cd-tab cd-tab-active" id="cdTabMachine">MACHINE CONTROL</div>
@@ -1027,7 +1026,9 @@
                   </div>
 
                   <div id="restartScrubInfo" class="cd-scrub-info pc-info-text">
-                    <div class="pc-info-line"><span class="pc-pill">Line 0</span>X:0 Y:0 Z:0</div>
+                    <div class="pc-info-row pc-info-row-pill"><span class="pc-pill">Line 0</span></div>
+                    <div class="pc-info-row pc-info-row-coords">X:0.00 Y:0.00 Z:0.00</div>
+                    <div class="pc-info-row pc-info-gcode">&nbsp;</div>
                   </div>
 
                   <button class="cd-btn-start cd-scrub-restart" onclick="triggerRestartFromScrubber()">✓ VALIDATE</button>
