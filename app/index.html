@@ -742,10 +742,6 @@
                 <span class="cd-set-nav-label">DIAGNOSTICS</span>
                 <span class="cd-set-nav-hint">Inputs · comms · 3D viewer</span>
               </button>
-              <button class="cd-set-nav-item" data-target="joblog">
-                <span class="cd-set-nav-label">JOB LOG</span>
-                <span class="cd-set-nav-hint">History · recover</span>
-              </button>
               <button class="cd-set-nav-item" data-target="about">
                 <span class="cd-set-nav-label">ABOUT</span>
                 <span class="cd-set-nav-hint">Version · changelog</span>
@@ -771,6 +767,28 @@
                   <span class="cd-dot"></span> JOG CONTROL
                   <span id="cdJogStatus" class="cd-status-tag"></span>
                 </div>
+                <!-- Z / Pen grid: 2×2 portrait buttons.
+                     Left column = Z jog (UP/DOWN). Right column = PEN presets. -->
+                <div class="cd-zpen-grid">
+                  <button class="cd-jog-btn cd-jog-z zP jogbtn cd-jog-zpen" id="cdZP">
+                    <span class="cd-zpen-arrow">↑</span>
+                    <span class="cd-zpen-label">UP</span>
+                  </button>
+                  <button class="cd-jog-btn cd-jog-pen cd-jog-pen-up" id="cdPenUpBtn">
+                    <span class="cd-zpen-arrow">↑</span>
+                    <span class="cd-zpen-label">PEN UP <span class="cd-zpen-val" id="cdPenUpHint">(5)</span></span>
+                  </button>
+                  <button class="cd-jog-btn cd-jog-z zM jogbtn cd-jog-zpen" id="cdZM">
+                    <span class="cd-zpen-arrow">↓</span>
+                    <span class="cd-zpen-label">DOWN</span>
+                  </button>
+                  <button class="cd-jog-btn cd-jog-pen cd-jog-pen-down" id="cdPenDownBtn">
+                    <span class="cd-zpen-arrow">↓</span>
+                    <span class="cd-zpen-label">PEN DOWN <span class="cd-zpen-val" id="cdPenDownHint">(0)</span></span>
+                  </button>
+                </div>
+
+                <!-- Row 2: XY jog grid with HOME center -->
                 <div class="cd-jog-row">
                   <div class="cd-jog-grid">
                     <div></div>
@@ -783,21 +801,16 @@
                     <button class="cd-jog-btn cd-jog-y yM jogbtn" id="cdYM">Y−</button>
                     <div></div>
                   </div>
-                  <div class="cd-z-column">
-                    <button class="cd-jog-btn cd-jog-z zP jogbtn" id="cdZP">Z+</button>
-                    <div class="cd-z-label">Z</div>
-                    <button class="cd-jog-btn cd-jog-z zM jogbtn" id="cdZM">Z−</button>
-                  </div>
                 </div>
 
                 <!-- Step size -->
                 <div class="cd-sub-section">
                   <div class="cd-sub-label">STEP (<span class="cdUnitsLabel">mm</span>)</div>
                   <div class="cd-step-row">
-                    <button class="cd-step-btn" data-step="0.01">0.01</button>
                     <button class="cd-step-btn" data-step="0.1">0.1</button>
                     <button class="cd-step-btn cd-step-active" data-step="1">1</button>
                     <button class="cd-step-btn" data-step="10">10</button>
+                    <button class="cd-step-btn" data-step="100">100</button>
                   </div>
                 </div>
 
@@ -815,21 +828,17 @@
               <div class="cd-panel-section">
                 <div class="cd-section-title"><span class="cd-dot"></span> UTILITIES</div>
                 <div class="cd-util-grid">
-                  <button class="cd-util-btn" id="cdToolBtn">
-                    <span class="cd-util-label" id="cdToolLabel">TOOL · OFF</span>
-                    <span class="cd-util-hint" id="cdToolHint">pen up</span>
-                  </button>
                   <button class="cd-util-btn" id="cdProbeBtn" onclick="openProbeZDialog()">
                     <span class="cd-util-label">PROBE Z</span>
                     <span class="cd-util-hint">auto-zero</span>
                   </button>
-                  <button class="cd-util-btn" id="cdChkSizeBtn">
-                    <span class="cd-util-label">CHECK SIZE</span>
-                    <span class="cd-util-hint">bounds dry-run</span>
-                  </button>
                   <button class="cd-util-btn" id="cdGotoXY0Btn">
                     <span class="cd-util-label">GO TO XY0</span>
                     <span class="cd-util-hint">rapid to origin</span>
+                  </button>
+                  <button class="cd-util-btn" id="cdChkSizeBtn" style="grid-column: 1 / -1;">
+                    <span class="cd-util-label">CHECK SIZE</span>
+                    <span class="cd-util-hint">bounds dry-run</span>
                   </button>
                 </div>
               </div>
@@ -843,30 +852,30 @@
                     <div class="cd-vslider-track">
                       <input type="range" id="cdJro" class="cd-vslider-input" orient="vertical"
                         min="1" max="200" value="100"
-                        oninput="jogOverride(+this.value)">
+                        oninput="document.getElementById('cdJroVal').textContent=this.value; jogOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdJroVal">100</span><span class="cd-vslider-unit">%</span></div>
-                    <button class="cd-vslider-reset" onclick="jogOverride(100)">RESET</button>
+                    <button class="cd-vslider-reset" onclick="document.getElementById('cdJro').value=100; document.getElementById('cdJroVal').textContent=100; jogOverride(100)">RESET</button>
                   </div>
                   <div class="cd-vslider" id="cd-fro-wrap">
                     <div class="cd-vslider-label">FEED</div>
                     <div class="cd-vslider-track">
                       <input type="range" id="cdFro" class="cd-vslider-input" orient="vertical"
                         min="10" max="200" value="100"
-                        oninput="feedOverride(+this.value)">
+                        oninput="document.getElementById('cdFroVal').textContent=this.value; feedOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdFroVal">100</span><span class="cd-vslider-unit">%</span></div>
-                    <button class="cd-vslider-reset" onclick="feedOverride(100)">RESET</button>
+                    <button class="cd-vslider-reset" onclick="document.getElementById('cdFro').value=100; document.getElementById('cdFroVal').textContent=100; feedOverride(100)">RESET</button>
                   </div>
                   <div class="cd-vslider" id="cd-tro-wrap">
                     <div class="cd-vslider-label">TOOL</div>
                     <div class="cd-vslider-track">
                       <input type="range" id="cdTro" class="cd-vslider-input" orient="vertical"
                         min="10" max="200" value="100"
-                        oninput="spindleOverride(+this.value)">
+                        oninput="document.getElementById('cdTroVal').textContent=this.value; spindleOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdTroVal">100</span><span class="cd-vslider-unit">%</span></div>
-                    <button class="cd-vslider-reset" onclick="spindleOverride(100)">RESET</button>
+                    <button class="cd-vslider-reset" onclick="document.getElementById('cdTro').value=100; document.getElementById('cdTroVal').textContent=100; spindleOverride(100)">RESET</button>
                   </div>
                 </div>
               </div>

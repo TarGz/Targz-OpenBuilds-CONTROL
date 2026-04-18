@@ -215,32 +215,73 @@
   color: var(--cd-good);
 }
 
+/* ── CD port selector (native <select> + custom chrome) ── */
+.cd-port-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  background: var(--pc-surface, #fff);
+  border: 1px solid var(--pc-border-default, rgba(0,0,0,0.1));
+  border-radius: 6px;
+  padding: 0 4px 0 10px;
+  height: 30px;
+  min-width: 220px;
+  max-width: 360px;
+  cursor: pointer;
+}
+.cd-port-select-wrap:hover {
+  border-color: rgba(0,0,0,0.2);
+}
+.cd-port-select-wrap:focus-within {
+  border-color: var(--pc-primary, #FF6A00);
+  box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.15);
+}
+
+.cd-port-icon {
+  color: var(--cd-text-muted, #6B6B6B);
+  font-size: 12px;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+}
+
 .cd-port-select {
   appearance: none;
   -webkit-appearance: none;
-  background: var(--pc-surface, #fff);
-  border: 1px solid var(--pc-border-default, rgba(0,0,0,0.1));
-  border-radius: 4px;
+  background: transparent;
+  border: none;
+  outline: none;
   color: var(--cd-text, #1a1a1a);
   font-family: var(--cd-mono);
-  font-size: 10px;
-  padding: 5px 22px 5px 10px;
-  max-width: 180px;
+  font-size: 12px;
+  padding: 0 22px 0 0;
+  height: 28px;
+  line-height: 28px;
+  flex: 1;
+  min-width: 0;
   cursor: pointer;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='none' stroke='%236B6B6B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1 1l4 4 4-4'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 8px center;
+  background-position: right 4px center;
 }
-
-.cd-port-select:focus {
-  outline: none;
-  border-color: var(--pc-primary, #FF6A00);
-  box-shadow: 0 0 0 2px rgba(255, 106, 0, 0.2);
-}
-
 .cd-port-select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.cd-port-select optgroup {
+  font-family: var(--pc-font, inherit);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cd-text-muted, #6B6B6B);
+  letter-spacing: 0.08em;
+}
+
+.cd-port-select option {
+  font-family: var(--cd-mono);
+  font-size: 12px;
+  color: var(--cd-text, #1a1a1a);
+  padding: 4px 8px;
 }
 
 #cdConnBtn {
@@ -476,7 +517,7 @@
 }
 
 .cd-panel-section {
-  padding: 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--cd-border);
 }
 
@@ -492,7 +533,7 @@
   color: var(--cd-accent);
   letter-spacing: 1.5px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -516,25 +557,26 @@
 /* ─── Jog grid ─────────────────────────────────────────────────────────────── */
 .cd-jog-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   justify-content: center;
+  padding: 2px 0;
 }
 
 .cd-jog-grid {
   display: grid;
-  grid-template-columns: repeat(3, 40px);
-  grid-template-rows: repeat(3, 40px);
-  gap: 2px;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(3, 46px);
+  gap: 4px;
 }
 
 .cd-jog-btn {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   border: 1px solid var(--cd-border);
   background: var(--cd-panel);
   font-family: var(--cd-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -559,13 +601,13 @@
 }
 
 .cd-jog-home {
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   background: var(--cd-accent-soft);
   border: 1px solid var(--cd-accent);
   color: var(--cd-accent);
   font-family: var(--cd-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 1px;
@@ -585,53 +627,165 @@
 .cd-z-column {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
 }
 
 .cd-z-label {
-  width: 40px;
-  height: 20px;
+  width: 56px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--cd-mono);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--cd-text-faint);
+  letter-spacing: 1.2px;
+}
+
+/* Pen column — sits next to Z column in the jog row. Taller buttons with
+   big directional arrow + label + saved Z hint. */
+/* Z / Pen grid — 2×2 portrait buttons.
+   Left column = Z jog (UP/DOWN). Right column = PEN presets with live value.
+   All four buttons share the same tall footprint for consistent spacing. */
+.cd-zpen-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 40px;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.cd-jog-btn.cd-jog-pen,
+.cd-jog-btn.cd-jog-zpen {
+  width: auto;
+  height: auto;
+  padding: 4px 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+  justify-content: flex-start;
+}
+
+.cd-zpen-arrow {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: var(--cd-mono);
+  flex-shrink: 0;
+}
+
+.cd-zpen-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  font-family: var(--cd-mono);
+  text-align: left;
+  line-height: 1.15;
+}
+
+.cd-zpen-val {
+  display: inline-block;
+  margin-left: 3px;
+  font-weight: 500;
+  font-size: 9.5px;
+  color: var(--cd-text-faint);
+  letter-spacing: 0;
+}
+
+/* Z+ / Z− keep their blue axis tint. */
+.cd-jog-btn.cd-jog-zpen {
+  color: var(--cd-axis-z);
+  border-color: var(--cd-border);
+}
+
+.cd-jog-btn.cd-jog-zpen:hover:not(:disabled) {
+  background: #EFF4FF;
+  border-color: var(--cd-axis-z);
+}
+
+.cd-jog-btn.cd-jog-pen .cd-pen-arrow {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: var(--cd-mono);
+  flex-shrink: 0;
+}
+
+.cd-jog-btn.cd-jog-pen .cd-pen-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.cd-jog-btn.cd-jog-pen .cd-pen-label {
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 1px;
+  line-height: 1;
+}
+
+.cd-jog-btn.cd-jog-pen .cd-pen-hint {
+  font-size: 10px;
+  color: var(--cd-text-faint);
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+.cd-jog-btn.cd-jog-pen-up {
+  color: var(--cd-accent);
+  border-color: var(--cd-accent-dim);
+}
+
+.cd-jog-btn.cd-jog-pen-up:hover:not(:disabled) {
+  background: var(--cd-accent-soft);
+  border-color: var(--cd-accent);
+}
+
+.cd-jog-btn.cd-jog-pen-down {
+  color: var(--cd-axis-z);
+  border-color: var(--cd-border);
+}
+
+.cd-jog-btn.cd-jog-pen-down:hover:not(:disabled) {
+  background: #EFF4FF;
+  border-color: var(--cd-axis-z);
 }
 
 /* ─── Step / Units ─────────────────────────────────────────────────────────── */
 .cd-sub-section {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .cd-sub-label {
   font-family: var(--cd-mono);
-  font-size: 9px;
+  font-size: 9.5px;
   color: var(--cd-text-muted);
-  letter-spacing: 1px;
-  margin-bottom: 5px;
+  letter-spacing: 1.2px;
+  margin-bottom: 4px;
   font-weight: 600;
 }
 
 .cd-step-row {
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 
 .cd-step-btn,
 .cd-unit-btn {
   flex: 1;
-  padding: 5px 2px;
-  font-size: 10px;
+  padding: 9px 4px;
+  font-size: 11px;
   font-family: var(--cd-mono);
   font-weight: 500;
   background: var(--cd-panel-alt);
   color: var(--cd-text);
   border: 1px solid var(--cd-border);
   cursor: pointer;
-  letter-spacing: 0.3px;
-  border-radius: 2px;
+  letter-spacing: 0.4px;
+  border-radius: 3px;
   transition: background 0.1s, color 0.1s, border-color 0.1s;
 }
 

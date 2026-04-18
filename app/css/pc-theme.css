@@ -1273,6 +1273,18 @@ table.table.compact tbody td {
   font-size: 12px;
 }
 
+/* v1.5.3: strip the outer Metro4 .input wrapper border/background around the
+   serial console so only the inner input shows a hairline. */
+#commandform .input,
+#commandform .input:hover,
+#commandform .input:focus-within {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
 /* ---------- GCODE & FluidNC editors ---------- */
 #editor,
 #fluidnceditor,

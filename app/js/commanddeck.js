@@ -619,19 +619,39 @@ $(document).ready(function () {
     $('#cd-abort-modal').fadeOut(120);
   });
 
-  // ─── Utility buttons ─────────────────────────────────────────────────────
-  var toolIsOn = false;
-
-  $('#cdToolBtn').on('click', function () {
-    if (toolIsOn) {
-      sendGcode('M5');
-    } else {
-      sendGcode('M3 S' + (typeof grblParams !== 'undefined' && grblParams['$30'] ? parseInt(grblParams['$30']) : 1000));
-    }
-    toolIsOn = !toolIsOn;
-    cdUpdateToolState(toolIsOn);
+  // ─── Pen Up / Pen Down (Z-axis based) ────────────────────────────────────
+  // Not the servo/M3 "tool" logic from OpenBuilds — on a pen plotter the "pen"
+  // is lifted and lowered by commanding Z to a stored absolute height.
+  function cdReadPenHeights() {
+    var up = parseFloat(localStorage.getItem('penUpZ'));
+    var down = parseFloat(localStorage.getItem('penDownZ'));
+    if (isNaN(up)) up = 5;
+    if (isNaN(down)) down = 0;
+    return { up: up, down: down };
+  }
+  window.cdRefreshPenHints = function () {
+    var p = cdReadPenHeights();
+    // Compact "(Z)" format that sits inline with the button label.
+    var fmt = function (v) {
+      var s = (Math.abs(v) < 10 ? v.toFixed(1) : v.toFixed(0));
+      return '(' + s + ')';
+    };
+    $('#cdPenUpHint').text(fmt(p.up));
+    $('#cdPenDownHint').text(fmt(p.down));
+  };
+  cdRefreshPenHints();
+  $('#cdPenUpBtn').on('click', function () {
+    var p = cdReadPenHeights();
+    sendGcode('G90');
+    sendGcode('G0 Z' + p.up);
+  });
+  $('#cdPenDownBtn').on('click', function () {
+    var p = cdReadPenHeights();
+    sendGcode('G90');
+    sendGcode('G0 Z' + p.down);
   });
 
+  // ─── Utility buttons ─────────────────────────────────────────────────────
   $('#cdChkSizeBtn').on('click', function () {
     $('#chkSize').trigger('click');
   });
@@ -891,12 +911,20 @@ $(document).ready(function () {
     // Progress bar paused tint
     $('#cdProgressBar').toggleClass('cd-paused', paused);
 
+    // Progress ticker: only tick while actively running (not paused / alarm / idle)
+    if (running) {
+      window.cdStartProgressTicker();
+    } else {
+      window.cdStopProgressTicker();
+    }
+
     // Utility buttons
     var canUtil = connected && !running && connectionStatus !== 5;
     $('#cdChkSizeBtn').prop('disabled', !canUtil || !hasFile);
     $('#cdGotoXY0Btn').prop('disabled', !connected || connectionStatus === 5);
     $('#cdProbeBtn').prop('disabled', !canUtil);
     $('#cdToolBtn').prop('disabled', !connected || connectionStatus === 5);
+    $('#cdPenUpBtn, #cdPenDownBtn').prop('disabled', !connected || connectionStatus === 5);
   };
 
   // ─── File state ───────────────────────────────────────────────────────────
@@ -945,9 +973,55 @@ $(document).ready(function () {
   };
 
   window.cdFmtTime = function (minutes) {
+    if (!isFinite(minutes) || minutes < 0) minutes = 0;
     var h = Math.floor(minutes / 60);
     var m = Math.floor(minutes % 60);
     return String(h).padStart(2, '0') + 'h:' + String(m).padStart(2, '0') + 'm';
+  };
+
+  // 1 Hz ticker: queueCount only fires on line dequeues, so elapsed/remaining
+  // freeze during long moves. Recompute from the wall clock while running.
+  var cdJobState = { done: 0, total: 0, totalTimeMin: NaN };
+  window.cdProgressTickerState = cdJobState;
+  var cdProgressTimer = null;
+
+  window.cdStartProgressTicker = function () {
+    if (cdProgressTimer) return;
+    cdProgressTimer = setInterval(cdProgressTick, 1000);
+    cdProgressTick();
+  };
+  window.cdStopProgressTicker = function () {
+    if (cdProgressTimer) {
+      clearInterval(cdProgressTimer);
+      cdProgressTimer = null;
+    }
+  };
+  function cdProgressTick() {
+    if (typeof lastJobStartTime === 'undefined' || !lastJobStartTime) return;
+    var totalMin = NaN;
+    if (typeof object !== 'undefined' && object && object.userData && !isNaN(object.userData.totalTime)) {
+      totalMin = object.userData.totalTime;
+    } else if (!isNaN(cdJobState.totalTimeMin)) {
+      totalMin = cdJobState.totalTimeMin;
+    }
+    var elapsedMin = (Date.now() - lastJobStartTime) / 1000 / 60;
+    var remainingMin = isNaN(totalMin) ? NaN : Math.max(0, totalMin - elapsedMin);
+    var pct = (cdJobState.total > 0) ? (cdJobState.done / cdJobState.total) * 100 : 0;
+    $('#cdElapsed').text(cdFmtTime(elapsedMin));
+    if (!isNaN(remainingMin)) $('#cdRemaining').text(cdFmtTime(remainingMin));
+    if (!isNaN(pct)) {
+      $('#cdProgressPct').html(pct.toFixed(1) + '<span class="cd-progress-pct-unit">%</span>');
+      $('#cdProgressBar').css('width', Math.min(100, pct) + '%');
+    }
+  }
+
+  // Patch cdUpdateJobProgress to stash state for the ticker.
+  var _origUpdateJobProgress = window.cdUpdateJobProgress;
+  window.cdUpdateJobProgress = function (pct, currentLine, totalLines, elapsed, remaining, travelMm) {
+    cdJobState.done = currentLine || 0;
+    cdJobState.total = totalLines || cdJobState.total;
+    if (!isNaN(elapsed) && !isNaN(remaining)) cdJobState.totalTimeMin = elapsed + remaining;
+    _origUpdateJobProgress.call(this, pct, currentLine, totalLines, elapsed, remaining, travelMm);
   };
 
   // ─── Feed display ─────────────────────────────────────────────────────────

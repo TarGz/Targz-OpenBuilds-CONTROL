@@ -3,6 +3,21 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-18',
+      version: '1.5.3',
+      changes: [
+        'Command Deck fix batch after v1.5.2 shakedown',
+        'Progress fields: add 1 Hz ticker so ELAPSED / REMAINING / %-bar update continuously while running (queueCount alone left them frozen on long moves)',
+        'Overrides: JOG slider now emits jogOverride over socket; value labels (JOG/FEED/TOOL %) update live on drag; RESET buttons snap slider back to 100',
+        'Serial console: strip the outer Metro4 .input wrapper border/background so only the input has a hairline',
+        'Alarm UX: suppress the blocking Grbl Alarm / Grbl Error modal popins — the #cd-alarm-banner header warning remains the single source of truth',
+        'Settings: drop the Job Log section (no backend); wire Firmware tool to openFlashingTool()',
+        'Settings > Calibration: dedicated PEN UP / PEN DOWN page with Z-axis visual, sliders, ±0.1/±1 nudge buttons, TEST UP/DOWN, DEFAULTS, SAVE — opened from a "SET DEFAULT PEN HEIGHTS" card alongside the axis wizards',
+        'Machine Control: replace the TOOL spindle button with dedicated PEN UP / PEN DOWN buttons that command Z to the saved heights (defaults Z5 / Z0)',
+        'Keyboard: re-point jog shortcuts from legacy #xM/#xP/#yM/#yP/#zM/#zP IDs to the Command Deck #cdXM/#cdXP/... buttons so arrow-key jogging works again'
+      ]
+    },
+    {
+      date: '2026-04-18',
       version: '1.5.2',
       changes: [
         'Settings page: rework legacy troubleshootingPanel into a V2-design SETTINGS view rendered inside Command Deck',

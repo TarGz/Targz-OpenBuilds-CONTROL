@@ -182,12 +182,12 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.xM'), "#e21b1b")
-          $('#xM').mousedown();
+          $('#cdXM').mousedown();
         }
       });
       $(document).bind('keyup', keyboardShortcuts.xM, function(event) {
         event.preventDefault();
-        $('#xM').mouseup();
+        $('#cdXM').mouseup();
       });
     }
 
@@ -196,13 +196,13 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.xP'), "#e21b1b")
-          $('#xP').mousedown();
+          $('#cdXP').mousedown();
         }
       });
 
       $(document).bind('keyup', keyboardShortcuts.xP, function(event) {
         event.preventDefault();
-        $('#xP').mouseup();
+        $('#cdXP').mouseup();
       });
     }
     if (keyboardShortcuts.yM.length) {
@@ -210,13 +210,13 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.yM'), "#5de21b")
-          $('#yM').mousedown();
+          $('#cdYM').mousedown();
         }
       });
 
       $(document).bind('keyup', keyboardShortcuts.yM, function(event) {
         event.preventDefault();
-        $('#yM').mouseup();
+        $('#cdYM').mouseup();
       });
     }
     if (keyboardShortcuts.yP.length) {
@@ -224,12 +224,12 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.yP'), "#5de21b")
-          $('#yP').mousedown();
+          $('#cdYP').mousedown();
         }
       });
       $(document).bind('keyup', keyboardShortcuts.yP, function(event) {
         event.preventDefault();
-        $('#yP').mouseup();
+        $('#cdYP').mouseup();
 
       });
     }
@@ -238,12 +238,12 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.zM'), "#1ba1e2")
-          $('#zM').mousedown();
+          $('#cdZM').mousedown();
         }
       });
       $(document).bind('keyup', keyboardShortcuts.zM, function(event) {
         event.preventDefault();
-        $('#zM').mouseup();
+        $('#cdZM').mouseup();
       });
     }
     if (keyboardShortcuts.zP.length) {
@@ -251,12 +251,12 @@ function bindKeys() {
         event.preventDefault();
         if (!event.originalEvent.repeat) {
           rippleEffect($('.zP'), "#1ba1e2")
-          $('#zP').mousedown();
+          $('#cdZP').mousedown();
         }
       });
       $(document).bind('keyup', keyboardShortcuts.zP, function(event) {
         event.preventDefault();
-        $('#zP').mouseup();
+        $('#cdZP').mouseup();
       });
     }
 

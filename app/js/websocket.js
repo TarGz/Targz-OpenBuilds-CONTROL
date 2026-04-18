@@ -440,34 +440,10 @@ function initSocket() {
     var printLogCls = "fg-darkRed"
     printLogModern(icon, source, string, printLogCls)
 
-    var dialog = Metro.dialog.create({
-      clsDialog: 'dark',
-      title: "<i class='fas fa-exclamation-triangle'></i> Grbl Alarm:",
-      content: "<i class='fas fa-exclamation-triangle fg-darkRed'></i>  " + data,
-      actions: [{
-          caption: "Clear Alarm",
-          cls: "js-dialog-close alert closeAlarmBtn",
-          onclick: function() {
-            socket.emit('clearAlarm', 2)
-          }
-        },
-        {
-          caption: "Cancel",
-          cls: "js-dialog-close",
-          onclick: function() {
-            //
-          }
-        }
-      ]
-    });
-
-    if (data.indexOf("ALARM: 6") == -1 && data.indexOf("ALARM: 7") == -1 && data.indexOf("ALARM: 8") == -1 && data.indexOf("ALARM: 9") == -1 && data.indexOf("ALARM: 10") == -1) {
-      openDialogs.push(dialog);
-    }
-
-    setTimeout(function() {
-      $(".closeAlarmBtn").focus();
-    }, 200, )
+    // v1.5.3: modal popup suppressed in favour of the Command Deck #cd-alarm-banner
+    // header warning, which is driven by cdUpdateConnection on connectionStatus === 5.
+    // Kept the log path above so the console still reflects the event.
+    var dialog = null;
     //
   });
 
@@ -480,22 +456,9 @@ function initSocket() {
     var printLogCls = "fg-darkRed"
     printLogModern(icon, source, string, printLogCls)
 
-    var dialog = Metro.dialog.create({
-      title: "<i class='fas fa-exclamation-triangle'></i> Grbl Error:",
-      content: "<i class='fas fa-exclamation-triangle fg-darkRed'></i>  " + data,
-      clsDialog: 'dark',
-      actions: [{
-        caption: "OK",
-        cls: "js-dialog-close alert closeErrorBtn",
-        onclick: function() {
-          socket.emit('clearAlarm', 2)
-        }
-      }]
-    });
-    openDialogs.push(dialog);
-    setTimeout(function() {
-      $(".closeErrorBtn").focus();
-    }, 200, )
+    // v1.5.3: modal popup suppressed. The error is already visible in the serial
+    // log and in the Command Deck alarm banner when the state transitions to 5.
+    var dialog = null;
     //
   });
 

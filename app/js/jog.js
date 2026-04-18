@@ -20,6 +20,9 @@ function jogOverride(newVal) {
     jogRateA = (grblParams['$113'] * (newVal / 100)).toFixed(0);
   }
   localStorage.setItem('jogOverride', newVal);
+  if (typeof socket !== 'undefined') {
+    try { socket.emit('jogOverride', newVal); } catch (e) { /* no-op if not connected */ }
+  }
 }
 
 function setADist(newADist) {
