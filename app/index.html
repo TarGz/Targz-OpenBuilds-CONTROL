@@ -659,7 +659,7 @@
             <div class="cd-logo">
               <div class="cd-logo-box">P</div>
               <span class="cd-logo-text">PENPLOTTER<span class="cd-logo-muted"> · CONTROL</span></span>
-              <span class="cd-logo-version" id="cdLogoVersion">v1.5.6</span>
+              <span class="cd-logo-version" id="cdLogoVersion"></span>
             </div>
             <div class="cd-tabs-nav">
               <div class="cd-tab cd-tab-active" id="cdTabMachine">MACHINE CONTROL</div>
@@ -854,8 +854,9 @@
                     <div class="cd-vslider-label">JOG</div>
                     <div class="cd-vslider-track">
                       <input type="range" id="cdJro" class="cd-vslider-input" orient="vertical"
-                        min="1" max="200" value="100"
-                        oninput="document.getElementById('cdJroVal').textContent=this.value; jogOverride(+this.value)">
+                        min="1" max="300" value="100"
+                        oninput="document.getElementById('cdJroVal').textContent=this.value"
+                        onchange="jogOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdJroVal">100</span><span class="cd-vslider-unit">%</span></div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdJro').value=100; document.getElementById('cdJroVal').textContent=100; jogOverride(100)">RESET</button>
@@ -865,7 +866,8 @@
                     <div class="cd-vslider-track">
                       <input type="range" id="cdFro" class="cd-vslider-input" orient="vertical"
                         min="10" max="200" value="100"
-                        oninput="document.getElementById('cdFroVal').textContent=this.value; feedOverride(+this.value)">
+                        oninput="document.getElementById('cdFroVal').textContent=this.value"
+                        onchange="feedOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdFroVal">100</span><span class="cd-vslider-unit">%</span></div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdFro').value=100; document.getElementById('cdFroVal').textContent=100; feedOverride(100)">RESET</button>
@@ -875,7 +877,8 @@
                     <div class="cd-vslider-track">
                       <input type="range" id="cdTro" class="cd-vslider-input" orient="vertical"
                         min="10" max="200" value="100"
-                        oninput="document.getElementById('cdTroVal').textContent=this.value; spindleOverride(+this.value)">
+                        oninput="document.getElementById('cdTroVal').textContent=this.value"
+                        onchange="spindleOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdTroVal">100</span><span class="cd-vslider-unit">%</span></div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdTro').value=100; document.getElementById('cdTroVal').textContent=100; spindleOverride(100)">RESET</button>

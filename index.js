@@ -550,9 +550,13 @@ checkPowerSettings()
 app.get('/api/version', (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  var versionMod = {};
+  try { versionMod = require('./version.js'); } catch (e) { /* no changelog file */ }
   data = {
     "application": "OMD",
     "version": require('./package').version + "-targz",
+    "appVersion": require('./package').version,
+    "changelog": versionMod.CHANGELOG || [],
     "ipaddress": ip.address() + ":" + config.webPort
   }
   res.send(JSON.stringify(data), null, 2);

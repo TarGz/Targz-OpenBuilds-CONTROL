@@ -3,6 +3,16 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-19',
+      version: '1.5.10',
+      changes: [
+        'Fix #1 — jog step default mismatch: commanddeck.js now triggers the active cd-step-btn on load so jogdistXYZ (jog.js default 10) resyncs to the UI-highlighted step (markup default: 1). Inch map and legacy-dist ID map gained the missing 100mm entry.',
+        'Fix #2 — override sliders were no-ops in common cases. Oninput fired the override on every pixel drag, flooding grbl with +1%/-1% real-time commands and out-racing curFRO, often netting zero effect. Split to oninput (value label only) + onchange (release-only emit). jogOverride no longer short-circuits when grblParams lacks $110 — it falls back to 4000/4000/2000/2000 so the slider works disconnected or pre-$$.',
+        'Fix #3 (closes) — JOG override slider range widened from 1-200% to 1-300% so there is more visual headroom above nominal feed. Grbl still caps real motion at $110/$111/$112.',
+        'Fix #4 — UI version plumbing. /api/version now also returns appVersion + changelog. commanddeck.js fetches the top-bar badge via /api/version (require(../../version.js) does not resolve in the renderer when the page is served over HTTP). settings.js PC_APP_VERSION and the About-panel changelog both come from the same endpoint. Stale hardcoded v1.5.2 and v1.5.6 fallbacks removed.'
+      ]
+    },
+    {
+      date: '2026-04-19',
       version: '1.5.9',
       changes: [
         '3D viewport surround unified to #FFFAF4 (matches --cd-bg). Three places had to agree: WebGLRenderer clear-color, the skydome top/bottom shader colors, and the Electron BrowserWindow native background.',

@@ -4,8 +4,18 @@
 (function () {
   'use strict';
 
-  var PC_APP_VERSION = '1.5.2';
+  var PC_APP_VERSION = '';
+  var PC_APP_CHANGELOG = null;
   var initialised = false;
+
+  // Fetch version + changelog from the Express backend. require('../../version.js')
+  // does not resolve in the renderer when the page is served over HTTP, so we
+  // rely on /api/version which already serves package.json and version.js.
+  $.getJSON('/api/version').done(function (v) {
+    if (v && v.appVersion) PC_APP_VERSION = v.appVersion;
+    if (v && v.changelog)  PC_APP_CHANGELOG = v.changelog;
+    if (initialised && $('#cd-settings-layout').is(':visible')) renderAbout();
+  });
 
   // ─── Public bootstrap ─────────────────────────────────────────────────────
   window.cdSettingsInit = function () {
@@ -718,10 +728,7 @@
       '</div>'
     );
 
-    // Changelog from version.js if exposed; else best-effort fetch via require.
-    var changelog = window.CHANGELOG || (function () {
-      try { return require('../../version.js').CHANGELOG; } catch (e) { return null; }
-    })();
+    var changelog = PC_APP_CHANGELOG || window.CHANGELOG;
     if (!changelog || !changelog.length) {
       $('#cdSetAboutChangelog').html('<div class="cd-set-empty">Changelog not loaded.</div>');
       return;
@@ -737,9 +744,4 @@
     $('#cdSetAboutChangelog').html(html);
   }
 
-  // Try to expose CHANGELOG to renderer scope (Electron main exposes via require if nodeIntegration).
-  try {
-    var v = require('../../version.js');
-    if (v && v.CHANGELOG) window.CHANGELOG = v.CHANGELOG;
-  } catch (e) { /* renderer without nodeIntegration — handled in renderAbout */ }
 })();

@@ -3,11 +3,11 @@
 
 $(document).ready(function () {
 
-  // Version badge — pull from version.js when reachable, else leave the markup value.
-  try {
-    var v = require('../../version.js');
-    if (v && v.version) $('#cdLogoVersion').text('v' + v.version);
-  } catch (e) { /* renderer without nodeIntegration — hardcoded markup is fine */ }
+  // Version badge — fetch from /api/version (Express serves app/ via HTTP, so
+  // require('../../version.js') does not resolve reliably in the renderer).
+  $.getJSON('/api/version').done(function (v) {
+    if (v && v.appVersion) $('#cdLogoVersion').text('v' + v.appVersion);
+  });
 
   // Resize the 3D renderer once the Command Deck layout is in place.
   // Three.js sized itself before flex:1 chained through, leaving a tiny canvas.
@@ -26,17 +26,24 @@ $(document).ready(function () {
       jogdistXYZ = step;
     } else {
       // convert stored mm values to their inch equivalents
-      var map = { 0.01: 0.0254, 0.1: 0.0254, 1: 0.254, 10: 2.54 };
+      var map = { 0.01: 0.0254, 0.1: 0.0254, 1: 0.254, 10: 2.54, 100: 25.4 };
       jogdistXYZ = map[step] !== undefined ? map[step] : step;
     }
     // sync old dist buttons so existing jog.js logic stays consistent
-    var idMap = { 0.01: '#dist01', 0.1: '#dist01', 1: '#dist1', 10: '#dist10' };
+    var idMap = { 0.01: '#dist01', 0.1: '#dist01', 1: '#dist1', 10: '#dist10', 100: '#dist100' };
     var target = idMap[step];
     if (target) $(target).trigger('click');
 
     $('.cd-step-btn').removeClass('cd-step-active');
     $(this).addClass('cd-step-active');
   });
+
+  // Sync jogdistXYZ to whichever step button renders as active on load — fixes
+  // the mismatch where jog.js defaulted to 10 but the UI highlighted 1.
+  setTimeout(function () {
+    var $active = $('.cd-step-btn.cd-step-active').first();
+    if ($active.length) $active.trigger('click');
+  }, 50);
 
   // ─── Unit toggle (mirror existing mmMode/inMode buttons) ─────────────────
   // The CD unit buttons call mmMode()/inMode() inline — we just sync styling.

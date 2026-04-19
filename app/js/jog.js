@@ -9,16 +9,25 @@ var jogRateZ = 2000
 var jogRateA = 2000
 
 function jogOverride(newVal) {
-  if (grblParams.hasOwnProperty('$110')) {
-    jogRateX = (grblParams['$110'] * (newVal / 100)).toFixed(0);
-    jogRateY = (grblParams['$111'] * (newVal / 100)).toFixed(0);
-    jogRateZ = (grblParams['$112'] * (newVal / 100)).toFixed(0);
+  // Base rates: from $110-$113 if the controller has reported them, else fall
+  // back to the module defaults so the slider still works disconnected or
+  // before the first $$ response.
+  var baseX = (grblParams && grblParams['$110']) ? parseFloat(grblParams['$110']) : 4000;
+  var baseY = (grblParams && grblParams['$111']) ? parseFloat(grblParams['$111']) : 4000;
+  var baseZ = (grblParams && grblParams['$112']) ? parseFloat(grblParams['$112']) : 2000;
+  var baseA = (grblParams && grblParams['$113']) ? parseFloat(grblParams['$113']) : 2000;
 
-    $('#jro').data('slider').val(newVal)
-  }
-  if (grblParams.hasOwnProperty('$113')) {
-    jogRateA = (grblParams['$113'] * (newVal / 100)).toFixed(0);
-  }
+  jogRateX = (baseX * (newVal / 100)).toFixed(0);
+  jogRateY = (baseY * (newVal / 100)).toFixed(0);
+  jogRateZ = (baseZ * (newVal / 100)).toFixed(0);
+  jogRateA = (baseA * (newVal / 100)).toFixed(0);
+
+  // Keep the legacy Metro4 mirror in sync when it exists; clamp to its 1-100 range.
+  try {
+    var legacy = $('#jro').data('slider');
+    if (legacy) legacy.val(Math.max(1, Math.min(100, newVal)));
+  } catch (e) { /* slider not initialised yet */ }
+
   localStorage.setItem('jogOverride', newVal);
   if (typeof socket !== 'undefined') {
     try { socket.emit('jogOverride', newVal); } catch (e) { /* no-op if not connected */ }
