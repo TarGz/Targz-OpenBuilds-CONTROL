@@ -199,6 +199,17 @@ function grblSettings(data) {
 
   updateToolOnSValues();
 
+  // Size the 3D work-area plane to the controller's reported max travel ($130/$131).
+  // $13 affects only GRBL's reporting units, not the stored $130/$131 (always mm).
+  if (typeof redrawGrid === 'function') {
+    var mx = parseFloat(grblParams['$130']);
+    var my = parseFloat(grblParams['$131']);
+    if (isFinite(mx) && isFinite(my) && mx > 0 && my > 0) {
+      var inches = localStorage.getItem('unitsMode') === 'in';
+      redrawGrid(0, inches ? mx / 25.4 : mx, 0, inches ? my / 25.4 : my, inches);
+    }
+  }
+
   if (localStorage.getItem('jogOverride')) {
     jogOverride(localStorage.getItem('jogOverride'))
   } else {

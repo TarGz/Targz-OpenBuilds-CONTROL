@@ -3,6 +3,17 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-19',
+      version: '1.5.9',
+      changes: [
+        '3D viewport surround unified to #FFFAF4 (matches --cd-bg). Three places had to agree: WebGLRenderer clear-color, the skydome top/bottom shader colors, and the Electron BrowserWindow native background.',
+        'WebGLRenderer switched to alpha:false so the clear-color fills opaquely (was compositing inconsistently between Electron 23 and vanilla Chrome, producing different surround tints on different machines)',
+        'Skydome SKY_TOP_COLOR / SKY_BOTTOM_COLOR changed from blue/white gradient to flat #FFFAF4 — the 9900-radius sphere was masking the clear-color from every camera angle, which is why top-down views always read as white regardless of clear-color',
+        'Work-area contour darkened to #B8A888 and raised from z=-0.4 to z=+0.02 so it sits above the plane + grid and is readable against both cream and white',
+        '3D work area now auto-sizes to the controller-reported machine envelope: grblSettings() calls redrawGrid(0, $130, 0, $131) whenever the controller reports its settings, replacing the hard-coded 307×207 default. Unit-aware (mm→in). Post-$$-refresh means CD-settings edits update the viewer without a reconnect.'
+      ]
+    },
+    {
+      date: '2026-04-19',
       version: '1.5.8',
       changes: [
         'Titlebar emptied — version, loaded-file name and "connected to /dev/tty…" suffix removed. The CD top bar already carries the version badge, file chip and port chip, so the titlebar was pure redundancy.',

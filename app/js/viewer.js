@@ -214,15 +214,15 @@ function redrawGrid(xmin, xmax, ymin, ymax, inches) {
 
   var contourGeo = new THREE.Geometry();
   contourGeo.vertices.push(
-    new THREE.Vector3(wxmin, wymin, -0.4),
-    new THREE.Vector3(wxmax, wymin, -0.4),
-    new THREE.Vector3(wxmax, wymax, -0.4),
-    new THREE.Vector3(wxmin, wymax, -0.4),
-    new THREE.Vector3(wxmin, wymin, -0.4)
+    new THREE.Vector3(wxmin, wymin, 0.02),
+    new THREE.Vector3(wxmax, wymin, 0.02),
+    new THREE.Vector3(wxmax, wymax, 0.02),
+    new THREE.Vector3(wxmin, wymax, 0.02),
+    new THREE.Vector3(wxmin, wymin, 0.02)
   );
   var contour = new THREE.Line(
     contourGeo,
-    new THREE.LineBasicMaterial({ color: 0xEADFCB })
+    new THREE.LineBasicMaterial({ color: 0xB8A888, linewidth: 2 })
   );
   contour.name = "WorkAreaContour";
   grid.add(contour);
@@ -351,7 +351,7 @@ function init3D() {
       autoClearColor: true,
       antialias: true,
       preserveDrawingBuffer: true,
-      alpha: true
+      alpha: false
     });
     // ThreeJS Render/Control/Camera
     scene = new THREE.Scene();

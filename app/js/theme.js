@@ -9,8 +9,8 @@ let ThemeData = {
       DESCRIPTION: 'Light Mode',
       ICON: 'sun',
       SPRITE_OPACITY: 0.6,
-      SKY_TOP_COLOR: 0x0077ff,
-      SKY_BOTTOM_COLOR: 0xffffff,
+      SKY_TOP_COLOR: 0xFFFAF4,
+      SKY_BOTTOM_COLOR: 0xFFFAF4,
       HEMI_LIGHT_COLOR: {
         'H': 0.6,
         'S': 1.0,

@@ -3172,7 +3172,7 @@ if (isElectron()) {
         experimentalFeatures: true,
         experimentalCanvasFeatures: true,
         offscreen: true,
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFAF4",
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false
