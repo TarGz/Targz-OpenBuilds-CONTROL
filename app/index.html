@@ -645,6 +645,15 @@
         <!-- ═══ Command Deck Layout ═══════════════════════════════════════════ -->
         <div id="cd-layout">
 
+          <!-- Alarm banner -->
+          <div id="cd-alarm-banner" style="display:none;">
+            <span class="cd-alarm-icon">⚠</span>
+            <span class="cd-alarm-title">ALARM</span>
+            <span class="cd-alarm-desc">Controller halted. Check limits and clear before resuming.</span>
+            <div style="flex:1;"></div>
+            <button id="cdUnlockAlarm">UNLOCK ALARM</button>
+          </div>
+
           <!-- Top bar -->
           <div id="cd-topbar">
             <div class="cd-logo">
@@ -670,15 +679,6 @@
               </label>
               <button id="cdConnBtn">CONNECT</button>
             </div>
-          </div>
-
-          <!-- Alarm banner -->
-          <div id="cd-alarm-banner" style="display:none;">
-            <span class="cd-alarm-icon">⚠</span>
-            <span class="cd-alarm-title">ALARM</span>
-            <span class="cd-alarm-desc">Controller halted. Check limits and clear before resuming.</span>
-            <div style="flex:1;"></div>
-            <button id="cdUnlockAlarm">UNLOCK ALARM</button>
           </div>
 
           <!-- Position strip -->
@@ -724,6 +724,10 @@
               <button class="cd-set-nav-item" data-target="parameters">
                 <span class="cd-set-nav-label">GRBL PARAMETERS</span>
                 <span class="cd-set-nav-hint">$0–$132 firmware config</span>
+              </button>
+              <button class="cd-set-nav-item" data-target="penheights">
+                <span class="cd-set-nav-label">PEN HEIGHTS</span>
+                <span class="cd-set-nav-hint">Pen Up / Pen Down Z defaults</span>
               </button>
               <button class="cd-set-nav-item" data-target="calibration">
                 <span class="cd-set-nav-label">CALIBRATION</span>

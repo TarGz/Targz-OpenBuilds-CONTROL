@@ -10,27 +10,8 @@ document.addEventListener("contextmenu", function(e) {
 }, false);
 
 function setWindowTitle(status) {
-
-  var string = ""
-
-  if (status) {
-    string += " v" + status.driver.version
-  } else if (laststatus) {
-    string += " v" + laststatus.driver.version
-  }
-
-
-  if (loadedFileName.length > 0) {
-    string += " / " + loadedFileName
-  }
-
-  if (!nostatusyet && laststatus.comms.interfaces.activePort) {
-    string += " / connected to " + laststatus.comms.interfaces.activePort
-  }
-
-  $('#windowtitle').html(string)
-  document.title = "OpenBuilds CONTROL" + string
-
+  $('#windowtitle').html("")
+  document.title = "OpenBuilds CONTROL"
 }
 
 

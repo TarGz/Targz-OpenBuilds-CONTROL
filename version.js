@@ -3,6 +3,15 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-19',
+      version: '1.5.8',
+      changes: [
+        'Titlebar emptied — version, loaded-file name and "connected to /dev/tty…" suffix removed. The CD top bar already carries the version badge, file chip and port chip, so the titlebar was pure redundancy.',
+        'Alarm banner moved above the CD top bar instead of below it, so a halt alert is the very first thing you see',
+        'build-mac script now `rm -rf dist &&` before electron-builder runs, preventing stale older-version artifacts from lingering in dist/ and being mistakenly opened after a version bump'
+      ]
+    },
+    {
+      date: '2026-04-19',
       version: '1.5.7',
       changes: [
         'Settings → Parameters: single unified $-key list (BASIC + ADVANCED tabs merged, numerically sorted by $-number). Search still works across the whole set.',
