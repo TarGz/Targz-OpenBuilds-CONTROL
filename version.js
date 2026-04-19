@@ -2,6 +2,16 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-19',
+      version: '1.5.7',
+      changes: [
+        'Settings → Parameters: single unified $-key list (BASIC + ADVANCED tabs merged, numerically sorted by $-number). Search still works across the whole set.',
+        'Settings → Calibration: X/Y/Z step-calibration cards now dispatch to the legacy xstepscalibrate / ystepscalibrate / zstepscalibrate wizards via bindCalibration()',
+        'Pen heights moved out of the Calibration card list into their own dedicated sub-page; Calibration header hint rewritten accordingly',
+        'Pen heights page: header simplified (hero + back button removed in favour of always-visible section), SVG "WORK 0" marker relabeled to "HOME" to match how users think about the Z reference'
+      ]
+    },
+    {
       date: '2026-04-18',
       version: '1.5.6',
       changes: [

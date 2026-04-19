@@ -31,6 +31,7 @@
     bindDiagnostics();
     bindTools();
     bindPenHeights();
+    bindCalibration();
     renderAbout();
     refreshDiagnostics();
     refreshParameters();
@@ -105,7 +106,6 @@
   };
 
   var paramDirty = {}; // key -> new value
-  var paramAdvanced = false;
   var paramQuery = '';
 
   function buildParametersSection() {
@@ -116,10 +116,6 @@
             '<div class="cd-set-header-title">GRBL PARAMETERS</div>' +
             '<div class="cd-set-header-hint">Firmware configuration · $-keys sent to controller on APPLY</div>' +
           '</div>' +
-        '</div>' +
-        '<div class="cd-set-tabs">' +
-          '<button class="cd-set-tab active" data-adv="false">✦ BASIC SETTINGS</button>' +
-          '<button class="cd-set-tab" data-adv="true">⚙ ADVANCED SETTINGS</button>' +
         '</div>' +
         '<div class="cd-set-toolbar">' +
           '<input type="text" class="cd-set-search" id="cdSetParamSearch" placeholder="Search by name or $-key…" />' +
@@ -143,12 +139,6 @@
   }
 
   function bindParameters() {
-    $('#cd-settings-layout').on('click', '.cd-set-tab', function () {
-      paramAdvanced = $(this).data('adv') === true || $(this).data('adv') === 'true';
-      $(this).siblings().removeClass('active');
-      $(this).addClass('active');
-      refreshParameters();
-    });
     $('#cdSetParamSearch').on('input', function () {
       paramQuery = $(this).val().toLowerCase();
       refreshParameters();
@@ -178,7 +168,9 @@
   }
 
   function refreshParameters() {
-    var keys = paramAdvanced ? GRBL_ADV_KEYS : GRBL_BASIC_KEYS;
+    var keys = GRBL_BASIC_KEYS.concat(GRBL_ADV_KEYS).sort(function (a, b) {
+      return parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10);
+    });
     var rows = '';
     keys.forEach(function (k) {
       var meta = GRBL_META[k] || { name: k, unit: '', step: 1 };
@@ -240,16 +232,15 @@
   // ═══ Section: Calibration ══════════════════════════════════════════════════
   function buildCalibrationSection() {
     var cards = [
-      { id: 'pen', title: 'SET DEFAULT PEN HEIGHTS', desc: 'Pen Up / Pen Down Z heights · open editor.', icon: '✎', axis: 'var(--cd-accent)', enabled: true },
-      { id: 'x',   title: 'CALIBRATE X-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $100.', icon: '↔', axis: 'var(--cd-axis-x)' },
-      { id: 'y',   title: 'CALIBRATE Y-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $101.', icon: '↕', axis: 'var(--cd-axis-y)' },
-      { id: 'z',   title: 'CALIBRATE Z-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $102.', icon: '⇅', axis: 'var(--cd-axis-z)' }
+      { id: 'x',   title: 'CALIBRATE X-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $100.', icon: '↔', axis: 'var(--cd-axis-x)', enabled: true },
+      { id: 'y',   title: 'CALIBRATE Y-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $101.', icon: '↕', axis: 'var(--cd-axis-y)', enabled: true },
+      { id: 'z',   title: 'CALIBRATE Z-AXIS STEPS/MM', desc: 'Jog a known distance, measure, compute $102.', icon: '⇅', axis: 'var(--cd-axis-z)', enabled: true }
     ];
     var html = '<section class="cd-set-section" data-section="calibration">' +
       '<div class="cd-set-header">' +
         '<div class="cd-set-header-main">' +
           '<div class="cd-set-header-title">CALIBRATION</div>' +
-          '<div class="cd-set-header-hint">Pen heights persist locally. Axis wizards compute firmware $-values.</div>' +
+          '<div class="cd-set-header-hint">Axis wizards compute firmware $-values.</div>' +
         '</div>' +
       '</div>' +
       '<div class="cd-set-cards">';
@@ -269,18 +260,29 @@
     return $(html);
   }
 
+  function bindCalibration() {
+    var map = {
+      x: typeof xstepscalibrate === 'function' ? xstepscalibrate : null,
+      y: typeof ystepscalibrate === 'function' ? ystepscalibrate : null,
+      z: typeof zstepscalibrate === 'function' ? zstepscalibrate : null
+    };
+    $('#cd-settings-layout').on('click', '[data-cal]', function () {
+      var id = $(this).data('cal');
+      if (id === 'pen') return; // handled by bindPenHeights
+      var fn = map[id];
+      if (typeof fn === 'function') fn();
+    });
+  }
+
   // ═══ Section: Pen Heights (dedicated sub-page of Calibration) ══════════════
   function buildPenHeightsSection() {
     var up = parseFloat(localStorage.getItem('penUpZ'));   if (isNaN(up)) up = 5;
     var down = parseFloat(localStorage.getItem('penDownZ')); if (isNaN(down)) down = 0;
 
     var html = '<section class="cd-set-section cd-set-pen" data-section="penheights">' +
-      '<div style="margin-bottom:14px; display:flex; align-items:flex-start; gap:14px;">' +
-        '<div class="cd-set-pen-hero" style="flex:1; margin-bottom:0;">' +
-          '<div class="cd-set-pen-hero-title">PEN UP <span>/</span> PEN DOWN</div>' +
-          '<div class="cd-set-pen-hero-hint">Z heights sent as G0 Z… when the PEN buttons are pressed.</div>' +
-        '</div>' +
-        '<button class="cd-set-btn" id="cdSetPenBack" style="margin-top:4px;">← BACK</button>' +
+      '<div class="cd-set-pen-hero">' +
+        '<div class="cd-set-pen-hero-title">PEN UP <span>/</span> PEN DOWN</div>' +
+        '<div class="cd-set-pen-hero-hint">Z heights sent as G0 Z… when the PEN buttons are pressed.</div>' +
       '</div>' +
 
       '<div class="cd-set-pen-body">' +
@@ -301,7 +303,7 @@
             '<line x1="96" y1="' + mapZtoY(20) + '" x2="96" y2="' + mapZtoY(-50) + '" stroke="var(--cd-border-strong)" stroke-width="2"/>' +
             // Work 0 dashed
             '<line x1="60" y1="' + mapZtoY(0) + '" x2="150" y2="' + mapZtoY(0) + '" stroke="var(--cd-text-muted)" stroke-dasharray="4 4" stroke-width="1"/>' +
-            '<text x="132" y="' + (mapZtoY(0) + 4) + '" font-family="var(--cd-mono)" font-size="10" fill="var(--cd-text-muted)">WORK 0</text>' +
+            '<text x="132" y="' + (mapZtoY(0) + 4) + '" font-family="var(--cd-mono)" font-size="10" fill="var(--cd-text-muted)">HOME</text>' +
             // Arrow (pen tip) pointing down at UP marker
             '<g id="cdSetPenArrow" transform="translate(96,' + mapZtoY(up) + ')">' +
               '<line x1="0" y1="-30" x2="0" y2="-6" stroke="var(--cd-text)" stroke-width="2" stroke-linecap="round"/>' +
@@ -368,15 +370,6 @@
 
   function bindPenHeights() {
     var $root = $('#cd-settings-layout');
-
-    // Open Pen Heights page from the Calibration card
-    $root.on('click', '[data-cal="pen"]', function () {
-      cdSettingsShow('penheights');
-    });
-
-    $root.on('click', '#cdSetPenBack', function () {
-      cdSettingsShow('calibration');
-    });
 
     function setPen(kind, v) {
       v = Math.max(-50, Math.min(20, parseFloat(v)));
