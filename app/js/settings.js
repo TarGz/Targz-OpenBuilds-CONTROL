@@ -12,8 +12,9 @@
   // does not resolve in the renderer when the page is served over HTTP, so we
   // rely on /api/version which already serves package.json and version.js.
   $.getJSON('/api/version').done(function (v) {
-    if (v && v.appVersion) PC_APP_VERSION = v.appVersion;
-    if (v && v.changelog)  PC_APP_CHANGELOG = v.changelog;
+    if (!v) return;
+    PC_APP_VERSION = v.appVersion || (v.version ? String(v.version).replace(/-targz$/, '') : '');
+    if (v.changelog) PC_APP_CHANGELOG = v.changelog;
     if (initialised && $('#cd-settings-layout').is(':visible')) renderAbout();
   });
 

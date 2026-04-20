@@ -6,7 +6,9 @@ $(document).ready(function () {
   // Version badge — fetch from /api/version (Express serves app/ via HTTP, so
   // require('../../version.js') does not resolve reliably in the renderer).
   $.getJSON('/api/version').done(function (v) {
-    if (v && v.appVersion) $('#cdLogoVersion').text('v' + v.appVersion);
+    if (!v) return;
+    var ver = v.appVersion || (v.version ? String(v.version).replace(/-targz$/, '') : '');
+    if (ver) $('#cdLogoVersion').text('v' + ver);
   });
 
   // Resize the 3D renderer once the Command Deck layout is in place.
@@ -44,6 +46,22 @@ $(document).ready(function () {
     var $active = $('.cd-step-btn.cd-step-active').first();
     if ($active.length) $active.trigger('click');
   }, 50);
+
+  // Sync the JOG override slider to whatever localStorage persisted last run,
+  // so the displayed % matches the real jogRateX/Y/Z multiplier on page load.
+  // Without this the CD slider always reads 100 while jogOverride() at startup
+  // applied whatever was stored (eg 1 → 40mm/min, feels like a dead jog).
+  setTimeout(function () {
+    var stored = parseInt(localStorage.getItem('jogOverride'), 10);
+    if (!stored || isNaN(stored)) return;
+    var $sl = $('#cdJro');
+    if (!$sl.length) return;
+    var min = parseInt($sl.attr('min') || '1', 10);
+    var max = parseInt($sl.attr('max') || '300', 10);
+    var clamped = Math.max(min, Math.min(max, stored));
+    $sl.val(clamped);
+    $('#cdJroVal').text(clamped);
+  }, 100);
 
   // ─── Unit toggle (mirror existing mmMode/inMode buttons) ─────────────────
   // The CD unit buttons call mmMode()/inMode() inline — we just sync styling.
@@ -467,28 +485,59 @@ $(document).ready(function () {
     }
   });
 
-  // ─── Port selector: native <select> in CD topbar, mirroring #portUSB ─────
-  // Copies the optgroup structure (USB Ports / Network Ports) from the
-  // Metro-populated #portUSB into our own <select>, and prepends the Dev
-  // Machine options.
+  // ─── Port selector: custom dropdown in CD topbar, mirroring #portUSB ─────
+  // A native <select> is the value-store (so existing $('#cdPortSelect').val()
+  // calls keep working) but the visible UI is a custom button+menu so:
+  //   · the popover stays inside the Electron window (native selects on macOS
+  //     render as OS-level popups that escape the window chrome)
+  //   · refreshes never blink an open menu (we gate sync while open, and
+  //     diff-skip no-op rebuilds)
+  var _cdPortSig = '';
+  var _cdPortMenuOpen = false;
+
+  function cdPortSignature($src) {
+    var parts = [];
+    $src.children().each(function () {
+      var $n = $(this);
+      if ($n.is('optgroup')) {
+        parts.push('G:' + $n.attr('label'));
+        $n.children('option').each(function () {
+          parts.push('O:' + $(this).val() + '|' + $(this).text());
+        });
+      } else if ($n.is('option')) {
+        parts.push('O:' + $n.val() + '|' + $n.text());
+      }
+    });
+    return parts.join('\n');
+  }
+
   function cdSyncPortOptions() {
     var $src = $('#portUSB');
     var $dst = $('#cdPortSelect');
     if (!$src.length || !$dst.length) return;
 
-    // Remember current CD selection so we don't clobber a Dev Machine pick
+    // Don't rebuild while the menu is open — would yank the list out from
+    // under the user's cursor.
+    if (_cdPortMenuOpen) return;
+
+    var sig = cdPortSignature($src);
+    if (sig === _cdPortSig) {
+      // Nothing changed upstream; just refresh label in case selection moved.
+      cdPortUpdateLabel();
+      return;
+    }
+    _cdPortSig = sig;
+
     var currentDst = $dst.val();
     var currentSrc = $src.val();
 
     $dst.empty();
 
-    // Dev Machine group at the top
     var $devGrp = $('<optgroup label="Dev Machine"></optgroup>');
     $devGrp.append($('<option></option>').val(DEV_PORT_DEMO).text('▸ Dev Machine + demo gcode'));
     $devGrp.append($('<option></option>').val(DEV_PORT_VALUE).text('▸ Dev Machine (simulator)'));
     $dst.append($devGrp);
 
-    // Mirror #portUSB structure — preserves optgroups (USB Ports, Network Ports)
     $src.children().each(function () {
       var $node = $(this);
       if ($node.is('optgroup')) {
@@ -503,24 +552,135 @@ $(document).ready(function () {
       }
     });
 
-    // Preserve selection: if CD was on a Dev Machine pick, keep it. Else
-    // reflect #portUSB's value.
     var isDevPick = (currentDst === DEV_PORT_VALUE || currentDst === DEV_PORT_DEMO);
     var preferred = isDevPick ? currentDst : (currentSrc || currentDst);
     if (preferred) $dst.val(preferred);
 
     $dst.prop('disabled', false);
+    cdPortUpdateLabel();
   }
 
-  // Initial populate + periodic refresh to pick up backend port scans.
+  function cdPortCurrentOptionText() {
+    var $dst = $('#cdPortSelect');
+    var v = $dst.val();
+    if (!v) return '';
+    var $opt = $dst.find('option').filter(function () { return this.value === v; }).first();
+    return $opt.length ? $opt.text() : '';
+  }
+
+  function cdPortUpdateLabel() {
+    var txt = cdPortCurrentOptionText();
+    $('#cdPortButtonLabel').text(txt || 'Select a port…');
+  }
+
+  function cdPortBuildMenu() {
+    var $menu = $('#cdPortMenu');
+    var $dst = $('#cdPortSelect');
+    var currentVal = $dst.val();
+    $menu.empty();
+
+    $dst.children().each(function () {
+      var $node = $(this);
+      if ($node.is('optgroup')) {
+        $menu.append($('<div class="cd-port-menu-group"></div>').text($node.attr('label')));
+        var $opts = $node.children('option');
+        if (!$opts.length) {
+          $menu.append($('<div class="cd-port-menu-item cd-port-menu-item-disabled"></div>').text('—'));
+        }
+        $opts.each(function () {
+          var $o = $(this);
+          var val = $o.val();
+          var $item = $('<div class="cd-port-menu-item" role="option"></div>')
+            .attr('data-value', val)
+            .text($o.text());
+          if (val === currentVal) $item.addClass('cd-port-menu-item-selected');
+          $menu.append($item);
+        });
+      } else if ($node.is('option')) {
+        var v = $node.val();
+        var $it = $('<div class="cd-port-menu-item" role="option"></div>')
+          .attr('data-value', v)
+          .text($node.text());
+        if (v === currentVal) $it.addClass('cd-port-menu-item-selected');
+        $menu.append($it);
+      }
+    });
+  }
+
+  function cdPortPositionMenu() {
+    var btn = document.getElementById('cdPortButton');
+    var menu = document.getElementById('cdPortMenu');
+    if (!btn || !menu) return;
+    var r = btn.getBoundingClientRect();
+    menu.style.minWidth = r.width + 'px';
+    menu.style.left = r.left + 'px';
+    // Prefer below; flip above if it would overflow the viewport.
+    var belowSpace = window.innerHeight - r.bottom - 8;
+    menu.style.maxHeight = Math.max(160, Math.min(360, belowSpace)) + 'px';
+    menu.style.top = (r.bottom + 2) + 'px';
+  }
+
+  function cdPortOpenMenu() {
+    if (_cdPortMenuOpen) return;
+    cdPortBuildMenu();
+    _cdPortMenuOpen = true;
+    var menu = document.getElementById('cdPortMenu');
+    menu.hidden = false;
+    $('#cdPortButton').attr('aria-expanded', 'true');
+    cdPortPositionMenu();
+  }
+
+  function cdPortCloseMenu() {
+    if (!_cdPortMenuOpen) return;
+    _cdPortMenuOpen = false;
+    document.getElementById('cdPortMenu').hidden = true;
+    $('#cdPortButton').attr('aria-expanded', 'false');
+    // Catch up on any sync we skipped while open.
+    cdSyncPortOptions();
+  }
+
+  // Delegate from document so timing / element-recreation can't drop the
+  // binding, and accept a click anywhere in the wrap (not just the inner
+  // <button>) — some Electron/macOS builds have pointer-event quirks on
+  // nested buttons that web Chrome doesn't.
+  $(document).on('click', '#cdPortCustom', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (_cdPortMenuOpen) cdPortCloseMenu(); else cdPortOpenMenu();
+  });
+
+  $(document).on('click', '#cdPortMenu .cd-port-menu-item', function (e) {
+    e.stopPropagation();
+    if ($(this).hasClass('cd-port-menu-item-disabled')) return;
+    var v = $(this).attr('data-value');
+    var $dst = $('#cdPortSelect');
+    if ($dst.val() !== v) {
+      $dst.val(v).trigger('change');
+    }
+    cdPortUpdateLabel();
+    cdPortCloseMenu();
+  });
+
+  $(document).on('mousedown', function (e) {
+    if (!_cdPortMenuOpen) return;
+    if ($(e.target).closest('#cdPortMenu, #cdPortCustom').length) return;
+    cdPortCloseMenu();
+  });
+  $(document).on('keydown', function (e) {
+    if (_cdPortMenuOpen && e.key === 'Escape') cdPortCloseMenu();
+  });
+  $(window).on('resize scroll', function () {
+    if (_cdPortMenuOpen) cdPortPositionMenu();
+  });
+
   cdSyncPortOptions();
   setTimeout(cdSyncPortOptions, 500);
   setInterval(cdSyncPortOptions, 2000);
   window.cdSyncPortOptions = cdSyncPortOptions;
 
-  // When user picks a non-dev port, mirror to #portUSB so selectPort() works
   $('#cdPortSelect').on('change', function () {
     var v = $(this).val();
+    cdPortUpdateLabel();
     if (v === DEV_PORT_VALUE || v === DEV_PORT_DEMO) return;
     $('#portUSB').val(v).trigger('change');
   });

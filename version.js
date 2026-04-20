@@ -2,6 +2,20 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-20',
+      version: '1.5.12',
+      changes: [
+        'Port selector (follow-up to 1.5.11): delegated the open/close click off document so it stays wired regardless of element timing, and moved the hit target from the inner <button> to the whole #cdPortCustom wrap — Electron on macOS had pointer-event quirks on the nested button that plain Chrome did not, so clicks registered in the browser but no-op in the app.'
+      ]
+    },
+    {
+      date: '2026-04-20',
+      version: '1.5.11',
+      changes: [
+        'Port selector: replaced the native <select> with a custom button + popover menu. Fixes two issues: (1) on macOS Electron the native dropdown rendered as an OS-level popup that floated outside the app window; (2) the 2s refresh was rebuilding the <select> unconditionally, making the open menu blink/close. The new menu is an in-DOM element so it stays clipped to the window, and the sync is now diff-based (skips rebuilds when the option list is unchanged) and completely suspended while the menu is open.'
+      ]
+    },
+    {
       date: '2026-04-19',
       version: '1.5.10',
       changes: [

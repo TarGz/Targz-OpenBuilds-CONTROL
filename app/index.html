@@ -673,10 +673,15 @@
             <div class="cd-topbar-conn">
               <span id="cdConnDot" class="cd-conn-dot"></span>
               <span id="cdConnLabel" class="cd-conn-label">OFFLINE</span>
-              <label class="cd-port-select-wrap">
+              <div class="cd-port-select-wrap" id="cdPortCustom">
                 <span class="cd-port-icon"><i class="fab fa-usb"></i></span>
-                <select id="cdPortSelect" class="cd-port-select" title="Serial port"></select>
-              </label>
+                <button type="button" id="cdPortButton" class="cd-port-button" title="Serial port" aria-haspopup="listbox" aria-expanded="false">
+                  <span id="cdPortButtonLabel" class="cd-port-button-label">Select a port…</span>
+                  <span class="cd-port-caret" aria-hidden="true"></span>
+                </button>
+                <select id="cdPortSelect" class="cd-port-select-hidden" aria-hidden="true" tabindex="-1"></select>
+              </div>
+              <div id="cdPortMenu" class="cd-port-menu" role="listbox" hidden></div>
               <button id="cdConnBtn">CONNECT</button>
             </div>
           </div>
