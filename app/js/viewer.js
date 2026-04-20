@@ -649,19 +649,17 @@ function resetView(object) {
 
 function drawMachineCoordinates(status) {
 
-  if (laststatus != undefined && grblParams.$130 !== undefined && grblParams.$131 !== undefined && grblParams.$132 !== undefined) {
-    var machineCoordinatesBoxMaxX = status.machine.position.work.x - status.machine.position.offset.x
-    var machineCoordinatesBoxMaxY = status.machine.position.work.y - status.machine.position.offset.y
-    var machineCoordinatesBoxMaxZ = status.machine.position.work.z - status.machine.position.offset.z
-
-    var machineCoordinatesBoxMinX = machineCoordinatesBoxMaxX - grblParams.$130
-    var machineCoordinatesBoxMinY = machineCoordinatesBoxMaxY - grblParams.$131
-    var machineCoordinatesBoxMinZ = machineCoordinatesBoxMaxZ - grblParams.$132
-
-    console.log("X", machineCoordinatesBoxMinX, machineCoordinatesBoxMaxX)
-    console.log("Y", machineCoordinatesBoxMinY, machineCoordinatesBoxMaxY)
-    console.log("Z", machineCoordinatesBoxMinZ, machineCoordinatesBoxMaxZ)
-
+  if (grblParams.$130 !== undefined && grblParams.$131 !== undefined && grblParams.$132 !== undefined) {
+    // Draw the envelope in WCS so it frames the white work-area plane (which is
+    // also drawn at 0..$130 / 0..$131 by redrawGrid). Previous version used
+    // `work - offset` (= MPos), which placed the wireframe in machine-coord
+    // space and floated it away from the toolpath whenever G54 offset != 0.
+    var machineCoordinatesBoxMinX = 0;
+    var machineCoordinatesBoxMinY = 0;
+    var machineCoordinatesBoxMinZ = 0;
+    var machineCoordinatesBoxMaxX = grblParams.$130;
+    var machineCoordinatesBoxMaxY = grblParams.$131;
+    var machineCoordinatesBoxMaxZ = grblParams.$132;
 
     workspace.remove(machineCoordinateSpace);
     machineCoordinateSpace = new THREE.Group();
