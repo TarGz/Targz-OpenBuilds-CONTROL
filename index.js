@@ -816,9 +816,8 @@ io.on("connection", function(socket) {
       title: "OpenBuilds CONTROL: Chromium's GPU Report",
       frame: true,
       autoHideMenuBar: true,
-      //icon: '/app/favicon.png',
       icon: nativeImage.createFromPath(
-        path.join(__dirname, "/app/favicon.png")
+        path.join(__dirname, "/app/icon.png")
       ),
       webgl: true,
       experimentalFeatures: true,
@@ -3168,9 +3167,8 @@ if (isElectron()) {
         title: "OpenBuilds CONTROL ",
         frame: false,
         autoHideMenuBar: true,
-        //icon: '/app/favicon.png',
         icon: nativeImage.createFromPath(
-          path.join(__dirname, "/app/favicon.png")
+          path.join(__dirname, "/app/icon.png")
         ),
         webgl: true,
         experimentalFeatures: true,

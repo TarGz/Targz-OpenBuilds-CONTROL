@@ -3,6 +3,13 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-21',
+      version: '1.5.15',
+      changes: [
+        'App icon: jogWindow and gpuInfoWindow BrowserWindow icons pointed to /app/favicon.png which does not exist, so nativeImage returned an empty image and Electron fell back to its default logo in the taskbar/window frame. Repointed both to the existing /app/icon.png (same source the tray already uses). Also fixed the Linux electron-builder icon path from "build/" (bare directory containing .icns/.ico) to "build/icons/" (directory of sized PNGs electron-builder expects).'
+      ]
+    },
+    {
+      date: '2026-04-21',
       version: '1.5.14',
       changes: [
         'Fix #7 — Alarm banner relocated to the top of the right column (#cd-right) as an inline panel, so toggling it only shifts the scrollable JOB info below it; the jog panel, position strip, topbar and console are unaffected. cdUpdateConnection also debounces the ON transition by 700ms so transient alarm ticks during the GRBL handshake (status oscillating 5↔2 during initial connect) do not flash the banner; OFF transitions still hide immediately.'
