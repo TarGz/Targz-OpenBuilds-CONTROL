@@ -2,6 +2,13 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-21',
+      version: '1.5.14',
+      changes: [
+        'Fix #7 — Alarm banner relocated to the top of the right column (#cd-right) as an inline panel, so toggling it only shifts the scrollable JOB info below it; the jog panel, position strip, topbar and console are unaffected. cdUpdateConnection also debounces the ON transition by 700ms so transient alarm ticks during the GRBL handshake (status oscillating 5↔2 during initial connect) do not flash the banner; OFF transitions still hide immediately.'
+      ]
+    },
+    {
       date: '2026-04-20',
       version: '1.5.12',
       changes: [

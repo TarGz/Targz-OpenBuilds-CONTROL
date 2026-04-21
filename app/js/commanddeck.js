@@ -232,6 +232,8 @@ $(document).ready(function () {
   }
 
   var _lastDispatchedStatus = -1;
+  var _lastAlarmShown = false;
+  var _alarmShowTimer = null;
 
   function devTick() {
     if (!window._devMachineActive) return;
@@ -942,8 +944,21 @@ $(document).ready(function () {
     }
     if (typeof window.cdSettingsOnStatus === 'function') window.cdSettingsOnStatus();
 
-    // Alarm banner
-    $('#cd-alarm-banner').toggle(alarm);
+    // Alarm banner — debounce ON so transient alarm ticks during the connect
+    // handshake (GRBL often boots into alarm before settling) don't flash the
+    // banner; hide OFF immediately so clearing an alarm feels instant.
+    if (alarm !== _lastAlarmShown) {
+      _lastAlarmShown = alarm;
+      if (_alarmShowTimer) { clearTimeout(_alarmShowTimer); _alarmShowTimer = null; }
+      if (alarm) {
+        _alarmShowTimer = setTimeout(function () {
+          _alarmShowTimer = null;
+          if (_lastAlarmShown) document.getElementById('cd-alarm-banner').style.display = 'flex';
+        }, 700);
+      } else {
+        $('#cd-alarm-banner').hide();
+      }
+    }
 
     // Jog section disabled state
     var canJog = connected && !running && !alarm;

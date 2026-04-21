@@ -399,15 +399,19 @@
 }
 
 /* ─── Alarm banner ─────────────────────────────────────────────────────────── */
+/* Lives at the top of #cd-right as an inline panel: toggling shifts only the
+   JOB info below it (which is flex:1 + scrollable) — the RUN controls stay
+   pinned to the bottom, and the jog / position strip / topbar are unaffected. */
 #cd-alarm-banner {
+  flex-shrink: 0;
   background: #FEE2E2;
   border-bottom: 1px solid var(--cd-bad);
   color: var(--cd-bad);
-  padding: 6px 14px;
+  padding: 8px 12px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
+  gap: 6px 10px;
 }
 
 .cd-alarm-icon {
@@ -427,6 +431,7 @@
 .cd-alarm-desc {
   font-size: 11px;
   color: #7f1d1d;
+  flex-basis: 100%;
 }
 
 #cdUnlockAlarm {

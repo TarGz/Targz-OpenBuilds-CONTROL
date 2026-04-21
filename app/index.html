@@ -645,15 +645,6 @@
         <!-- ═══ Command Deck Layout ═══════════════════════════════════════════ -->
         <div id="cd-layout">
 
-          <!-- Alarm banner -->
-          <div id="cd-alarm-banner" style="display:none;">
-            <span class="cd-alarm-icon">⚠</span>
-            <span class="cd-alarm-title">ALARM</span>
-            <span class="cd-alarm-desc">Controller halted. Check limits and clear before resuming.</span>
-            <div style="flex:1;"></div>
-            <button id="cdUnlockAlarm">UNLOCK ALARM</button>
-          </div>
-
           <!-- Top bar -->
           <div id="cd-topbar">
             <div class="cd-logo">
@@ -973,6 +964,14 @@
 
             <!-- RIGHT: Job info + run controls -->
             <div id="cd-right">
+
+              <!-- Alarm banner (pinned to top of right column) -->
+              <div id="cd-alarm-banner" style="display:none;">
+                <span class="cd-alarm-icon">⚠</span>
+                <span class="cd-alarm-title">ALARM</span>
+                <span class="cd-alarm-desc">Controller halted. Check limits and clear before resuming.</span>
+                <button id="cdUnlockAlarm">UNLOCK ALARM</button>
+              </div>
 
               <!-- Job info (shown when file loaded) -->
               <div id="cd-job-info" class="cd-panel-section" style="display:none; flex:1; overflow-y:auto; overflow-x:hidden; border-bottom: 1px solid var(--cd-border);">
