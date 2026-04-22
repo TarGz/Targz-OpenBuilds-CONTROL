@@ -3,6 +3,49 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-04-21',
+      version: '1.7.0',
+      changes: [
+        'Axis readouts now show a small "MPos: <value>" line under each big WCS number, so the machine-coordinate position is visible at a glance. Highlights in accent colour when MPos differs from the displayed WCS value — i.e. whenever a G54 offset is active — to help avoid crashes caused by stale stored offsets.'
+      ]
+    },
+    {
+      date: '2026-04-21',
+      version: '1.6.3',
+      changes: [
+        'FEED slider widened from 10-200% to 1-500% for visual parity with the JOG slider. Grbl itself still clamps feed override at 10-200% (bytes 0x91-0x94 cannot push it past that band) — beyond those limits the slider is effectively cosmetic for G1, but the coupled rapid override introduced in 1.6.0 keeps responding: below 38% the slider still drops G0 travel to 25%, and above 75% it releases to 100%. Net effect for the user: the slider range matches JOG visually and the extra low-end headroom just stays on rapid=25% all the way down.'
+      ]
+    },
+    {
+      date: '2026-04-21',
+      version: '1.6.2',
+      changes: [
+        'Strip the srvLog debug bridge added in 1.6.1 now that rapidOverride is hardware-verified — grbl 1.1g reports back feedOverride=10 / rapidOverride=25 after dragging FEED low during a plot, confirming the bytes land. First-read races before the next 250ms status tick were a diagnostic artefact, not a bug.'
+      ]
+    },
+    {
+      date: '2026-04-21',
+      version: '1.6.1',
+      changes: [
+        'Debug aid (temporary): rapidOverride backend handler now echoes each step back to the renderer via a new srvLog socket event, so debug output is visible in DevTools console instead of only the Node terminal. Will be stripped once the rapid-override hardware issue is diagnosed.'
+      ]
+    },
+    {
+      date: '2026-04-21',
+      version: '1.6.0',
+      changes: [
+        'FEED slider now also drives grbl rapid override during a plotting job. On a pen plotter, pen-up XY travel is G0 rapid, which the feed-override bytes (0x91-0x94) do not touch — so the FEED slider previously did nothing for most of the visible motion. websocket.js feedOverride() now co-emits rapidOverride alongside feedOverride. New index.js handler maps the slider value to grbl\'s three discrete rapid levels: ≥75% → 0x95 (100%), ≥38% → 0x96 (50%), <38% → 0x97 (25%). Caches current rapidOverride to avoid redundant bytes. Dragging FEED down now slows G1 strokes and G0 travel together; dragging it up releases both.'
+      ]
+    },
+    {
+      date: '2026-04-21',
+      version: '1.5.17',
+      changes: [
+        'Fix #2 — JOG override: fire jogOverride on oninput (not onchange-only), matching legacy Metro4 #jro behaviour. v1.5.10 had moved all three CD sliders to onchange to stop FEED/TOOL flooding grbl, but JOG is purely client-side (updates jogRateX/Y/Z/A, no socket emit) so the flood rationale never applied — and the onchange event on the vertical HTML5 range fired inconsistently, making the slider feel dead. Root cause of the "does nothing" perception, once oninput was in place, turned out to be the 1 mm default jog step: F=300 vs F=3000 over 1 mm both complete in a blink. Works clearly at 10 mm / 100 mm step. Hardware-verified at 1 % vs 100 %. FEED and TOOL intentionally left on onchange (their emit path still needs the debounce).',
+        'Closes #3 — JOG slider widened from 1-300% to 1-500%. Below 100% the scaling is honoured exactly (fine slow-jog control). Above 100% grbl still clamps commanded F to $110/$111; the wider range removes the UI ceiling so there is headroom once $110 is raised in Settings.'
+      ]
+    },
+    {
+      date: '2026-04-21',
       version: '1.5.15',
       changes: [
         'App icon: jogWindow and gpuInfoWindow BrowserWindow icons pointed to /app/favicon.png which does not exist, so nativeImage returned an empty image and Electron fell back to its default logo in the taskbar/window frame. Repointed both to the existing /app/icon.png (same source the tray already uses). Also fixed the Linux electron-builder icon path from "build/" (bare directory containing .icns/.ico) to "build/icons/" (directory of sized PNGs electron-builder expects).'

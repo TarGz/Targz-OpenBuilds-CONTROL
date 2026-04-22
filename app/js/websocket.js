@@ -1202,6 +1202,9 @@ function sendGcode(gcode) {
 function feedOverride(step) {
   if (socket) {
     socket.emit('feedOverride', step);
+    // Also drive the grbl rapid (G0) override so FEED governs XY travel during
+    // a plotter job, not just G1 strokes. Backend maps to 100/50/25.
+    socket.emit('rapidOverride', step);
     $('#fro').data('slider').buff(((step - 10) * 100) / (200 - 10))
   }
 }

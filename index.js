@@ -424,6 +424,7 @@ var status = {
     inputs: [],
     overrides: {
       feedOverride: 100, //
+      rapidOverride: 100, //
       spindleOverride: 100, //
       realFeed: 0, //
       realSpindle: 0 //
@@ -2044,6 +2045,28 @@ io.on("connection", function(socket) {
           }
           addQRealtime("?");
           status.machine.overrides.feedOverride = parseInt(reqfro); // Set now, but will be overriden from feedback from Grbl itself in next queryloop
+          break;
+      }
+    } else {
+      debug_log('ERROR: Machine connection not open!');
+    }
+  });
+
+  socket.on('rapidOverride', function(data) {
+    if (status.comms.connectionStatus > 0) {
+      switch (status.machine.firmware.type) {
+        case 'grbl':
+          var step = parseInt(data);
+          var target, byte;
+          if (step >= 75) { target = 100; byte = 0x95; }
+          else if (step >= 38) { target = 50; byte = 0x96; }
+          else { target = 25; byte = 0x97; }
+          var current = parseInt(status.machine.overrides.rapidOverride);
+          if (current !== target) {
+            addQRealtime(String.fromCharCode(byte));
+            addQRealtime("?");
+            status.machine.overrides.rapidOverride = target;
+          }
           break;
       }
     } else {

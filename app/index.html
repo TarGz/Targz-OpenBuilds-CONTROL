@@ -850,8 +850,8 @@
                     <div class="cd-vslider-label">JOG</div>
                     <div class="cd-vslider-track">
                       <input type="range" id="cdJro" class="cd-vslider-input" orient="vertical"
-                        min="1" max="300" value="100"
-                        oninput="document.getElementById('cdJroVal').textContent=this.value"
+                        min="1" max="500" value="100"
+                        oninput="document.getElementById('cdJroVal').textContent=this.value; jogOverride(+this.value)"
                         onchange="jogOverride(+this.value)">
                     </div>
                     <div class="cd-vslider-val"><span id="cdJroVal">100</span><span class="cd-vslider-unit">%</span></div>
@@ -861,7 +861,7 @@
                     <div class="cd-vslider-label">FEED</div>
                     <div class="cd-vslider-track">
                       <input type="range" id="cdFro" class="cd-vslider-input" orient="vertical"
-                        min="10" max="200" value="100"
+                        min="1" max="500" value="100"
                         oninput="document.getElementById('cdFroVal').textContent=this.value"
                         onchange="feedOverride(+this.value)">
                     </div>

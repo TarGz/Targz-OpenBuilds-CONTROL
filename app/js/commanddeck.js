@@ -1249,6 +1249,16 @@ $(document).ready(function () {
   // ─── MPos ─────────────────────────────────────────────────────────────────
   window.cdUpdateMPos = function (x, y, z) {
     $('#cdMpos').text('MPos X' + x + ' Y' + y + ' Z' + z);
+    var axes = [['cdXMpos', x, 'cdXPos'], ['cdYMpos', y, 'cdYPos'], ['cdZMpos', z, 'cdZPos']];
+    axes.forEach(function (a) {
+      var el = document.getElementById(a[0]);
+      if (!el) return;
+      el.textContent = 'MPos: ' + a[1];
+      var wcs = parseFloat((document.getElementById(a[2]) || {}).textContent);
+      var mp  = parseFloat(a[1]);
+      var offset = !isNaN(wcs) && !isNaN(mp) && Math.abs(wcs - mp) > 0.0005;
+      el.classList.toggle('cd-axis-mpos-offset', offset);
+    });
   };
 
 });
