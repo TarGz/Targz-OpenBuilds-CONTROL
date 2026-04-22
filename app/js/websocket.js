@@ -611,6 +611,11 @@ function initSocket() {
         populatePortsMenu();
       }
 
+      if (!_.isEqual(status.comms.interfaces.virtualPorts, laststatus.comms.interfaces.virtualPorts)) {
+        laststatus.comms.interfaces.virtualPorts = status.comms.interfaces.virtualPorts;
+        populatePortsMenu();
+      }
+
     }
 
     if (status.comms.runStatus.indexOf("Door") == 0) {
@@ -1185,11 +1190,35 @@ function populatePortsMenu() {
       };
     }
     response += `</optgroup>`
+
+    var virtualPorts = (laststatus.comms.interfaces.virtualPorts || []);
+    if (virtualPorts.length) {
+      response += `<optgroup label="Virtual Ports">`
+      for (i = 0; i < virtualPorts.length; i++) {
+        var lastUsedPortV = localStorage.getItem('lastUsedPort');
+        if (virtualPorts[i].path == lastUsedPortV) {
+          response += `<option value="` + virtualPorts[i].path + `" selected>` + virtualPorts[i].path + " " + virtualPorts[i].note + `</option>`;
+        } else {
+          response += `<option value="` + virtualPorts[i].path + `">` + virtualPorts[i].path + " " + virtualPorts[i].note + `</option>`;
+        }
+      }
+      response += `</optgroup>`
+    }
+
     var select = $("#portUSB").data("select");
     select.data(response);
 
     $('#portUSB').parent(".select").removeClass('disabled')
     $("#connectBtn").attr('disabled', false);
+
+    // Metro4's select.data() updates only its widget, not the native <select>
+    // children. Inject the same HTML directly into #cdPortSelect so the CD
+    // dropdown has real <optgroup>/<option> nodes to render from.
+    // Use innerHTML directly: jQuery's .html() parses via a detached <div>
+    // which silently strips <optgroup> tags (they're invalid children of div).
+    var cdSel = document.getElementById('cdPortSelect');
+    if (cdSel) cdSel.innerHTML = response;
+    if (typeof window.cdSyncPortOptions === 'function') window.cdSyncPortOptions();
   }
 }
 

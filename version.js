@@ -2,6 +2,15 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-04-22',
+      version: '1.8.0',
+      changes: [
+        'Port selector now includes a "Virtual Ports" section for PTY devices: index.js findVirtualPorts() scans /tmp for symlinks pointing at /dev/ttys* or /dev/pty* and adds them to status.comms.interfaces.virtualPorts; populatePortsMenu() renders them as a third optgroup alongside USB and Network ports. Selected virtual ports flow through the existing serial connect/read/write path with no special-casing, so connecting to a fake GRBL simulator (e.g. python3 fake_grbl.py --link /tmp/fakegrbl) works exactly like a real device.',
+        'Removed the in-renderer "Dev Machine" simulator (DEV_PORT_VALUE / DEV_PORT_DEMO entries, buildFakeStatus tick loop, socket.emit / runJobFile / sendGcode intercepts) now that the real fake-GRBL PTY simulator is wired up. _lastAlarmShown / _alarmShowTimer, which happened to live inside the DEV block but belong to the alarm-banner debounce in cdUpdateConnection, are kept as standalone declarations.',
+        'commanddeck.js cdSyncPortOptions no longer mirrors #portUSB via the DOM — Metro4 select.data() only updates its widget state, not the native select children, so that mirror always read the "Waiting for USB" placeholder. populatePortsMenu now writes the same response HTML directly to #cdPortSelect via element.innerHTML (jQuery .html() silently strips <optgroup> via its detached-div parser), and cdSyncPortOptions shrinks to a label/disabled-state refresh.'
+      ]
+    },
+    {
       date: '2026-04-21',
       version: '1.7.0',
       changes: [

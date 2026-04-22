@@ -499,6 +499,7 @@ var status = {
       type: "",
       ports: "",
       networkDevices: [],
+      virtualPorts: [],
       activePort: "" // or activeIP in the case of wifi/telnet?
     },
     alarm: ""
@@ -514,6 +515,26 @@ var status = {
 };
 
 
+function findVirtualPorts() {
+  const virtual = [];
+  try {
+    const entries = fs.readdirSync('/tmp');
+    for (const name of entries) {
+      const fullPath = '/tmp/' + name;
+      try {
+        const stat = fs.lstatSync(fullPath);
+        if (stat.isSymbolicLink()) {
+          const target = fs.readlinkSync(fullPath);
+          if (/\/dev\/(ttys|pty)/.test(target)) {
+            virtual.push({ path: fullPath, note: '→ ' + target });
+          }
+        }
+      } catch (e) { /* skip unreadable entries */ }
+    }
+  } catch (e) { /* /tmp not accessible */ }
+  return virtual;
+}
+
 async function findPorts() {
   const ports = await SerialPort.list()
   // console.log(ports)
@@ -523,6 +544,7 @@ async function findPorts() {
     status.comms.interfaces.ports[i].img = data.img;
     status.comms.interfaces.ports[i].note = data.note;
   }
+  status.comms.interfaces.virtualPorts = findVirtualPorts();
 }
 findPorts()
 
