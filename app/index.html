@@ -794,14 +794,11 @@
                     </span>
                   </button>
                   <button class="cd-jog-btn cd-jog-pen cd-jog-pen-pump" id="cdPumpBtn">
-                    <!-- vertical syringe: plunger top, needle bottom -->
+                    <!-- pen nib pressed flush against ground, no arrow -->
                     <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
-                      <rect x="4" y="0" width="8" height="3" rx="1" fill="currentColor" opacity="0.7"/>
-                      <line x1="8" y1="3" x2="8" y2="5" stroke="currentColor" stroke-width="2"/>
-                      <rect x="2" y="5" width="12" height="11" rx="1.5" fill="currentColor"/>
-                      <line x1="3" y1="9" x2="13" y2="9" stroke="white" stroke-width="1"/>
-                      <line x1="3" y1="12" x2="13" y2="12" stroke="white" stroke-width="1"/>
-                      <line x1="8" y1="16" x2="8" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <rect x="4" y="0" width="8" height="9" rx="1" fill="currentColor"/>
+                      <polygon points="4,9 12,9 8,16" fill="currentColor"/>
+                      <line x1="0" y1="17" x2="16" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     <span class="cd-pen-text">
                       <span class="cd-pen-label">PUMP</span>
@@ -880,7 +877,13 @@
                         oninput="document.getElementById('cdJroVal').textContent=this.value; jogOverride(+this.value)"
                         onchange="jogOverride(+this.value)">
                     </div>
-                    <div class="cd-vslider-val"><span id="cdJroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <div class="cd-vslider-nudge-row">
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdJro','cdJroVal',-1,jogOverride,1,500)">−</button>
+                      <div class="cd-vslider-val" data-slider="cdJro" data-fn="jogOverride" data-min="1" data-max="500">
+                        <span id="cdJroVal" class="cd-vslider-num">100</span><span class="cd-vslider-unit">%</span>
+                      </div>
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdJro','cdJroVal',1,jogOverride,1,500)">+</button>
+                    </div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdJro').value=100; document.getElementById('cdJroVal').textContent=100; jogOverride(100)">RESET</button>
                   </div>
                   <div class="cd-vslider" id="cd-fro-wrap">
@@ -891,7 +894,13 @@
                         oninput="document.getElementById('cdFroVal').textContent=this.value"
                         onchange="feedOverride(+this.value)">
                     </div>
-                    <div class="cd-vslider-val"><span id="cdFroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <div class="cd-vslider-nudge-row">
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdFro','cdFroVal',-1,feedOverride,1,500)">−</button>
+                      <div class="cd-vslider-val" data-slider="cdFro" data-fn="feedOverride" data-min="1" data-max="500">
+                        <span id="cdFroVal" class="cd-vslider-num">100</span><span class="cd-vslider-unit">%</span>
+                      </div>
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdFro','cdFroVal',1,feedOverride,1,500)">+</button>
+                    </div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdFro').value=100; document.getElementById('cdFroVal').textContent=100; feedOverride(100)">RESET</button>
                   </div>
                   <div class="cd-vslider" id="cd-tro-wrap">
@@ -902,7 +911,13 @@
                         oninput="document.getElementById('cdTroVal').textContent=this.value"
                         onchange="spindleOverride(+this.value)">
                     </div>
-                    <div class="cd-vslider-val"><span id="cdTroVal">100</span><span class="cd-vslider-unit">%</span></div>
+                    <div class="cd-vslider-nudge-row">
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdTro','cdTroVal',-1,spindleOverride,10,200)">−</button>
+                      <div class="cd-vslider-val" data-slider="cdTro" data-fn="spindleOverride" data-min="10" data-max="200">
+                        <span id="cdTroVal" class="cd-vslider-num">100</span><span class="cd-vslider-unit">%</span>
+                      </div>
+                      <button class="cd-vslider-nudge" onclick="cdNudgeOverride('cdTro','cdTroVal',1,spindleOverride,10,200)">+</button>
+                    </div>
                     <button class="cd-vslider-reset" onclick="document.getElementById('cdTro').value=100; document.getElementById('cdTroVal').textContent=100; spindleOverride(100)">RESET</button>
                   </div>
                 </div>

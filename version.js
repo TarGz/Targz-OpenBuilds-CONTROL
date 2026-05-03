@@ -3,6 +3,13 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-05-03',
+      version: '1.8.3',
+      changes: [
+        'Closes TarGz/TargzPenPlotterCtrl#10 — Override sliders (JOG/FEED/TOOL): add −/+ nudge buttons (±1%) flanking the value display, and click-to-edit on the % label (click → inline number input → Enter applies, Escape cancels). cdNudgeOverride helper added to commanddeck.js.'
+      ]
+    },
+    {
+      date: '2026-05-03',
       version: '1.8.2',
       changes: [
         'Closes #11 — Add PUMP Z-height preset: button in jog panel (syringe SVG icon, amber colour) + PUMP row in PEN HEIGHTS settings (slider, nudge, TEST, amber SVG marker on Z-axis diagram). localStorage key penPumpZ, default −2. Pen button icons replaced with inline SVGs (pen-up lifts, pen-down presses onto paper line). cdReadPenHeights / cdRefreshPenHints / cdUpdateConnection all extended for pump.'

@@ -63,6 +63,46 @@ $(document).ready(function () {
     $('#cdJroVal').text(clamped);
   }, 100);
 
+  // ─── Override nudge (±1) helper ───────────────────────────────────────────
+  window.cdNudgeOverride = function (sliderId, valId, delta, fn, min, max) {
+    var el = document.getElementById(sliderId);
+    var v = Math.max(min, Math.min(max, +el.value + delta));
+    el.value = v;
+    document.getElementById(valId).textContent = v;
+    fn(v);
+  };
+
+  // ─── Override value click-to-edit ─────────────────────────────────────────
+  // Clicking the % display opens an inline number input; Enter or blur applies.
+  $(document).on('click', '.cd-vslider-val', function () {
+    var $div = $(this);
+    if ($div.find('.cd-vslider-edit').length) return;
+    var sliderId = $div.data('slider');
+    var fn       = window[$div.data('fn')];
+    var min      = +$div.data('min');
+    var max      = +$div.data('max');
+    var $num     = $div.find('.cd-vslider-num');
+    var $unit    = $div.find('.cd-vslider-unit');
+    var current  = parseInt($num.text(), 10);
+    var $input   = $('<input type="number" class="cd-vslider-edit">').val(current);
+    $num.hide(); $unit.hide();
+    $div.append($input);
+    $input[0].focus(); $input[0].select();
+    function apply() {
+      var v = parseInt($input.val(), 10);
+      if (isNaN(v)) v = current;
+      v = Math.max(min, Math.min(max, v));
+      document.getElementById(sliderId).value = v;
+      $num.text(v).show(); $unit.show();
+      $input.off('blur').remove();
+      if (typeof fn === 'function') fn(v);
+    }
+    $input.on('keydown', function (e) {
+      if (e.key === 'Enter')  { e.preventDefault(); apply(); }
+      if (e.key === 'Escape') { $num.show(); $unit.show(); $input.off('blur').remove(); }
+    }).on('blur', apply);
+  });
+
   // ─── Unit toggle (mirror existing mmMode/inMode buttons) ─────────────────
   // The CD unit buttons call mmMode()/inMode() inline — we just sync styling.
   function syncUnitBtns() {

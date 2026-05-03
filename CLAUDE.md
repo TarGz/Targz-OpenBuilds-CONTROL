@@ -23,7 +23,7 @@ gh issue view <N>   --repo TarGz/TargzPenPlotterCtrl
 ### Rules
 
 1. **One issue per commit.** Do not batch fixes across issues into a single commit unless the user explicitly asks for it.
-2. **Tag the issue in the commit.** Use `Fixes #N` (for bugs) or `Closes #N` (for features / enhancements) in the commit body so GitHub auto-closes the issue when the commit reaches `master`. One verb per line if multiple issues are legitimately inseparable.
+2. **Tag the issue in the commit.** Use `Fixes TarGz/TargzPenPlotterCtrl#N` (for bugs) or `Closes TarGz/TargzPenPlotterCtrl#N` (for features / enhancements) in the commit body. **Always use the full `owner/repo#N` form** — bare `#N` resolves against the upstream fork root (`OpenBuilds/OpenBuilds-CONTROL`), not this repo. One verb per line if multiple issues are legitimately inseparable.
 3. **Pause for review between fixes.** After committing one issue's fix, stop and let the user test it before starting the next. The user will say "next" or name the next issue. Don't proactively chain through multiple issues without a pause — some fixes need hardware verification.
 4. **Don't push automatically.** Committing is fine when the user asks; pushing to `origin` requires explicit authorization.
 
@@ -35,7 +35,7 @@ Every commit bumps `version.js` + `package.json` per semver. CHANGELOG entry in 
 - **YY** (Minor) — new features, non-breaking enhancements
 - **ZZ** (Patch) — bug fixes, small tweaks
 
-Commit subject pattern: `vX.Y.Z - short summary`. Body lists `Fixes #N` / `Closes #N` on their own lines.
+Commit subject pattern: `vX.Y.Z - short summary`. Body lists `Fixes TarGz/TargzPenPlotterCtrl#N` / `Closes TarGz/TargzPenPlotterCtrl#N` on their own lines.
 
 Never mention Claude Code in commits. Never add `Co-Authored-By` lines.
 
