@@ -766,20 +766,11 @@
                   <span class="cd-dot"></span> JOG CONTROL
                   <span id="cdJogStatus" class="cd-status-tag"></span>
                 </div>
-                <!-- Z / Pen grid: 2×2 portrait buttons.
-                     Left column = Z jog (UP/DOWN). Right column = PEN presets. -->
+                <!-- Pen presets row -->
                 <div class="cd-zpen-grid">
-                  <button class="cd-jog-btn cd-jog-z zP jogbtn cd-jog-zpen" id="cdZP">
-                    <span class="cd-zpen-arrow">↑</span>
-                    <span class="cd-zpen-label">UP</span>
-                  </button>
                   <button class="cd-jog-btn cd-jog-pen cd-jog-pen-up" id="cdPenUpBtn">
                     <span class="cd-zpen-arrow">↑</span>
                     <span class="cd-zpen-label">PEN UP <span class="cd-zpen-val" id="cdPenUpHint">(5)</span></span>
-                  </button>
-                  <button class="cd-jog-btn cd-jog-z zM jogbtn cd-jog-zpen" id="cdZM">
-                    <span class="cd-zpen-arrow">↓</span>
-                    <span class="cd-zpen-label">DOWN</span>
                   </button>
                   <button class="cd-jog-btn cd-jog-pen cd-jog-pen-down" id="cdPenDownBtn">
                     <span class="cd-zpen-arrow">↓</span>
@@ -787,18 +778,21 @@
                   </button>
                 </div>
 
-                <!-- Row 2: XY jog grid with HOME center -->
+                <!-- XY + Z jog grid: 4 columns, Z in right column -->
                 <div class="cd-jog-row">
                   <div class="cd-jog-grid">
                     <div></div>
                     <button class="cd-jog-btn cd-jog-y yP jogbtn" id="cdYP">Y+</button>
                     <div></div>
+                    <button class="cd-jog-btn cd-jog-z zP jogbtn" id="cdZP">Z+</button>
                     <button class="cd-jog-btn cd-jog-x xM jogbtn" id="cdXM">X−</button>
                     <button class="cd-jog-home jogbtn" id="cdHome" onclick="sendGcode('$H')">HOME</button>
                     <button class="cd-jog-btn cd-jog-x xP jogbtn" id="cdXP">X+</button>
                     <div></div>
+                    <div></div>
                     <button class="cd-jog-btn cd-jog-y yM jogbtn" id="cdYM">Y−</button>
                     <div></div>
+                    <button class="cd-jog-btn cd-jog-z zM jogbtn" id="cdZM">Z−</button>
                   </div>
                 </div>
 

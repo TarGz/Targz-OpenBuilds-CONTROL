@@ -2,6 +2,13 @@ module.exports = {
   version: require('./package.json').version,
   CHANGELOG: [
     {
+      date: '2026-05-03',
+      version: '1.8.1',
+      changes: [
+        'Fix #8 — Rename Z jog buttons UP/DOWN → Z+/Z− and move them into the XY jog grid as a 4th column. PEN UP / PEN DOWN remain as their own macro row above the pad. No JS changes: .zP / .zM class handlers in jog.js are untouched.'
+      ]
+    },
+    {
       date: '2026-04-22',
       version: '1.8.0',
       changes: [

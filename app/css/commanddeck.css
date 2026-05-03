@@ -654,7 +654,7 @@
 
 .cd-jog-grid {
   display: grid;
-  grid-template-columns: repeat(3, 46px);
+  grid-template-columns: repeat(4, 46px);
   grid-template-rows: repeat(3, 46px);
   gap: 4px;
 }
@@ -738,7 +738,7 @@
    All four buttons share the same tall footprint for consistent spacing. */
 .cd-zpen-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-auto-rows: 40px;
   gap: 4px;
   margin-bottom: 8px;
