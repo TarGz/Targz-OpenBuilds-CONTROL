@@ -3,6 +3,13 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-05-03',
+      version: '1.8.2',
+      changes: [
+        'Closes #11 — Add PUMP Z-height preset: button in jog panel (syringe SVG icon, amber colour) + PUMP row in PEN HEIGHTS settings (slider, nudge, TEST, amber SVG marker on Z-axis diagram). localStorage key penPumpZ, default −2. Pen button icons replaced with inline SVGs (pen-up lifts, pen-down presses onto paper line). cdReadPenHeights / cdRefreshPenHints / cdUpdateConnection all extended for pump.'
+      ]
+    },
+    {
+      date: '2026-05-03',
       version: '1.8.1',
       changes: [
         'Fix #8 — Rename Z jog buttons UP/DOWN → Z+/Z− and move them into the XY jog grid as a 4th column. PEN UP / PEN DOWN remain as their own macro row above the pad. No JS changes: .zP / .zM class handlers in jog.js are untouched.'

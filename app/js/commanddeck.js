@@ -357,21 +357,20 @@ $(document).ready(function () {
   // Not the servo/M3 "tool" logic from OpenBuilds — on a pen plotter the "pen"
   // is lifted and lowered by commanding Z to a stored absolute height.
   function cdReadPenHeights() {
-    var up = parseFloat(localStorage.getItem('penUpZ'));
+    var up   = parseFloat(localStorage.getItem('penUpZ'));
     var down = parseFloat(localStorage.getItem('penDownZ'));
-    if (isNaN(up)) up = 5;
+    var pump = parseFloat(localStorage.getItem('penPumpZ'));
+    if (isNaN(up))   up   = 5;
     if (isNaN(down)) down = 0;
-    return { up: up, down: down };
+    if (isNaN(pump)) pump = -2;
+    return { up: up, down: down, pump: pump };
   }
   window.cdRefreshPenHints = function () {
     var p = cdReadPenHeights();
-    // Compact "(Z)" format that sits inline with the button label.
-    var fmt = function (v) {
-      var s = (Math.abs(v) < 10 ? v.toFixed(1) : v.toFixed(0));
-      return '(' + s + ')';
-    };
+    var fmt = function (v) { return v.toFixed(1); };
     $('#cdPenUpHint').text(fmt(p.up));
     $('#cdPenDownHint').text(fmt(p.down));
+    $('#cdPumpHint').text(fmt(p.pump));
   };
   cdRefreshPenHints();
   $('#cdPenUpBtn').on('click', function () {
@@ -383,6 +382,11 @@ $(document).ready(function () {
     var p = cdReadPenHeights();
     sendGcode('G90');
     sendGcode('G0 Z' + p.down);
+  });
+  $('#cdPumpBtn').on('click', function () {
+    var p = cdReadPenHeights();
+    sendGcode('G90');
+    sendGcode('G0 Z' + p.pump);
   });
 
   // ─── Utility buttons ─────────────────────────────────────────────────────
@@ -686,7 +690,7 @@ $(document).ready(function () {
     $('#cdGotoXY0Btn').prop('disabled', !connected || connectionStatus === 5);
     $('#cdProbeBtn').prop('disabled', !canUtil);
     $('#cdToolBtn').prop('disabled', !connected || connectionStatus === 5);
-    $('#cdPenUpBtn, #cdPenDownBtn').prop('disabled', !connected || connectionStatus === 5);
+    $('#cdPenUpBtn, #cdPenDownBtn, #cdPumpBtn').prop('disabled', !connected || connectionStatus === 5);
   };
 
   // ─── File state ───────────────────────────────────────────────────────────

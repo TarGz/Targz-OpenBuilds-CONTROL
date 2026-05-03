@@ -287,13 +287,14 @@
 
   // ═══ Section: Pen Heights (dedicated sub-page of Calibration) ══════════════
   function buildPenHeightsSection() {
-    var up = parseFloat(localStorage.getItem('penUpZ'));   if (isNaN(up)) up = 5;
+    var up   = parseFloat(localStorage.getItem('penUpZ'));   if (isNaN(up))   up   = 5;
     var down = parseFloat(localStorage.getItem('penDownZ')); if (isNaN(down)) down = 0;
+    var pump = parseFloat(localStorage.getItem('penPumpZ')); if (isNaN(pump)) pump = -2;
 
     var html = '<section class="cd-set-section cd-set-pen" data-section="penheights">' +
       '<div class="cd-set-pen-hero">' +
-        '<div class="cd-set-pen-hero-title">PEN UP <span>/</span> PEN DOWN</div>' +
-        '<div class="cd-set-pen-hero-hint">Z heights sent as G0 Z… when the PEN buttons are pressed.</div>' +
+        '<div class="cd-set-pen-hero-title">PEN UP <span>/</span> PEN DOWN <span>/</span> PUMP</div>' +
+        '<div class="cd-set-pen-hero-hint">Z heights sent as G0 Z… when the PEN / PUMP buttons are pressed.</div>' +
       '</div>' +
 
       '<div class="cd-set-pen-body">' +
@@ -320,15 +321,18 @@
               '<line x1="0" y1="-30" x2="0" y2="-6" stroke="var(--cd-text)" stroke-width="2" stroke-linecap="round"/>' +
               '<polygon points="-5,-6 5,-6 0,2" fill="var(--cd-text)"/>' +
             '</g>' +
-            // UP marker horizontal line
+            // UP marker
             '<line id="cdSetPenUpLine" x1="76" y1="' + mapZtoY(up) + '" x2="116" y2="' + mapZtoY(up) + '" stroke="var(--cd-accent)" stroke-width="3" stroke-linecap="round"/>' +
-            // UP label (orange, left of axis, tracks UP value)
             '<text id="cdSetPenUpText" x="16" y="' + (mapZtoY(up) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-accent)" letter-spacing="0.5">UP</text>' +
             '<text id="cdSetPenUpVal"  x="16" y="' + (mapZtoY(up) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-accent)">' + up.toFixed(1) + '</text>' +
             // DOWN marker
             '<line id="cdSetPenDownLine" x1="76" y1="' + mapZtoY(down) + '" x2="116" y2="' + mapZtoY(down) + '" stroke="var(--cd-axis-z)" stroke-width="3" stroke-linecap="round"/>' +
             '<text id="cdSetPenDownText" x="16" y="' + (mapZtoY(down) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-axis-z)" letter-spacing="0.5">DN</text>' +
             '<text id="cdSetPenDownVal"  x="16" y="' + (mapZtoY(down) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-axis-z)">' + down.toFixed(1) + '</text>' +
+            // PUMP marker
+            '<line id="cdSetPenPumpLine" x1="76" y1="' + mapZtoY(pump) + '" x2="116" y2="' + mapZtoY(pump) + '" stroke="var(--cd-amber)" stroke-width="3" stroke-linecap="round"/>' +
+            '<text id="cdSetPenPumpText" x="16" y="' + (mapZtoY(pump) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-amber)" letter-spacing="0.5">PMP</text>' +
+            '<text id="cdSetPenPumpVal"  x="16" y="' + (mapZtoY(pump) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-amber)">' + pump.toFixed(1) + '</text>' +
           '</svg>' +
         '</div>' +
 
@@ -337,6 +341,8 @@
           penRowHtml('up',   up)   +
           '<div class="cd-set-pen-divider"></div>' +
           penRowHtml('down', down) +
+          '<div class="cd-set-pen-divider"></div>' +
+          penRowHtml('pump', pump) +
         '</div>' +
       '</div>' +
 
@@ -359,8 +365,9 @@
   }
 
   function penRowHtml(kind, val) {
-    var color = kind === 'up' ? 'var(--cd-accent)' : 'var(--cd-axis-z)';
-    var labelTxt = kind === 'up' ? 'PEN UP Z' : 'PEN DOWN Z';
+    var color    = kind === 'up' ? 'var(--cd-accent)' : kind === 'pump' ? 'var(--cd-amber)' : 'var(--cd-axis-z)';
+    var labelTxt = kind === 'up' ? 'PEN UP Z'         : kind === 'pump' ? 'PUMP Z'          : 'PEN DOWN Z';
+    var testLbl  = kind === 'up' ? 'UP'               : kind === 'pump' ? 'PUMP'             : 'DOWN';
     return '<div class="cd-set-pen-row" data-kind="' + kind + '">' +
       '<div class="cd-set-pen-row-head">' +
         '<span class="cd-set-pen-row-label">' + labelTxt + '</span>' +
@@ -374,7 +381,7 @@
         '<input type="range" class="cd-set-pen-slider" data-kind="' + kind + '" min="-50" max="20" step="0.1" value="' + val + '" style="accent-color:' + color + ';" />' +
         '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="0.1">+0.1</button>' +
         '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="1">+1</button>' +
-        '<button class="cd-set-btn cd-set-pen-test" data-kind="' + kind + '">▶ TEST ' + (kind === 'up' ? 'UP' : 'DOWN') + '</button>' +
+        '<button class="cd-set-btn cd-set-pen-test" data-kind="' + kind + '">▶ TEST ' + testLbl + '</button>' +
       '</div>' +
     '</div>';
   }
@@ -389,19 +396,21 @@
       $root.find('.cd-set-pen-slider[data-kind="' + kind + '"]').val(v);
       // Move SVG marker line + label + arrow (UP only)
       var y = mapZtoY(v);
-      var cap = kind === 'up' ? 'Up' : 'Down';
+      var cap = kind === 'up' ? 'Up' : kind === 'pump' ? 'Pump' : 'Down';
       document.getElementById('cdSetPen' + cap + 'Line').setAttribute('y1', y);
       document.getElementById('cdSetPen' + cap + 'Line').setAttribute('y2', y);
       document.getElementById('cdSetPen' + cap + 'Text').setAttribute('y', y - 2);
       document.getElementById('cdSetPen' + cap + 'Val').setAttribute('y', y + 12);
       document.getElementById('cdSetPen' + cap + 'Val').textContent = v.toFixed(1);
       if (kind === 'up') document.getElementById('cdSetPenArrow').setAttribute('transform', 'translate(96,' + y + ')');
-      // Footer travel + safe-order
-      var up = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
-      var down = parseFloat($root.find('.cd-set-pen-row-val[data-kind="down"]').val());
-      $('#cdSetPenTravel').text(Math.abs(up - down).toFixed(1) + 'mm');
-      var safe = up > down;
-      $('#cdSetPenOrder').text(safe ? 'safe order ✓' : 'UP ≤ DOWN ⚠').css('color', safe ? '' : 'var(--cd-bad)');
+      // Footer travel + safe-order (pump is independent, doesn't affect UP-DOWN travel)
+      if (kind !== 'pump') {
+        var up = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
+        var down = parseFloat($root.find('.cd-set-pen-row-val[data-kind="down"]').val());
+        $('#cdSetPenTravel').text(Math.abs(up - down).toFixed(1) + 'mm');
+        var safe = up > down;
+        $('#cdSetPenOrder').text(safe ? 'safe order ✓' : 'UP ≤ DOWN ⚠').css('color', safe ? '' : 'var(--cd-bad)');
+      }
     }
 
     $root.on('input', '.cd-set-pen-row-val', function () { setPen($(this).data('kind'), $(this).val()); });
@@ -420,13 +429,16 @@
     $root.on('click', '#cdSetPenDefaults', function () {
       setPen('up', 5);
       setPen('down', 0);
+      setPen('pump', -2);
     });
     $root.on('click', '#cdSetPenSave', function () {
-      var up = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
+      var up   = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
       var down = parseFloat($root.find('.cd-set-pen-row-val[data-kind="down"]').val());
-      if (isNaN(up) || isNaN(down)) { alert('Enter numeric Z values.'); return; }
+      var pump = parseFloat($root.find('.cd-set-pen-row-val[data-kind="pump"]').val());
+      if (isNaN(up) || isNaN(down) || isNaN(pump)) { alert('Enter numeric Z values.'); return; }
       localStorage.setItem('penUpZ', up);
       localStorage.setItem('penDownZ', down);
+      localStorage.setItem('penPumpZ', pump);
       if (typeof window.cdRefreshPenHints === 'function') window.cdRefreshPenHints();
       var $btn = $(this);
       $btn.text('SAVED ✓').prop('disabled', true);
