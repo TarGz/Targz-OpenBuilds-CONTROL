@@ -27,7 +27,6 @@
     $content.empty()
       .append(buildParametersSection())
       .append(buildCalibrationSection())
-      .append(buildPenHeightsSection())
       .append(buildToolsSection())
       .append(buildShortcutsSection())
       .append(buildDiagnosticsSection())
@@ -41,7 +40,6 @@
     bindParameters();
     bindDiagnostics();
     bindTools();
-    bindPenHeights();
     bindCalibration();
     renderAbout();
     refreshDiagnostics();
@@ -279,170 +277,8 @@
     };
     $('#cd-settings-layout').on('click', '[data-cal]', function () {
       var id = $(this).data('cal');
-      if (id === 'pen') return; // handled by bindPenHeights
       var fn = map[id];
       if (typeof fn === 'function') fn();
-    });
-  }
-
-  // ═══ Section: Pen Heights (dedicated sub-page of Calibration) ══════════════
-  function buildPenHeightsSection() {
-    var up   = parseFloat(localStorage.getItem('penUpZ'));   if (isNaN(up))   up   = 5;
-    var down = parseFloat(localStorage.getItem('penDownZ')); if (isNaN(down)) down = 0;
-    var pump = parseFloat(localStorage.getItem('penPumpZ')); if (isNaN(pump)) pump = -2;
-
-    var html = '<section class="cd-set-section cd-set-pen" data-section="penheights">' +
-      '<div class="cd-set-pen-hero">' +
-        '<div class="cd-set-pen-hero-title">PEN UP <span>/</span> PEN DOWN <span>/</span> PUMP</div>' +
-        '<div class="cd-set-pen-hero-hint">Z heights sent as G0 Z… when the PEN / PUMP buttons are pressed.</div>' +
-      '</div>' +
-
-      '<div class="cd-set-pen-body">' +
-        // ── Z axis visual ──
-        '<div class="cd-set-pen-axis">' +
-          '<svg class="cd-set-pen-axis-svg" viewBox="0 0 160 420" preserveAspectRatio="xMidYMid meet">' +
-            // Ticks from +20 to -50 step 10
-            (function () {
-              var s = '';
-              for (var v = 20; v >= -50; v -= 10) {
-                var y = mapZtoY(v);
-                s += '<line x1="90" x2="100" y1="' + y + '" y2="' + y + '" stroke="var(--cd-text-faint)" stroke-width="1" />';
-                s += '<text x="108" y="' + (y + 4) + '" font-family="var(--cd-mono)" font-size="12" fill="var(--cd-text-muted)">' + v + '</text>';
-              }
-              return s;
-            })() +
-            // Vertical axis line
-            '<line x1="96" y1="' + mapZtoY(20) + '" x2="96" y2="' + mapZtoY(-50) + '" stroke="var(--cd-border-strong)" stroke-width="2"/>' +
-            // Work 0 dashed
-            '<line x1="60" y1="' + mapZtoY(0) + '" x2="150" y2="' + mapZtoY(0) + '" stroke="var(--cd-text-muted)" stroke-dasharray="4 4" stroke-width="1"/>' +
-            '<text x="132" y="' + (mapZtoY(0) + 4) + '" font-family="var(--cd-mono)" font-size="10" fill="var(--cd-text-muted)">HOME</text>' +
-            // Arrow (pen tip) pointing down at UP marker
-            '<g id="cdSetPenArrow" transform="translate(96,' + mapZtoY(up) + ')">' +
-              '<line x1="0" y1="-30" x2="0" y2="-6" stroke="var(--cd-text)" stroke-width="2" stroke-linecap="round"/>' +
-              '<polygon points="-5,-6 5,-6 0,2" fill="var(--cd-text)"/>' +
-            '</g>' +
-            // UP marker
-            '<line id="cdSetPenUpLine" x1="76" y1="' + mapZtoY(up) + '" x2="116" y2="' + mapZtoY(up) + '" stroke="var(--cd-accent)" stroke-width="3" stroke-linecap="round"/>' +
-            '<text id="cdSetPenUpText" x="16" y="' + (mapZtoY(up) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-accent)" letter-spacing="0.5">UP</text>' +
-            '<text id="cdSetPenUpVal"  x="16" y="' + (mapZtoY(up) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-accent)">' + up.toFixed(1) + '</text>' +
-            // DOWN marker
-            '<line id="cdSetPenDownLine" x1="76" y1="' + mapZtoY(down) + '" x2="116" y2="' + mapZtoY(down) + '" stroke="var(--cd-axis-z)" stroke-width="3" stroke-linecap="round"/>' +
-            '<text id="cdSetPenDownText" x="16" y="' + (mapZtoY(down) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-axis-z)" letter-spacing="0.5">DN</text>' +
-            '<text id="cdSetPenDownVal"  x="16" y="' + (mapZtoY(down) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-axis-z)">' + down.toFixed(1) + '</text>' +
-            // PUMP marker
-            '<line id="cdSetPenPumpLine" x1="76" y1="' + mapZtoY(pump) + '" x2="116" y2="' + mapZtoY(pump) + '" stroke="var(--cd-amber)" stroke-width="3" stroke-linecap="round"/>' +
-            '<text id="cdSetPenPumpText" x="16" y="' + (mapZtoY(pump) - 2) + '" font-family="var(--cd-mono)" font-size="11" font-weight="700" fill="var(--cd-amber)" letter-spacing="0.5">PMP</text>' +
-            '<text id="cdSetPenPumpVal"  x="16" y="' + (mapZtoY(pump) + 12) + '" font-family="var(--cd-mono)" font-size="13" font-weight="600" fill="var(--cd-amber)">' + pump.toFixed(1) + '</text>' +
-          '</svg>' +
-        '</div>' +
-
-        // ── Controls ──
-        '<div class="cd-set-pen-controls">' +
-          penRowHtml('up',   up)   +
-          '<div class="cd-set-pen-divider"></div>' +
-          penRowHtml('down', down) +
-          '<div class="cd-set-pen-divider"></div>' +
-          penRowHtml('pump', pump) +
-        '</div>' +
-      '</div>' +
-
-      '<div class="cd-set-pen-footer">' +
-        '<span class="cd-set-pen-footer-info">TRAVEL <span id="cdSetPenTravel">' + Math.abs(up - down).toFixed(1) + 'mm</span> · <span id="cdSetPenOrder">safe order ✓</span></span>' +
-        '<div style="flex:1;"></div>' +
-        '<button class="cd-set-btn" id="cdSetPenDefaults">↺ DEFAULTS</button>' +
-        '<button class="cd-set-btn cd-set-btn-primary" id="cdSetPenSave">💾 SAVE</button>' +
-      '</div>' +
-    '</section>';
-    return $(html);
-  }
-
-  function mapZtoY(z) {
-    // Map Z ∈ [20, -50] → y ∈ [20, 400] (linear)
-    var zmin = -50, zmax = 20;
-    var ymin = 30,  ymax = 400;
-    var t = (zmax - z) / (zmax - zmin);
-    return ymin + t * (ymax - ymin);
-  }
-
-  function penRowHtml(kind, val) {
-    var color    = kind === 'up' ? 'var(--cd-accent)' : kind === 'pump' ? 'var(--cd-amber)' : 'var(--cd-axis-z)';
-    var labelTxt = kind === 'up' ? 'PEN UP Z'         : kind === 'pump' ? 'PUMP Z'          : 'PEN DOWN Z';
-    var testLbl  = kind === 'up' ? 'UP'               : kind === 'pump' ? 'PUMP'             : 'DOWN';
-    return '<div class="cd-set-pen-row" data-kind="' + kind + '">' +
-      '<div class="cd-set-pen-row-head">' +
-        '<span class="cd-set-pen-row-label">' + labelTxt + '</span>' +
-        '<span class="cd-set-pen-row-unit">mm</span>' +
-        '<div style="flex:1;"></div>' +
-        '<input type="number" step="0.1" class="cd-set-pen-row-val" style="color:' + color + ';" value="' + val + '" data-kind="' + kind + '"/>' +
-      '</div>' +
-      '<div class="cd-set-pen-row-controls">' +
-        '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="-1">−1</button>' +
-        '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="-0.1">−0.1</button>' +
-        '<input type="range" class="cd-set-pen-slider" data-kind="' + kind + '" min="-50" max="20" step="0.1" value="' + val + '" style="accent-color:' + color + ';" />' +
-        '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="0.1">+0.1</button>' +
-        '<button class="cd-set-btn cd-set-pen-nudge" data-kind="' + kind + '" data-delta="1">+1</button>' +
-        '<button class="cd-set-btn cd-set-pen-test" data-kind="' + kind + '">▶ TEST ' + testLbl + '</button>' +
-      '</div>' +
-    '</div>';
-  }
-
-  function bindPenHeights() {
-    var $root = $('#cd-settings-layout');
-
-    function setPen(kind, v) {
-      v = Math.max(-50, Math.min(20, parseFloat(v)));
-      if (isNaN(v)) return;
-      $root.find('.cd-set-pen-row-val[data-kind="' + kind + '"]').val(v);
-      $root.find('.cd-set-pen-slider[data-kind="' + kind + '"]').val(v);
-      // Move SVG marker line + label + arrow (UP only)
-      var y = mapZtoY(v);
-      var cap = kind === 'up' ? 'Up' : kind === 'pump' ? 'Pump' : 'Down';
-      document.getElementById('cdSetPen' + cap + 'Line').setAttribute('y1', y);
-      document.getElementById('cdSetPen' + cap + 'Line').setAttribute('y2', y);
-      document.getElementById('cdSetPen' + cap + 'Text').setAttribute('y', y - 2);
-      document.getElementById('cdSetPen' + cap + 'Val').setAttribute('y', y + 12);
-      document.getElementById('cdSetPen' + cap + 'Val').textContent = v.toFixed(1);
-      if (kind === 'up') document.getElementById('cdSetPenArrow').setAttribute('transform', 'translate(96,' + y + ')');
-      // Footer travel + safe-order (pump is independent, doesn't affect UP-DOWN travel)
-      if (kind !== 'pump') {
-        var up = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
-        var down = parseFloat($root.find('.cd-set-pen-row-val[data-kind="down"]').val());
-        $('#cdSetPenTravel').text(Math.abs(up - down).toFixed(1) + 'mm');
-        var safe = up > down;
-        $('#cdSetPenOrder').text(safe ? 'safe order ✓' : 'UP ≤ DOWN ⚠').css('color', safe ? '' : 'var(--cd-bad)');
-      }
-    }
-
-    $root.on('input', '.cd-set-pen-row-val', function () { setPen($(this).data('kind'), $(this).val()); });
-    $root.on('input', '.cd-set-pen-slider', function () { setPen($(this).data('kind'), $(this).val()); });
-    $root.on('click', '.cd-set-pen-nudge', function () {
-      var kind = $(this).data('kind');
-      var delta = parseFloat($(this).data('delta'));
-      var current = parseFloat($root.find('.cd-set-pen-row-val[data-kind="' + kind + '"]').val()) || 0;
-      setPen(kind, (current + delta).toFixed(2));
-    });
-    $root.on('click', '.cd-set-pen-test', function () {
-      var kind = $(this).data('kind');
-      var v = parseFloat($root.find('.cd-set-pen-row-val[data-kind="' + kind + '"]').val());
-      if (typeof sendGcode === 'function' && !isNaN(v)) { sendGcode('G90'); sendGcode('G0 Z' + v); }
-    });
-    $root.on('click', '#cdSetPenDefaults', function () {
-      setPen('up', 5);
-      setPen('down', 0);
-      setPen('pump', -2);
-    });
-    $root.on('click', '#cdSetPenSave', function () {
-      var up   = parseFloat($root.find('.cd-set-pen-row-val[data-kind="up"]').val());
-      var down = parseFloat($root.find('.cd-set-pen-row-val[data-kind="down"]').val());
-      var pump = parseFloat($root.find('.cd-set-pen-row-val[data-kind="pump"]').val());
-      if (isNaN(up) || isNaN(down) || isNaN(pump)) { alert('Enter numeric Z values.'); return; }
-      localStorage.setItem('penUpZ', up);
-      localStorage.setItem('penDownZ', down);
-      localStorage.setItem('penPumpZ', pump);
-      if (typeof window.cdRefreshPenHints === 'function') window.cdRefreshPenHints();
-      var $btn = $(this);
-      $btn.text('SAVED ✓').prop('disabled', true);
-      setTimeout(function () { $btn.text('💾 SAVE').prop('disabled', false); }, 1200);
     });
   }
 

@@ -3,6 +3,13 @@ module.exports = {
   CHANGELOG: [
     {
       date: '2026-05-03',
+      version: '1.8.4',
+      changes: [
+        'Closes TarGz/TargzPenPlotterCtrl#12 — Remove PEN HEIGHTS settings sub-page; replace with click-to-edit Z value spans inline on PEN UP / PEN DOWN / PUMP buttons in the jog panel. Click a value, type a new number, blur or Enter to save to localStorage, Escape to cancel. cd-zpen-editable / cd-zpen-input CSS added; buildPenHeightsSection + bindPenHeights + helpers removed from settings.js.'
+      ]
+    },
+    {
+      date: '2026-05-03',
       version: '1.8.3',
       changes: [
         'Closes TarGz/TargzPenPlotterCtrl#10 — Override sliders (JOG/FEED/TOOL): add −/+ nudge buttons (±1%) flanking the value display, and click-to-edit on the % label (click → inline number input → Enter applies, Escape cancels). cdNudgeOverride helper added to commanddeck.js.'

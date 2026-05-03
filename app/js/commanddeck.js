@@ -408,10 +408,98 @@ $(document).ready(function () {
   window.cdRefreshPenHints = function () {
     var p = cdReadPenHeights();
     var fmt = function (v) { return v.toFixed(1); };
-    $('#cdPenUpHint').text(fmt(p.up));
-    $('#cdPenDownHint').text(fmt(p.down));
-    $('#cdPumpHint').text(fmt(p.pump));
+    // Skip refresh on any span that's currently open for editing.
+    var pairs = [['#cdPenUpHint', fmt(p.up)], ['#cdPenDownHint', fmt(p.down)], ['#cdPumpHint', fmt(p.pump)]];
+    pairs.forEach(function (pair) {
+      var $s = $(pair[0]);
+      if (!$s.find('input').length) $s.text(pair[1]);
+    });
   };
+
+  // ─── Z-height edit popover ────────────────────────────────────────────────
+  var $zpenPop = $(
+    '<div id="cdZpenPopover" class="cd-zpen-popover">' +
+      '<div class="cd-zpen-pop-header">' +
+        '<span class="cd-zpen-pop-title"></span>' +
+        '<button class="cd-zpen-pop-close" type="button">✕</button>' +
+      '</div>' +
+      '<div class="cd-zpen-pop-body">' +
+        '<div class="cd-zpen-pop-field">' +
+          '<input type="number" class="cd-zpen-pop-input" step="0.1">' +
+          '<span class="cd-zpen-pop-unit">mm</span>' +
+        '</div>' +
+        '<div class="cd-zpen-pop-nudges">' +
+          '<button class="cd-zpen-pop-nudge" type="button" data-delta="-1">−1</button>' +
+          '<button class="cd-zpen-pop-nudge" type="button" data-delta="-0.1">−0.1</button>' +
+          '<button class="cd-zpen-pop-nudge" type="button" data-delta="0.1">+0.1</button>' +
+          '<button class="cd-zpen-pop-nudge" type="button" data-delta="1">+1</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cd-zpen-pop-footer">' +
+        '<button class="cd-zpen-pop-cancel" type="button">CANCEL</button>' +
+        '<button class="cd-zpen-pop-apply" type="button">APPLY</button>' +
+      '</div>' +
+    '</div>'
+  ).appendTo('body');
+
+  var _zpenState = { key: null, min: -50, max: 20, $span: null, orig: 0 };
+
+  function zpenOpen($editBtn) {
+    var $span  = $('#' + $editBtn.data('target'));
+    var key    = $editBtn.data('key');
+    var color  = $editBtn.css('color');
+    var val    = parseFloat($span.text());
+    var label  = $editBtn.closest('.cd-pen-row').find('.cd-pen-label').text();
+    _zpenState = { key: key, min: parseFloat($editBtn.data('min')), max: parseFloat($editBtn.data('max')), $span: $span, orig: val };
+
+    $zpenPop.find('.cd-zpen-pop-title').text(label + ' — Z HEIGHT');
+    $zpenPop.find('.cd-zpen-pop-input').val(val.toFixed(1)).css('color', color);
+    $zpenPop.find('.cd-zpen-pop-apply').css({ background: color, color: '#fff', border: 'none' });
+    $zpenPop.addClass('is-open');
+
+    var rect = $editBtn[0].getBoundingClientRect();
+    var pw = 210, ph = 182;
+    var top  = rect.top - ph - 8;
+    if (top < 8) top = rect.bottom + 8;
+    var left = Math.max(8, Math.min(rect.right - pw, window.innerWidth - pw - 8));
+    $zpenPop.css({ top: top + 'px', left: left + 'px' });
+    $zpenPop.find('.cd-zpen-pop-input')[0].focus();
+    $zpenPop.find('.cd-zpen-pop-input')[0].select();
+  }
+
+  function zpenApply() {
+    var v = parseFloat($zpenPop.find('.cd-zpen-pop-input').val());
+    if (isNaN(v)) v = _zpenState.orig;
+    v = Math.max(_zpenState.min, Math.min(_zpenState.max, parseFloat(v.toFixed(1))));
+    _zpenState.$span.text(v.toFixed(1));
+    localStorage.setItem(_zpenState.key, v);
+    if (typeof window.cdRefreshPenHints === 'function') window.cdRefreshPenHints();
+    $zpenPop.removeClass('is-open');
+  }
+
+  function zpenClose() { $zpenPop.removeClass('is-open'); }
+
+  $zpenPop.find('.cd-zpen-pop-apply').on('click', zpenApply);
+  $zpenPop.find('.cd-zpen-pop-cancel, .cd-zpen-pop-close').on('click', zpenClose);
+  $zpenPop.find('.cd-zpen-pop-nudge').on('click', function () {
+    var $inp = $zpenPop.find('.cd-zpen-pop-input');
+    var v = parseFloat($inp.val()) + parseFloat($(this).data('delta'));
+    v = Math.max(_zpenState.min, Math.min(_zpenState.max, parseFloat(v.toFixed(1))));
+    $inp.val(v.toFixed(1));
+  });
+  $zpenPop.find('.cd-zpen-pop-input').on('keydown', function (e) {
+    if (e.key === 'Enter')  { e.preventDefault(); zpenApply(); }
+    if (e.key === 'Escape') { zpenClose(); }
+  });
+  $(document).on('mousedown', function (e) {
+    if ($zpenPop.hasClass('is-open') && !$(e.target).closest('#cdZpenPopover, .cd-zpen-edit-btn').length) {
+      zpenClose();
+    }
+  });
+
+  $('.cd-pen-edit-trigger').on('click', function () {
+    zpenOpen($(this));
+  });
   cdRefreshPenHints();
   $('#cdPenUpBtn').on('click', function () {
     var p = cdReadPenHeights();

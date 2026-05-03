@@ -737,11 +737,60 @@
    Left column = Z jog (UP/DOWN). Right column = PEN presets with live value.
    All four buttons share the same tall footprint for consistent spacing. */
 .cd-zpen-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-auto-rows: 48px;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
   margin-bottom: 8px;
+}
+
+.cd-pen-row {
+  display: flex;
+  gap: 4px;
+  height: 48px;
+}
+
+.cd-pen-edit-trigger {
+  flex-shrink: 0;
+  width: 46px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  background: var(--cd-panel);
+}
+
+.cd-pen-edit-up {
+  color: var(--cd-text);
+  border: 1px solid var(--cd-border-strong);
+}
+.cd-pen-edit-up:hover {
+  background: var(--cd-panel-alt);
+  border-color: var(--cd-text);
+}
+
+.cd-pen-edit-down {
+  color: var(--cd-accent);
+  border: 1px solid var(--cd-accent-dim);
+}
+.cd-pen-edit-down:hover {
+  background: var(--cd-accent-soft);
+  border-color: var(--cd-accent);
+}
+
+.cd-pen-edit-pump {
+  color: var(--cd-bad);
+  border: 1px solid #FECACA;
+}
+.cd-pen-edit-pump:hover {
+  background: #FEF2F2;
+  border-color: var(--cd-bad);
+}
+
+.cd-jog-btn.cd-jog-pen {
+  flex: 1;
 }
 
 .cd-jog-btn.cd-jog-pen,
@@ -778,6 +827,173 @@
   color: inherit;
   letter-spacing: 0;
   line-height: 1;
+}
+
+
+/* ─── Z-height edit popover ─────────────────────────────────────────────── */
+.cd-zpen-popover {
+  position: fixed;
+  z-index: 9999;
+  width: 210px;
+  background: var(--cd-panel);
+  border: 1px solid var(--cd-border-strong);
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cd-zpen-popover.is-open {
+  display: flex;
+}
+
+.cd-zpen-pop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px 7px;
+  border-bottom: 1px solid var(--cd-border);
+}
+
+.cd-zpen-pop-title {
+  font-family: var(--cd-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--cd-text-muted);
+}
+
+.cd-zpen-pop-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--cd-text-faint);
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 3px;
+}
+
+.cd-zpen-pop-close:hover {
+  color: var(--cd-text);
+  background: var(--cd-panel-alt);
+}
+
+.cd-zpen-pop-body {
+  padding: 12px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cd-zpen-pop-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--cd-panel-alt);
+  border: 1px solid var(--cd-border);
+  border-radius: 5px;
+  padding: 8px 12px;
+  transition: border-color 0.15s;
+}
+
+.cd-zpen-pop-field:focus-within {
+  border-color: var(--cd-border-strong);
+}
+
+.cd-zpen-pop-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--cd-mono);
+  font-size: 26px;
+  font-weight: 700;
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+  padding: 0;
+  line-height: 1;
+}
+
+.cd-zpen-pop-input::-webkit-inner-spin-button,
+.cd-zpen-pop-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cd-zpen-pop-unit {
+  font-family: var(--cd-mono);
+  font-size: 11px;
+  color: var(--cd-text-faint);
+  flex-shrink: 0;
+  align-self: flex-end;
+  padding-bottom: 2px;
+}
+
+.cd-zpen-pop-nudges {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.cd-zpen-pop-nudge {
+  background: var(--cd-panel-alt);
+  border: 1px solid var(--cd-border);
+  border-radius: 3px;
+  font-family: var(--cd-mono);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 0;
+  color: var(--cd-text-muted);
+  transition: background 0.1s, color 0.1s;
+}
+
+.cd-zpen-pop-nudge:hover {
+  color: var(--cd-text);
+  background: var(--cd-panel);
+  border-color: var(--cd-border-strong);
+}
+
+.cd-zpen-pop-footer {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px 10px;
+}
+
+.cd-zpen-pop-cancel {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--cd-border);
+  border-radius: 4px;
+  font-family: var(--cd-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  padding: 7px;
+  color: var(--cd-text-muted);
+  transition: background 0.1s;
+}
+
+.cd-zpen-pop-cancel:hover {
+  background: var(--cd-panel-alt);
+}
+
+.cd-zpen-pop-apply {
+  flex: 2;
+  border-radius: 4px;
+  font-family: var(--cd-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  padding: 7px;
+  transition: filter 0.1s;
+  border: none;
 }
 
 /* Z+ / Z− keep their blue axis tint. */
@@ -822,33 +1038,33 @@
 }
 
 .cd-jog-btn.cd-jog-pen-up {
+  color: var(--cd-text);
+  border-color: var(--cd-border-strong);
+}
+
+.cd-jog-btn.cd-jog-pen-up:hover:not(:disabled) {
+  background: var(--cd-panel-alt);
+  border-color: var(--cd-text);
+}
+
+.cd-jog-btn.cd-jog-pen-down {
   color: var(--cd-accent);
   border-color: var(--cd-accent-dim);
 }
 
-.cd-jog-btn.cd-jog-pen-up:hover:not(:disabled) {
+.cd-jog-btn.cd-jog-pen-down:hover:not(:disabled) {
   background: var(--cd-accent-soft);
   border-color: var(--cd-accent);
 }
 
-.cd-jog-btn.cd-jog-pen-down {
-  color: var(--cd-axis-z);
-  border-color: var(--cd-border);
-}
-
-.cd-jog-btn.cd-jog-pen-down:hover:not(:disabled) {
-  background: #EFF4FF;
-  border-color: var(--cd-axis-z);
-}
-
 .cd-jog-btn.cd-jog-pen-pump {
-  color: var(--cd-amber);
-  border-color: var(--cd-border);
+  color: var(--cd-bad);
+  border-color: #FECACA;
 }
 
 .cd-jog-btn.cd-jog-pen-pump:hover:not(:disabled) {
-  background: #FEF3C7;
-  border-color: var(--cd-amber);
+  background: #FEF2F2;
+  border-color: var(--cd-bad);
 }
 
 /* Canvas status strip (GRID / VIEW / state chip) — overlays the right side of

@@ -721,10 +721,6 @@
                 <span class="cd-set-nav-label">GRBL PARAMETERS</span>
                 <span class="cd-set-nav-hint">$0–$132 firmware config</span>
               </button>
-              <button class="cd-set-nav-item" data-target="penheights">
-                <span class="cd-set-nav-label">PEN HEIGHTS</span>
-                <span class="cd-set-nav-hint">Pen Up / Pen Down Z defaults</span>
-              </button>
               <button class="cd-set-nav-item" data-target="calibration">
                 <span class="cd-set-nav-label">CALIBRATION</span>
                 <span class="cd-set-nav-hint">Axes steps · servo</span>
@@ -768,43 +764,64 @@
                 </div>
                 <!-- Pen presets row -->
                 <div class="cd-zpen-grid">
-                  <button class="cd-jog-btn cd-jog-pen cd-jog-pen-up" id="cdPenUpBtn">
-                    <!-- pen nib lifted, arrow up -->
-                    <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
-                      <path d="M8 7 V1 M5 4 L8 1 L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <rect x="4" y="7" width="8" height="9" rx="1" fill="currentColor"/>
-                      <polygon points="4,16 12,16 8,22" fill="currentColor"/>
-                    </svg>
-                    <span class="cd-pen-text">
-                      <span class="cd-pen-label">PEN UP</span>
-                      <span class="cd-zpen-val" id="cdPenUpHint">5.0</span>
-                    </span>
-                  </button>
-                  <button class="cd-jog-btn cd-jog-pen cd-jog-pen-down" id="cdPenDownBtn">
-                    <!-- pen nib pressing onto paper line, arrow down -->
-                    <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
-                      <rect x="4" y="0" width="8" height="9" rx="1" fill="currentColor"/>
-                      <polygon points="4,9 12,9 8,15" fill="currentColor"/>
-                      <path d="M8 15 V18 M5.5 16.5 L8 19 L10.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                      <line x1="0" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span class="cd-pen-text">
-                      <span class="cd-pen-label">PEN DOWN</span>
-                      <span class="cd-zpen-val" id="cdPenDownHint">0.0</span>
-                    </span>
-                  </button>
-                  <button class="cd-jog-btn cd-jog-pen cd-jog-pen-pump" id="cdPumpBtn">
-                    <!-- pen nib pressed flush against ground, no arrow -->
-                    <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
-                      <rect x="4" y="0" width="8" height="9" rx="1" fill="currentColor"/>
-                      <polygon points="4,9 12,9 8,16" fill="currentColor"/>
-                      <line x1="0" y1="17" x2="16" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <span class="cd-pen-text">
-                      <span class="cd-pen-label">PUMP</span>
-                      <span class="cd-zpen-val" id="cdPumpHint">-2.0</span>
-                    </span>
-                  </button>
+                  <div class="cd-pen-row">
+                    <button type="button" class="cd-pen-edit-trigger cd-pen-edit-up" data-target="cdPenUpHint" data-key="penUpZ" data-min="-50" data-max="20" title="Edit PEN UP Z height">
+                      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4l-9 9L5 15l.7-3.7 9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="3" y1="18" x2="17" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                    <button class="cd-jog-btn cd-jog-pen cd-jog-pen-up" id="cdPenUpBtn">
+                      <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <path d="M8 7 V1 M5 4 L8 1 L11 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="4" y="7" width="8" height="9" rx="1" fill="currentColor"/>
+                        <polygon points="4,16 12,16 8,22" fill="currentColor"/>
+                      </svg>
+                      <span class="cd-pen-text">
+                        <span class="cd-pen-label">PEN UP</span>
+                        <span class="cd-zpen-val" id="cdPenUpHint">5.0</span>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="cd-pen-row">
+                    <button type="button" class="cd-pen-edit-trigger cd-pen-edit-down" data-target="cdPenDownHint" data-key="penDownZ" data-min="-50" data-max="20" title="Edit PEN DOWN Z height">
+                      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4l-9 9L5 15l.7-3.7 9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="3" y1="18" x2="17" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                    <button class="cd-jog-btn cd-jog-pen cd-jog-pen-down" id="cdPenDownBtn">
+                      <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <rect x="4" y="0" width="8" height="9" rx="1" fill="currentColor"/>
+                        <polygon points="4,9 12,9 8,15" fill="currentColor"/>
+                        <path d="M8 15 V18 M5.5 16.5 L8 19 L10.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="0" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      <span class="cd-pen-text">
+                        <span class="cd-pen-label">PEN DOWN</span>
+                        <span class="cd-zpen-val" id="cdPenDownHint">0.0</span>
+                      </span>
+                    </button>
+                  </div>
+                  <div class="cd-pen-row">
+                    <button type="button" class="cd-pen-edit-trigger cd-pen-edit-pump" data-target="cdPumpHint" data-key="penPumpZ" data-min="-50" data-max="20" title="Edit PUMP Z height">
+                      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <path d="M14.7 2.3a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4l-9 9L5 15l.7-3.7 9-9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="3" y1="18" x2="17" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                    <button class="cd-jog-btn cd-jog-pen cd-jog-pen-pump" id="cdPumpBtn">
+                      <svg class="cd-zpen-arrow" viewBox="0 0 16 22" xmlns="http://www.w3.org/2000/svg" fill="none">
+                        <rect x="4" y="0" width="8" height="9" rx="1" fill="currentColor"/>
+                        <polygon points="4,9 12,9 8,16" fill="currentColor"/>
+                        <line x1="0" y1="17" x2="16" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      <span class="cd-pen-text">
+                        <span class="cd-pen-label">PUMP</span>
+                        <span class="cd-zpen-val" id="cdPumpHint">-2.0</span>
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- XY + Z jog grid: 4 columns, Z in right column -->
